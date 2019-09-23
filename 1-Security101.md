@@ -1,3 +1,30 @@
+# Intro
+
+## Exam
+
+Must hold an AWS Certified Associate certification to take the exam.
+
+IAM will be the majority of the exam = the key to pass the exam.
+
+
+
+## Security Basics
+
+CIA
+* Confidentiality: IAM, MFA, bucket policies, security groups, ACL's within VPC's, KMS encryption etc.
+* Integrity: Certificate Manager (SSL), IAM, bucket policies, S3 version control, MFA for S3 deletion etc.
+* Availability: Autoscaling, Multi-AZs, Route53 health checks etc.
+
+AAA
+* Authentication: auth into IAM user/role
+* Authorization: IAM policies to defined access
+* Accounting: audit trail i.e. CloudTrail
+
+Non-repudiation
+* Not being able to deny something has happened.
+* CloudTrail, CloudWatch.
+
+
 ## How does AWS Secure their Stuff?
 
 Physical and Environmental Security
@@ -90,5 +117,37 @@ Exam Tips: Have a STRONG understanding of the shared responsibility model.
 
 
 ## Security IN AWS
+
+Controls that you need:
+1. Visibility
+* AWS Config - managed and custom rules
+2. Auditability
+* AWS CloudTrail - records every API call in the environment
+3. Controllability
+* AWS KMS - multi-tenant. Underlying hardware is shared, but strict controls.
+* AWS CloudHSM (hardware security module) - dedicated. Underlying hardware is NOT shared.
+    * Exam: Which service is required for FIPS 140-2 Compliance? - CloudHSM as KMS being multi-tenant/shared does not comply.
+4. Agility (how quickly can we adapt to changes)
+* AWS CloudFormation - deploy templates to any regions
+* AWS Elastic Beanstalk - AWS provision resources for you, rather than you doing it each service manually to create an example (as an example)
+5. Automation (are processes repeatable?
+* AWS OpsWorks - operate alongside CF / EB
+* AWS CodeDeploy - operate alongside CF / EB
+6. Scale
+* Every customer gets the same AWS security foundations, from a startup to a Fortune 500 company.
+
+Other services applying to all controls
+* AWS IAM - creaiting users, password policies, MFA, groups
+* AWS CloudWAtch - monitor environment, see breaches, CPU runtime
+* AWS Trusted Advisor - advises on security, budgeting, primarily warn if security groups are open to the world.
+
+
+
+## Intro and Security101 Summary / Exam Tips
+
+Understanding 3 models:
+1. CIA
+2. AAA
+3. Non-repudiation
 
 

@@ -123,3 +123,23 @@ Policy conflict flow:
     -> NO = DENY (0 allow/deny)
 
 This flow will be examined heavily with scenarios containing 2-3 different policies.
+
+## Forcing Encryption on S3
+
+Use S3 bucket policies to enforce encryption - prevent read without SSL enabled:
+```json
+"Sid":"PublicReadGetObject",
+"Effect":"Deny",
+"Principal":{
+    "AWS":"*"
+}
+"Action":"s3:GetObject",
+"Resource":"arn:aws:s3:::bucketname/*",
+"Condition":{
+    "Bool":{
+        "aws:SecureTransport":false
+    }
+}
+```
+
+### 

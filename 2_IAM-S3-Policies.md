@@ -126,8 +126,10 @@ This flow will be examined heavily with scenarios containing 2-3 different polic
 
 ## Forcing Encryption on S3
 
-Use S3 bucket policies to enforce encryption - prevent read without SSL enabled:
+Use S3 bucket policy to enforce encryption - prevent read without SSL enabled:
 ```json
+// If secure transport is false, DENY read.
+// Alternative policy, if secure transport is true, ALLOW read.
 "Sid":"PublicReadGetObject",
 "Effect":"Deny",
 "Principal":{
@@ -142,4 +144,47 @@ Use S3 bucket policies to enforce encryption - prevent read without SSL enabled:
 }
 ```
 
-### 
+### Cross-Region Replication
+
+Cross-region replication replicates objects from one region to another.
+By default, this is done using SSL. You don't need to enable encryption.
+
+You can replicate objects from a source bucket to only one destination bucket (1-1 relationship).
+After S3 replicates an object, the object can't be replicated again.
+
+Cross-Region Replication (CRR) requirements:
+* Src/dest buckets must have versioning enabled.
+* Src/dest buckets must be in different AWS regions.
+* Amazon S3 must have permissions to replicate objects from src/dest bucket on your behalf. When you enable CRR for the first time, a role will be created for you + a customer-managed policy will be assigned.
+* If src bucket owner also owns the object, the bucket owner has full permissions to replicate the object. If not, object owner must grant the bucket owner `READ`/`READ_ACP` permissions via. the object ACL.
+
+CRR Cross Accounts:
+* The IAM role must have permissions to replicate objects in the destination bucket.
+* In CRR config, you can optionally direct AWS S3 to change ownership of object replicas to the AWS account that owns the destination bucket.
+* GOOD USE-CASE: CloudTrail auditing - have CT log everything inside an AWS account, turn on CRR and replicate audit logs to another AWS account. The AWS account will only have permission to replicate the objects, but not read,edit,delete CT logs. So you have a separate AUDIT account that contains all log data which can't be touched.
+
+Best-practice to have a separate AWS account, turn on Cross-Region Replication, have your CloudTrail logs replicated to an AWS "AUDIT ACCOUNT" and you can't go in and read, write, delete those logs.
+
+What is replicated?
+* New objects created after you add a replication config.
+* S3 replicates objects encrypted using S3 managed keys (SSE-S3) or KMS managed keys (SSE-KMS) + unencrypted objects.
+* Object metadata
+* Object ACL updates
+* Object tags
+* S3 replicates only objects in the src bucket for which the bucket owner has permissions to read objects and read access control lists.
+
+DELETE replication
+* Putting a delete marker on an object -> replicated to other bucket.
+* A delete marker only hides an object via. versioning, not actually delete it.
+
+What is NOT replicated
+* Anything created BEFORE CRR is turned on.
+* Objects created with SSE using customer-provided (SSE-C) encryption keys.
+* Objects created with SSE using AWS KMS-managed encryption (SSE-KMS) keys, unless you explicitly enable this option.
+* Objects in the src bucket for which the bucket owner does NOT have permissions (happens when the obj owner is different from the bucket owner).
+* Deletes to a particular VERSION of an object. This is a security mechanism. Stops being maliciously deleting versions of a file.
+
+Resources:
+* Cross-Region Replication: https://docs.aws.amazon.com/AmazonS3/latest/dev/replication.html
+* What does S3 replicate: https://docs.aws.amazon.com/AmazonS3/latest/dev/replication-what-is-isnot-replicated.html
+

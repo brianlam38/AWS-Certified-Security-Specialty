@@ -173,8 +173,8 @@ What is replicated?
 * Object tags
 * S3 replicates only objects in the src bucket for which the bucket owner has permissions to read objects and read access control lists.
 
-DELETE replication
-* Putting a delete marker on an object -> replicated to other bucket.
+DELETE marker replication
+* Delete markers on an object are replicated. Deleted versions of objects are NOT replicated.
 * A delete marker only hides an object via. versioning, not actually delete it.
 
 What is NOT replicated
@@ -187,4 +187,21 @@ What is NOT replicated
 Resources:
 * Cross-Region Replication: https://docs.aws.amazon.com/AmazonS3/latest/dev/replication.html
 * What does S3 replicate: https://docs.aws.amazon.com/AmazonS3/latest/dev/replication-what-is-isnot-replicated.html
+
+## Securing S3 Using CloudFront
+
+Force users to only access S3 via. CloudFront instead of direct access via. S3 URL.
+
+Steps to create a new CF distribution:
+1. CloudFront service
+2. Create a new distribution -> Web Distribution
+3. Origin Domain Name: the source S3 bucket URL
+4. Restrict Bucket Access -> NO (exam will test how to restrict AFTER a distribution has already been created)
+5. Everything as default
+
+Steps to secure the CF distribution:
+1. CloudFront service
+2. Select distribution -> Distribution Settings -> Origins -> Select Origin -> Edit
+3. "Restrict Bucket Access" = YES. You need an "Origin Access Identity" - a special CF user (an origin access identity) to your origin.
+4. "Grant Read Permissions on Bucket" = YES. So CF can update the bucket policy for you.
 

@@ -58,5 +58,68 @@ S3 bucket policies specify what actions are allowed ot denied on the bucket.
 * They are attached only to S3 buckets.
 * They are bucket-level only (not bucket object-level).
 
+Why use S3 policy instead of IAM policy
+* You want to grant cross-account access to your S3 environment, without using IAM roles.
+* Your IAM policies reach the size limit (2kb for users, 5kb for groups, 10kb for roles). S3 supports bucket policies of up to 20kb.
+* You prefer to keep access control policies in the S3 env.
 
+S3 Policy best use case: management of individual S3 buckets
+* Having a deny policy for a specific bucket is easier than creating an IAM policy that denies access to a specific bucekt, then rolling that out to every user in your organisation.
+* Example scenario: bucket could contain everyone's performance reviews in it.
 
+Use the "AWS Policy Generator" to generate a S3 bucket policy.
+
+S3 Policy "EXPLICIT DENY" will always override an "ALLOW".
+
+## S3 Object Access Control Lists (ACLs)
+
+S3 ACLs are a legacy access control mechanism. AWS recommends sticking to IAM policies and S3 bucket policies.
+However, S3 ACLs can be applied to individual objects/files as opposed to S3 bucekt policies.
+
+S3 ACL use cases:
+* If you nede fine grained permissions on individual files/objects.
+* Reachign size limit of 20kb for S3 bucket policies.
+
+Managing S3 object permissions
+* Click on object itself -> permissions
+* Applying S3 object policies to individual IAM users - possible but can only be done via. CLI or AWS API (not console).
+* Add S3 object access for other AWS Accounts by adding Account ID.
+
+Conflict policy example: IAM user policy denying all S3 read vs. S3 bucket with object open to the public.
+* Even though an explicit DENY overrides all ALLOW policies... the user would still be able to access the object. WHY??? =>
+* The user CAN access objects in the public bucket via. the public bucket link (as an anonymous user).
+* The user CANNOT access objects in the public bucket via. opening the object within AWS console/CLI/API (as an AWS user).
+
+EXAM: Best exam practise is by creating your own S3 Bucket Policies, S3 Object ACLs, IAM User Policies etc.
+
+## Policy Conflicts (EXAM ESSENTIAL TOPIC)
+
+What happens if an IAM policy conflicts with an S3 policy which conflicts with an S3 ACL?
+
+__Whenever an AWS principal (user, group or role) issues a request to S3, the authorization decision depends on the union of all the IAM policies, S3 bucket policies and S3 ACLs that apply.
+
+Least-privilege:
+* Decisions ALWAYS default to DENY.
+* An explicit DENY ALWAYS trumps an ALLOW.
+* So if you DENY access to something somewhere and then something else allows acecssm the DENY will override the ALLOW.
+
+ACCESS DENIED EXAMPLES:
+* IAM policy grants access to an object + S3 bucket policy denies access to object + no S3 ACL exists.
+* No method specifies an ALLOW, request is denied by default.
+
+ACCESS ALLOWED EXAMPLE:
+* No method specifies a DENY + one or more methods specify an ALLOW.
+
+Policy conflict flow:
+1. Decision starts at DENY by default.
+2. Any applicable policies?
+    -> YES = CONTINUE
+    -> NO = DENY (0 allow/deny)
+3. Does a policy have an EXPLICIT DENY?
+    -> YES = DENY
+    -> NO = CONTINUE
+4. Does a policy have an ALLOW?
+    -> YES = ALLOW
+    -> NO = DENY (0 allow/deny)
+
+This flow will be examined heavily with scenarios containing 2-3 different policies.

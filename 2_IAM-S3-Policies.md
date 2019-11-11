@@ -205,3 +205,105 @@ Steps to secure the CF distribution:
 3. "Restrict Bucket Access" = YES. You need an "Origin Access Identity" - a special CF user (an origin access identity) to your origin.
 4. "Grant Read Permissions on Bucket" = YES. So CF can update the bucket policy for you.
 
+## Using SSL Certificates using CloudFront
+
+DEFAULT SSL CERTIFICATE: If you have happy for users to access your content using *.cloudfront.net domain name.
+CUSTOM SSL CERTIFICATE: If you want to use a domain name that you own example.com.
+
+You must store your custom SSL Certificate using:
+* IAM API
+* AWS Certificate Manager (ACM)
+
+## Secure S3 Using Pre-Signed URLs
+
+Another method of accessing objects inside S3 - done via. SDKs (Python, Java, Go) or CLI.
+
+```bash
+$ aws s3 mb s3://acloudgurupresigned                # Make bucket
+$ echo "Hello Cloud Gurus" > hello.txt
+$ aws s3 cp hello.txt s3://acloudgurupresigned      # Upload object to bucket
+$ aws s3 ls s3://acloudgurupresigned                # Check object is in bucket
+$ aws s3 presign s3://acloudgurupresigned/hello.txt --expires-in 300 # presign URL with 300 sec expiration (default expiry = 1 hr)
+https://acloudgurupresigned.s3.amazonaws.com/hello.txt?AWSACcessKeyId=XXX&Expires=XXX&x-amz-security-token=XXX&Signature=XXX
+```
+
+## Security Token Service (STS) (IMPORTANT EXAM TOPIC)
+
+STS grants users limited and temporary access to AWS resources.
+
+These users can come from:
+* Federation (typically Active Directory)
+  * Uses SAML
+  * Grants temp access based off user's AD credentials. Does not need to be a user in IAM.
+  * SSO allows users to log into AWS console without assigning IAM credentials.
+* Federation with Mobile Apps
+  * Facebook / Amazon / Google or other OpenID providers.
+* Cross Account Access
+  * Lets users from one AWS account access resources in another.
+
+Key Terms:
+* Federation - combining or joining a list of users in one domain (such as IAM) with a list of users in another domain (such as AD, Facebook etc.)
+* Identity Broker -  service that allows you to take an identity from point A and join it (federate it) to point B.
+* Identity Store - services like AD, Facebook, Google etc.
+* Identities - a user of a service like Facebook etc.
+
+An Identity is a user, that is stored in an Identity Store (like Active Directory/Facebook). You create an Identity broker that allows you take those Identities in your Identity Store and join them up to IAM -> This is essentially the federation/joining of IAM with AD/Facebook. The service that allows this is the Security Token Service.
+
+Scenario: _You are hosting a company website on EC2 web servers in your VPC. Users of the site must login to the site, which authenticates against the company's AD servers which are based on-site at the company HQ. Your VPC is connected to the company HQ via. a secure IPSEC VPN. Once logged in, the user can only have access to their own S3 bucket._
+
+How to set this up:
+1. Develop an Identity Broker (join AD -> IAM).
+2. Identity Broker will authenticate (using client/appid, secret) against AD:
+    * Authenticate to obtain an AD token.
+    * Pass AD token to STS.
+    * STS will provide us with another token.
+3. Pass STS to the web application to authenticate against S3.
+4. S3 uses IAM to check if user has access to S3.
+5. User is able to access S3.
+
+Scenario:
+1. Employee enters username / password
+2. Application calls Identity Broker. Broker captures username/password.
+3. Identity Broker uses the organisation's LDAP directory to validate the employee's identity.
+4. Identity Broker calls the GetFederationToken function using IAM credentials.
+    * GetFederationToken(DurationSeconds, Name, Policy, PolicyArn) where:
+    * _DurationSeconds_: duration of the STS token (1 to 36 hours).
+    * _Name_: name of the federated user.
+    * _Policy_: inline IAM policy.
+    * _PolicyArn_: ARN referencing an IAM policy.
+5. STS confirms that the policy of the IAM user making the call to GetFederationToken gives permission to create new tokens.
+6. STS returns the temp STS token to the Identity Broker.
+7. Identity Broker returns the STS token to the application.
+8. Application uses the STS token to make requests to S3.
+9. S3 uses IAM to verify STS token and to allow requested operation on the given S3 bucket.
+10. IAM provides S3 with go-ahead to perform requested operation.
+
+High-Level Summary:
+1. Authenticate (as Identity/User) against 3rd-party (Identity Store: AD/Facebook/Google).
+2. Authenticate (as Identity Broker) against STS.
+3. Authenticate (as Application) against AWS service to obtain access to resource.
+
+## Web Identity Federation
+
+Web Identity Federation lets you give users access to AWS resources after they have successfully authenticated with a web-based identity provider like Amazon/Facebook/Google. User trades authentication code from Web ID provider for an AWS STS token.
+
+Use case: mobile app which you want to make available to Facebook users. (recommended for social accounts)
+
+Amazon Cognito
+* Sign-up / Sign-in to your apps
+* Provides guest access
+* Acts as identity broker between your app / Web ID provider
+* Synchronises user data across multiple devices (mobile, desktop data sync)
+* Recommended for mobile apps running on AWS.
+
+Amazon Cognito scenario:
+* Mobile shopping app: S3 for product data, DynamoDB for customer data.
+* User logs into Facebook, Facebook provides web token.
+* Cognito takes web token and exchanges it for STS token.
+* Cognito passes STS token to mobile app.
+* Mobile app uses STS token to get access to resources for user.
+
+Amazon Cognito benefits:
+* No need for mobile app to embed or store AWS credentials locally on the device = increased security.
+* Provides users a seamless experience across all devices.
+

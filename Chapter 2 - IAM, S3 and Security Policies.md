@@ -96,7 +96,7 @@ EXAM: Best exam practise is by creating your own S3 Bucket Policies, S3 Object A
 
 What happens if an IAM policy conflicts with an S3 policy which conflicts with an S3 ACL?
 
-__Whenever an AWS principal (user, group or role) issues a request to S3, the authorization decision depends on the union of all the IAM policies, S3 bucket policies and S3 ACLs that apply.
+Whenever an AWS principal (user, group or role) issues a request to S3, the authorization decision depends on the union of all the IAM policies, S3 bucket policies and S3 ACLs that apply.
 
 Least-privilege:
 * Decisions ALWAYS default to DENY.

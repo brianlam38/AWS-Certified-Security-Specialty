@@ -287,7 +287,7 @@ High-Level Summary:
 
 Web Identity Federation lets you give users access to AWS resources after they have successfully authenticated with a web-based identity provider like Amazon/Facebook/Google. User trades authentication code from Web ID provider for an AWS STS token.
 
-Use case: mobile app which you want to make available to Facebook users. (recommended for social accounts)
+Suggested use case: mobile app which you want to make available to Facebook users. (recommended for social accounts)
 
 Amazon Cognito
 * Sign-up / Sign-in to your apps
@@ -307,3 +307,74 @@ Amazon Cognito benefits:
 * No need for mobile app to embed or store AWS credentials locally on the device = increased security.
 * Provides users a seamless experience across all devices.
 
+Cognito User Pools: user directories used to manage sign-up and sign-in functionality for mobile/web apps.
+* User sign-in directly via. User Pool or indirectly via. identity provider (Amazon/Facebook/Google)
+* Cognito acts as identity broker between ID provider and AWS.
+
+## Glacier Vault Lock
+
+Glacier is a low-cost storage service for data archiving and long-term backup.
+* _Archives_: a single file or multiple files stored in a .tar or .zip.
+* _Vault_: containers which store one or more Archives
+* _Vault Lock Policy_: similar to an IAM policy to configure and enforce compliance controls - connfigure write-once-read-many archives / create data retention policies
+
+Example Vault Lock Policy: Enforce archive retention for 1 year (deny archive delete for all archives <365 days old)
+```json
+"Version":"2012-10-17",
+"Statement":[
+    {
+        "Sid":"deny-based-on-archive-age",
+        "Principal":"*",
+        "Effect":"Deny",
+        "Action":"glacier:DeleteArchive",
+        "Resource":[
+            "arn:aws:glacier:us-west-2:XXXaccountidXXX:vaults/examplevault"
+        ],
+        "Condition":{
+            "NumericLessThan":{
+                "glacier:ArchiveAgeInDays":"365",
+            }
+        }
+    }
+]
+```
+
+Steps to configuring Vault Locks:
+* Create Vault Lock policy.
+* Initiate lock by attaching Vault Lock policy to your vault = in-progress state.
+* You have 24 hours to validate the lock policy. You can abort within 24 hours.
+* Once validated, Vault Lock policies are immutable.
+
+## Summary / Exam Tips
+
+Resetting Root Users
+* Create new root user password / strong password policy.
+* Delete 2FA / re-create.
+* Delete Access Key ID / Secret Access Key.
+* Check existing user accounts, delete if not legit.
+
+IAM policies
+* IAM is Global.
+* Three different types: (1) Managed Policies (2) Customer Managed Policies (3) Inline Policies
+
+S3 policies
+* S3 policies are attached only to S3 buckets (NOT objects). They specify what is ALLOWED/DENIED on the bucket.
+* Broken down to the user-level.
+* _EXPLICIT DENY ALWAYS OVERRIDES AN ALLOW_.
+* S3 ACL's: Legacy access control for enforcing access to S3 OBJECTS.
+* S3 policy conflicts: see _policy conflict diagram_ above (IMPORTANT).
+* aws:SecureTransport: restrict S3 bucket access to only HTTPS.
+* Cross-Region-Replication:
+    * Delete markers are replicated, deleted versions of files are NOT replicated.
+    * Versioning must be enabled.
+    * Possible to use CRR from one AWS account to another.
+    * IAM role must have permissions to replicate objects in destination bucket.
+    * Scenario: replicate CloudTrail logs to separate AWS audit account (can only send data there, not read/write).
+
+Pre-signed URLs (CLI/SDK only):
+* Access objects using pre-signed URL's
+* Exist only for a certain length of time.
+* Change TTL by using `expires-in`
+
+STS / Identity Provider
+* User provides credentials to Identity Provider (AD/FB/Google) -> AWS STS -> User accesses AWS resource -> AWS resource checks IAM -> access is provided to user.

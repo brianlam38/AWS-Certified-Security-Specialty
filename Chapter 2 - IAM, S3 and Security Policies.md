@@ -283,7 +283,7 @@ High-Level Summary:
 2. Authenticate (as Identity Broker) against STS.
 3. Authenticate (as Application) against AWS service to obtain access to resource.
 
-## Web Identity Federation
+## Web Identity Federation / Amazon Cognito
 
 Web Identity Federation lets you give users access to AWS resources after they have successfully authenticated with a web-based identity provider like Amazon/Facebook/Google. User trades authentication code from Web ID provider for an AWS STS token.
 

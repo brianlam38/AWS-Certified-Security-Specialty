@@ -21,6 +21,12 @@ Critical Terms:
 
 IAM is global - users, groups, roles, policies are done on a global level, not region-specific.
 
+IAM Permissions Boundary for IAM Entities (users/roles)
+* A Permissions Boundary is using a managed policy to set the _maximum permissions_ that an identity-based policy can grant to an IAM entity.
+* https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html
+* https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_iam-condition-keys.html#ck_PermissionsBoundary
+
+
 ## IAM Root User Scenario
 
 Scenario: You have have started as a sysadmin at a cloud-based company. Previous admin used only the root-user.

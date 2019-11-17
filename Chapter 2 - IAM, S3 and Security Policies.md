@@ -219,6 +219,7 @@ CUSTOM SSL CERTIFICATE: If you want to use a domain name that you own example.co
 You must store your custom SSL Certificate using:
 * IAM API
 * AWS Certificate Manager (ACM)
+* Only in the `us-east-1` region = US East (N. Virginia)
 
 ## Secure S3 Using Pre-Signed URLs
 
@@ -351,6 +352,18 @@ Steps to configuring Vault Locks:
 * You have 24 hours to validate the lock policy. You can abort within 24 hours.
 * Once validated, Vault Lock policies are immutable.
 
+Vault Lock Policy vs. Vault Access Policy:
+* https://docs.aws.amazon.com/amazonglacier/latest/dev/vault-lock.html
+
+## AWS Organisations
+
+AWS Organisations is an account management service that lets you consolodate multiple AWS accounts into an organisation so that you can consolidate billing, group your AWS accounts into logical groupings for access control and attach Service Control Policies.
+
+SCPs enable you to restrict, at the account level of granularity, what services and actions the users, groups, and roles in those accounts can do. However, an SCP never grants permissions. The SCP limits permissions for entities in member accounts, including each AWS account root user. SCPs are available only in an AWS organization that has all features enabled, SCPs aren't available if your organization has enabled only the consolidated billing features.
+
+https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scp.html
+
+
 ## Summary / Exam Tips
 
 Resetting Root Users
@@ -370,10 +383,11 @@ S3 policies
 * S3 ACL's: Legacy access control for enforcing access to S3 OBJECTS.
 * S3 policy conflicts: see _policy conflict diagram_ above (IMPORTANT).
 * aws:SecureTransport: restrict S3 bucket access to only HTTPS.
-* Cross-Region-Replication:
+* Cross-Region-Replication (CRR):
     * Delete markers are replicated, deleted versions of files are NOT replicated.
     * Versioning must be enabled.
-    * Possible to use CRR from one AWS account to another.
+    * Possible to use CRR from one AWS account to another
+    * SSL is enabled by default when you configure CRR
     * IAM role must have permissions to replicate objects in destination bucket.
     * Scenario: replicate CloudTrail logs to separate AWS audit account (can only send data there, not read/write).
 

@@ -2,13 +2,13 @@
 
 Configuration of managed Services like S3 and DynamoDB
 Configuration of hypervisors
-> Configuration of the Operating System running on EC2 instances
+__Configuration of the Operating System running on EC2 instances__
 Physical security of the data center
 
 ### Which of the following services can be used to automate technical tasks, avoid mistakes caused by human error and ensure that processes in your organization are repeatable? (Choose 2)
 
-> CodeDeploy
-> OpsWorks
+__CodeDeploy__
+__OpsWorks__
 Elastic Beanstalk
 API Gateway
 
@@ -16,34 +16,34 @@ API Gateway
 
 Applying security updates and patching DynamoDB
 Applying security updates and patching the hypervisor
-> Configuring IAM
-> Applying security updates and patching the Operating System running on EC2 instances
+__Configuring IAM__
+__Applying security updates and patching the Operating System running on EC2 instances__
 
 ### Which of the following is a multi-tenant managed service which allows you to securely store and manage your encryption keys?
 
-> KMS
+__KMS__
 CloudTrail
 CloudHSM
 Config
 
 ### Which of the following AWS services can be used to enable customers to quickly adapt to the changing needs of their business? (Choose 2)
 
-> Elastic BeanStalk
-> CloudFormation
+__Elastic BeanStalk__
+__CloudFormation__
 CloudTrail
 Config
 
 ### For which of the following are you responsible for ensuring the Operating System is configured securely?
 
 Lambda
-> EC2
+__EC2__
 RDS
 DynamoDB
 
 ### Which of the following services can be used to provide an audit trail of all the API activity taking place in your AWS account?
 
 Trusted Advisor
-> CloudTrail
+__CloudTrail__
 CloudWatch
 Config
 
@@ -51,20 +51,20 @@ Config
 
 Config
 CloudFormation
-> Trusted Advisor
+__Trusted Advisor__
 CloudWatch
 
 ### Which of the following services would you use to check CPU utilization of your EC2 instances?
 
 CloudFormation
-> CloudWatch
+__CloudWatch__
 Config
 Trusted Advisor
 
 ### Which of the following tools can be used to give you visibility of the assets you have in AWS?
 
 CloudTrail
-> AWS Config
+__AWS Config__
 CloudFormation
 Trusted Advisor
 

@@ -257,4 +257,3 @@ Storage of log files:
 * S3
     * S3 Object Lifecycle Management
     * 99.99999% durability and 99.99% availability of objects over a given year
-    

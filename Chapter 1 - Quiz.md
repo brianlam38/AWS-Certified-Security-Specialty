@@ -1,43 +1,31 @@
 ### Which of the following is NOT the responsibility of AWS in terms of Security and Compliance?
 
 
-
+```
 Configuration of managed Services like S3 and DynamoDB
-
 Configuration of hypervisors
-
-__Configuration of the Operating System running on EC2 instances__
-
+>Configuration of the Operating System running on EC2 instances
 Physical security of the data center
-
+```
 
 
 ### Which of the following services can be used to automate technical tasks, avoid mistakes caused by human error and ensure that processes in your organization are repeatable? (Choose 2)
 
-
-
-__CodeDeploy__
-
-__OpsWorks__
-
+```
+CodeDeploy
+>OpsWorks
 Elastic Beanstalk
-
 API Gateway
-
-
+```
 
 ### When using AWS, which of the following are a customer responsibility in terms of Security and Compliance? (Choose 2)
 
-
-
+```
 Applying security updates and patching DynamoDB
-
 Applying security updates and patching the hypervisor
-
-__Configuring IAM__
-
-__Applying security updates and patching the Operating System running on EC2 instances__
-
+>Configuring IAM
+>Applying security updates and patching the Operating System running on EC2 instances
+```
 
 
 ### Which of the following is a multi-tenant managed service which allows you to securely store and manage your encryption keys?

@@ -50,6 +50,8 @@ Validating CT log file integrity:
 
 ## CloudTrail Log Protection
 
+Log files are encrypted by default (AES-256) even if the bucket itself doesn't show encryption turned on.
+
 CT logs must be secured because they contain valuable info to an attacker such as:
 * Personally identifiable info such as usernames / team membership.
 * Config information such as a DynamoDB table and key names may be stored.
@@ -63,7 +65,64 @@ How do we restrict access to only employees with a security responsibility?
 * Place employees who have a security role into an IAM group with attached policies
 * Two AWS-managed policies: AWSCloudTrailFullAccess (security role) and AWSCloudTrailReadOnly (auditor role)
 
-How can we be notified that a log file has been created / validate integrity
+How can we be notified that a log file has been created / validate integrity?
 * Configure SNS ontifs and log file validation.
 * Develop a solution to execute log validation usign the digest file.
 
+How to prevent CT log files from being deleted?
+* Using IAM and bucket policies
+* Configure S3 MFA delete
+* Validate that logs have not been deleted using log file validation
+
+How to ensure that logs are retained for X years?
+* By default, logs are kept indenfinitely
+* Can use S3 Object Lifecycle Management to delete files after required period of time.
+    * Go to S3 bucket -> Management Tab -> "Add lifecycle rule" button -> Configure bucket expiration
+* OR move files to AWS Glacier for long-term storage.
+
+## AWS CloudWatch
+
+AWS CloudWatch is a monitoring service for AWS cloud resources and the applications you run on AWS.
+
+Enables:
+* Resource utilisation,. operational performance monitoring
+* Log aggregation and basic analysis
+
+Provides:
+* Real-time monitoring iwthin AWS for resources and applications
+* Hooks to event triggers
+
+Key components:
+1. CloudWatch
+2. CloudWatch Logs
+3. CloudWatch Events
+
+CloudWatch:
+* Real-time monitoring: standard monitoring (every 5 mins) / detailed monitoring (every 1 min)
+* Metrics: CPU utilisation, network utilisation
+* Alarms: CPU > 80%, trigger alarm
+* Notifications: SNS notifications etc.
+* Custom Metrics: pass / program custom metrics via. AWS API.
+
+CloudWatch Logs:
+* Pushed from some AWS services, including CloudTrail
+* Pushed from your applicaiton/systems - kernel logs, application logs, web-server logs etc.
+* Metrics from log entry matches
+* Stored indefinitely (not user S3)
+
+CloudWatch Events | scenario: user creating EC2 instance, resulting in auto-deletion via. CloudWatch Events
+1. User performs API call (create EC2)
+2. API call logged in CloudTrail S3 bucket
+3. CloudTrail is configured as a CloudWatch Event Source, so API call is pushed to CloudWatch Events
+4. CloudWatch Events pushes details of API call to an Event Target, such as an AWS Lambda
+5. AWS Lambda deletes EC2 instance.
+
+CloudWatch Events:
+* Near real-time stream of system events
+* Events:
+    * AWS Resources state change
+    * AWS CloudTrail (API Calls)
+    * Custom events (e.g. HTTP 403 status in Apache web-server logs)
+    * Scheduled events
+* Rules: match incoming events and orute them to one or more targets
+* Targets: Lambda, SNS topics. SQS queues, Kinesis Streams and more

@@ -150,10 +150,12 @@ Terminology:
 * _Configuration History_: collection of config items for a resource over time
 * _Configuration Recorder_: the configuration of AWS Config that records and stores config items (Config Recorder Role)
 
+
 Recorder Setup:
 * Logs config for account in region (per-region-basis)
 * Stores in S3
 * Notified of issues via. SNS
+
 
 What we see:
 * Resources Type, Resource ID
@@ -164,19 +166,23 @@ What we see:
     * Managed Rules: ~40 rules
 * Timeline: configuration details, relationships, changes, CloudTrail events
 
+
 Permissions needed for AWS Config - requires and IAM role with:
 * ReadOnly permissions to the recorded resources
 * Write access to S3 logging bucket
 * Publish access to SNS
+
 
 Restrict access to AWS Config:
 * Users need to be authenticated with AWS and have appropriate permissions set via. IAM policies to gain acecss.
 * Only Admins/Security needing to set up and manage Config require full acecss.
 * Provide ReadOnly for Config day-to-day use e.g. analyse misconfigurations etc.
 
+
 Monitoring Config:
 * Use CloudTrail with Config to provide deeper insight into resources.
 * Use CloudTrail to monitor access to Config - e.g. someone stopping Config Recorder would be monitored in CloudTrail.
+
 
 AWS Config is a big part of the exam, so read the Config FAQ: https://aws.amazon.com/config/faq/
 
@@ -197,7 +203,9 @@ Set up an alert if the Root user logs in and makes API calls
 
 _This topic is not really examined - can mostly skip it._
 
+
 AWS CloudHSM service helps meet corporate, contractual and regulatory compliance requiremetns for data security by using dedicated Hardware Security Module appliances within the AWS Cloud.
+
 
 Enables: Control of data, evidence of control, meet tough compliance controls
 Provides: Secure key storage (generate, store public/private keys), cryptographic operations, tamper-resistant Hardware Security Module
@@ -227,6 +235,7 @@ AWS Trusted Advisor
 ## Logging
 
 Understand the 4 logging services and their differences: _CloudTrail, CloudWatch, Config, VPC Flow Logs_
+
 Resources: White-paper _Security at Scale: Logging in AWS_ https://d1.awsstatic.com/whitepapers/compliance/AWS_Security_at_Scale_Logging_in_AWS_Whitepaper.pdf
 
 Control access to log files:

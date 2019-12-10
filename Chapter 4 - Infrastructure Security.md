@@ -208,3 +208,43 @@ EC Dedicated Hosts
 Provision Dedicated Instances / Dedicated Hosts via. EC2 service when launching an instance.
 
 
+## AWS Hypervisors, Isolation of AWS Resources, AWS Firewalls
+
+AWS Hypervisor
+* Hypervisor or virual machine monitor (VMM) is software, firmware, hardware that creates an runs virutal machines.
+    * Host machine: a computer on which a hypervisor runs 1+ virtual machines
+    * Guest machine: each virtual machine
+* EC2 runs on __Xen Hypervisors__: they can have guest OSs' running Paravirtualisation (PV) or using Hardware Virtual Machine (HVM).
+    * HVM guests are fully virtualised: VMs on top of hypervisors are not aware that they are sharing processing time with other VMs.
+    * PV is a lighter form of virtualisation and it used to be quicker.
+    * Performance gap between HVM/PV is closed and AWS recommends using HVM over PV.
+    * Windows EC2 instances can only be HVM where Linux can be HVM/PV.
+* Paravirtualised guests
+    * Relies on the hypervisor to provide support for operations that normally require privileged access.
+    * Guest OS has no elevated access to the CPU.
+    * CPU provides 4 separate privilege modes: 0-3 __"rings"__.
+    * Host OS executes in __Ring 0__
+    * Guest OS runs in lesser-privileged __Ring 1__ and applications in least-privileged __Ring 3__
+    * E.g. `R0: Xen Hypervisor` | `R1: Linux instance` | `R3: Applications`
+
+What happens when we interact with EC2:
+1. Physical Interface
+2. Firewall splits traffic (runs at Hypervisor-layer - AWS managed)
+3. Traffic is split and isolated through our security groups, our virtual interface, the hypervisor back to our resources.
+
+Hypervisor Access (by AWS employees)
+* Administrators with a business need to access the management plane requires MFA to access the administration hosts.
+* The administration hosts are systems that are specifically designed, built, configured and hardened to protect the management plane of the cloud.
+* All access is logged and audited.
+* When an employee no longer has business need to access the management plane, privileges and access to these hosts can be revoked.
+
+Guest OS (EC2) Access (by customers)
+* These virtual instances are controlled completely by customers.
+* Full root access over accounts, services and applications running on the EC2.
+* AWS have no access rights to our Guest OS in EC2.
+
+Memory Scrubbing:
+* EBS automatically resets every block of storage used by the customer, so one customer's data is never unintentionally exposed to another customer. (all storage and RAM memory)
+* Memory allocated to guests is scrubbed/zeroed by the Hypervisor when it is unallocated to a guest.
+* Memory is not returned to the pool of free memory available for new allocations until scrubbing is complete.
+* I.e. disk-recovery tools to find other customer's data won't work.

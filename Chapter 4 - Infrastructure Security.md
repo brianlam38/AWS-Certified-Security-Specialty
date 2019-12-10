@@ -152,3 +152,17 @@ Notes about deleting Key Pairs:
     2. Go to AMIs -> launch the EC2 clone -> create a new key pair.
     3. Your new public key will be added to the existing list in `~/.ssh/authorized_keys`.
 * Prevent access with old key pairs by removing the public keys in `~/.ssh/authorized_keys`.
+
+Additional notes:
+* You cannot use KMS with SSH for EC2 because Amazon is involved in generation of KMS keys.
+* You can use CloudHSM with SSH for EC2 becausey you can export CloudHSM keys.
+
+## AWS Marketplace Security Products
+
+You can purchase security products from 3rd-party vendors on the AWS Marketplace.
+* Includes: firewalls, hardened OS's, WAF's, Antivirus, Security Monitoring etc.
+* Billed: free, hourly, monthly, annually, BYOL etc.
+* Recommended reading: steps on CIS OS Hardening
+
+
+

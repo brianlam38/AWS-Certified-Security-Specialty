@@ -91,21 +91,6 @@ Key Rotation: Customer Managed Keys w/ Imported Key Material
 * Manual rotation is the only option
 * Create a new CMK -> update apps / key-alias to use the new CMK (be careful of old-key deletion)
 
-## EC2 and importing a Customer Managed Key Pair (for SSH access) - MAC USERS ONLY
-
-1. Generate a private-key using RSA 2048 bits: 
-`$ openssl genpkey -algorithm RSA -out private_key.pem -pkeyopt rsa_keygen_bits:2048`
-
-2. Generate a public-key: 
-`$ openssl rsa -pubout -in private_key.pem  -out public_key.pem`
-
-3. Change permissions of private-key: 
-`$ chmod 400 private_key.pem`
-
-4. Go to EC2 -> Key Pairs -> Import a Key Pair -> choose your public-key. Now you can provision an EC2 instance and select your public-key.
-
-You CANNOT take your private/public-key pair and import it into KMS.
-You must follow the external Key Material import process to generate a CMK.
 
 ## Using KMS with EBS
 
@@ -125,3 +110,45 @@ How to encrypt an existing EBS volume / the Root Device volume (default vol when
 4. Copy the AMI to a new image -> turn on encryption -> select either AWS-managed or your own CMK.
 5. Launch the AMI. Your Root Device volume will now be encrypted.
 
+
+## EC2 and importing a Customer Managed Key Pair (for SSH access) - MAC USERS ONLY
+
+1. Generate a private-key using RSA 2048 bits: 
+`$ openssl genpkey -algorithm RSA -out private_key.pem -pkeyopt rsa_keygen_bits:2048`
+
+2. Generate a public-key: 
+`$ openssl rsa -pubout -in private_key.pem  -out public_key.pem`
+
+3. Change permissions of private-key: 
+`$ chmod 400 private_key.pem`
+
+4. Go to EC2 -> Key Pairs -> Import a Key Pair -> choose your public-key. Now you can provision an EC2 instance and select your public-key.
+
+You CANNOT take your private/public-key pair and import it into KMS.
+You must follow the external Key Material import process to generate a CMK.
+
+
+## EC2 and Key Pairs (SSH access)
+
+Creating additional/multiple key pairs for an EC2 instance.
+1. Provision EC2 with an original key pair + SSH into instance `$ ssh ec2-user@public-ec2-ip -i KeyPairOriginal.pem`
+2. Elevate to root `$ sudo su`
+3. View your public keys by:
+    * `$ cat ~/.ssh/authorized_keys` where authorized_keys contains all public keys.
+    * OR by calling `$ curl http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key/`
+4. Go to IAM -> create a new EC2 role -> provision `AmazonS3FullAccess` policy.
+5. Go to EC2 -> attach new IAM role to instance.
+6. Within the EC2, create a new S3 bucket: `$ aws s3 mb s3://brianec2keypairs`
+7. Generate a new asymmetric key pair: `$ ssh-keygen -t rsa`
+8. Add the new public key to authorized_keys `$ cat mynewkey.pub >> ~/.ssh/authorized_keys`.
+9. Add the new private key to S3 bucket: `$ aws s3 cp mynewkey s3://brianec2keypairs`.
+10. Go to S3 -> download new private key `mynewkey` -> `$ chmod 400 mynewkey`
+11. Access the EC2 instance using the new private key `$ ssh ec2-user@ec2-public-ip -i mynewkey`
+
+Notes about deleting Key Pairs:
+* Deleting your key pair via. AWS Console will NOT prevent accessing EC2 with the private key, since the public key inside your EC2 in `~/.ssh/authorized_keys` still exists.
+* If you delete an EC2 key pair via. AWS Console, you can generate a new key pair for the instance by:
+    1. Go to the EC2 -> Actions -> Create an AMI.
+    2. Go to AMIs -> launch the EC2 clone -> create a new key pair.
+    3. Your new public key will be added to the existing list in `~/.ssh/authorized_keys`.
+* Prevent access with old key pairs by removing the public keys in `~/.ssh/authorized_keys`.

@@ -164,5 +164,28 @@ You can purchase security products from 3rd-party vendors on the AWS Marketplace
 * Billed: free, hourly, monthly, annually, BYOL etc.
 * Recommended reading: steps on CIS OS Hardening
 
+## AWS Web Application Firewall (WAF) & AWS Shield
+
+AWS Web Application Firewall (WAF): monitors/controls HTTP/HTTPS requests that are forwarded to CloudFront or an Application Load Balancer.
+* Config includes: access based on IP, query string params.
+* Offers 3 behaviours: (1) `ALLOW` (2) `BLOCK` (3) `COUNT`
+* Additional protections based off: IP, Country, request header values, strings/regex in requests, request length, SQLi, XSS.
+
+WAF deployment: done manually or via. CloudFormation template.
+* Deploy WAF to CloudFront Distributions: global
+* Deploy WAF to Application Load Balancer: region-specific
+
+WebACL configuration example
+* `CommonAttackProtectionManualIPBlockRule`: manually specify IPs to block
+* `CommonAttackProtectionLargeBodyRule`: block requests w/ body size > limit
+* `CommonAttackProtectionSqliRule`: block requests that indicate SQLi
+* `CommonAttackProtectionXssRule`: block requests that indicate XSS
+
+AWS Shield
+* Basic-level turned on by default - $3,000/month for advanced-level.
+* Advanced gives you an incident-response team + in-depth reporting.
+* You won't pay if you are a victim of an attack.
+
+
 
 

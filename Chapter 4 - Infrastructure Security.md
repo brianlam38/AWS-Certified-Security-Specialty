@@ -187,5 +187,24 @@ AWS Shield
 * You won't pay if you are a victim of an attack.
 
 
+## EC2 Dedicated Instances vs. EC2 Dedicated Hosts
+
+EC2 Dedicated Instances
+* Run in a VPC on dedicated physical hardware separate from other AWS accounts, for a single customer.
+* Dedicated instances may share hardware with other non-dedicated instances in the same AWS account.
+* Billing: per-instance basis
+    * On-demand.
+    * Reserved Instances - save up to 70%.
+    * Spot Instances - save up to 90%.
+
+EC Dedicated Hosts
+* Also runs on dedicated physical hardware from other AWS accounts, for a single customer.
+* Provides additional visibility and control over how instances are placed on a physical server.
+* Consistently deploy instances to the same physical server each time.
+* Enable you to use your existing server-bound software licenses (e.g. VMWare, Oracle licenses which might require dedicated hosts).
+* Enable you to address corporate and regulatory compliance.
+* Billing: per-host billing
+
+Provision Dedicated Instances / Dedicated Hosts via. EC2 service when launching an instance.
 
 

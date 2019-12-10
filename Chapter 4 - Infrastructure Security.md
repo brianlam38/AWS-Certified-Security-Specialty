@@ -65,3 +65,63 @@ Scenario #2: User disables a KMS key - AWS Config monitoring KMS events.
 * Rule will notify AWS Config -> AWS Config fires off SNS notification to security team.
 
 Read the AWS KMS FAQ: https://aws.amazon.com/kms/faqs/
+
+## KMS Key Rotation Options
+
+Extensive re-use of encryption keys is not recommended.
+Best practice is to rotate keys on a regular basis.
+Frequency of key rotation is dependant on local laws, regulations and corporate policies.
+Method of rotation depends on the type of key you are using.
+1. AWS Managed Key
+2. Customer Managed Key
+3. Customer Managed w/ imported key material.
+
+Key Rotation: AWS Managed Keys
+* Automatic rotatation every 3 years.
+* No automatic rotation
+* AWS manages everything and saves old backing key (key material)
+
+Key Rotation: Customer Managed Keys
+* Automatic rotation every 1 year (disabled by default)
+* Manual rotation is possible
+* Create a new CMK -> update apps / key-alias to use the new CMK (be careful of old-key deletion)
+
+Key Rotation: Customer Managed Keys w/ Imported Key Material
+* NO automatic rotation (key material is not generated in AWS)
+* Manual rotation is the only option
+* Create a new CMK -> update apps / key-alias to use the new CMK (be careful of old-key deletion)
+
+## EC2 and importing a Customer Managed Key Pair (for SSH access) - MAC USERS ONLY
+
+1. Generate a private-key using RSA 2048 bits: 
+`$ openssl genpkey -algorithm RSA -out private_key.pem -pkeyopt rsa_keygen_bits:2048`
+
+2. Generate a public-key: 
+`$ openssl rsa -pubout -in private_key.pem  -out public_key.pem`
+
+3. Change permissions of private-key: 
+`$ chmod 400 private_key.pem`
+
+4. Go to EC2 -> Key Pairs -> Import a Key Pair -> choose your public-key. Now you can provision an EC2 instance and select your public-key.
+
+You CANNOT take your private/public-key pair and import it into KMS.
+You must follow the external Key Material import process to generate a CMK.
+
+## Using KMS with EBS
+
+Using KMS to encrypt Elastic Block Storage (EBS) volumes.
+
+Creating an EBS encrypted volume w/ AWS-managed key:
+1. Create a new EC2
+2. Provision EBS storage (not encrypted by default)
+3. Turn on encryption for the attached EBS volume.
+4. This will generate an AWS-managed key for EBS in KMS.
+* You cannot modify/delete this AWS-managed key.
+
+How to encrypt an existing EBS volume / the Root Device volume (default vol when launching an EC2):
+1. Create an EBS volume.
+2. Create a snapshot of the EBS volume.
+3. Create an Amazon Machine Image (AMI) from the EBS snapshot (actions -> create image).
+4. Copy the AMI to a new image -> turn on encryption -> select either AWS-managed or your own CMK.
+5. Launch the AMI. Your Root Device volume will now be encrypted.
+

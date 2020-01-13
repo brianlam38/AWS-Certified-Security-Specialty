@@ -248,3 +248,105 @@ Memory Scrubbing:
 * Memory allocated to guests is scrubbed/zeroed by the Hypervisor when it is unallocated to a guest.
 * Memory is not returned to the pool of free memory available for new allocations until scrubbing is complete.
 * I.e. disk-recovery tools to find other customer's data won't work.
+
+## KMS Grants
+
+KMS Grants are an alternate access control mechanism to a Key Policy
+* Programtically delegate use of KMS CMKs to other AWS principals (another user in your account / another account)
+* Provide temp granular permissions (encrypt, decrypt, re-encrypt, describekey etc.)]
+* Only grants ALLOWs, not DENYs
+* Use Key Policies for static permissions, Grants for temp permissions.
+* _Analogy: I give house keys to a friend to take care of my plants while I'm on holidays._
+
+KMS Grants are configure programatically via CLI
+* _create-grant_: adds new grant to CMK, specifies who can use it and list of operations the grantee can perform. A grant token is generated and can be passed as an argument to a KMS API.
+* _list-grants_: lists grants
+* _revoke-grant_: remove a grant
+
+Example: Providing "Encrypt" operation as grant to IAM user
+```bash
+#Create a new key and make a note of the region you are working in 
+aws kms create-key
+
+#Test encrypting plain text using my new key: 
+aws kms encrypt --plaintext "hello" --key-id <key_arn>
+
+#Create a new user called Dave and generate access key / secret access key
+aws iam create-user --user-name dave
+aws iam create-access-key --user-name dave
+
+#Run aws configure using Dave's credentials creating a CLI profile for him
+aws configure --profile dave
+aws kms encrypt --plaintext "hello" --key-id <key_arn> --profile dave
+
+#Create a grant for user called Dave
+aws iam get-user --user-name dave
+aws kms create-grant --key-id <key_arn> --grantee-principal <Dave\'s_arn> --operations "Encrypt"
+
+#Encrypt plain text as user Dave: 
+aws kms encrypt --plaintext "hello" --key-id <key_arn> --grant-tokens <grant_token_from_previous_command> --profile dave
+
+#Revoke the grant:
+aws kms list-grants --key-id <key_arn>
+aws kms revoke-grant --key-id <key_arn> --grant-id <grant_id>
+
+#Check that the revoke was successful:
+aws kms encrypt --plaintext "hello" --key-id <key_arn> --profile dave
+
+https://docs.aws.amazon.com/cli/latest/reference/kms/create-grant.html
+```
+
+## KMS Policy Conditions - ViaService
+
+Policy Conditions can be used to specify a condition within a Key Policy or IAM Policy
+
+KMS provides a set of predefined __Condition Keys__.
+* See https://docs.aws.amazon.com/kms/latest/developerguide/policy-conditions.html.
+
+Use __kms:ViaService__ to allow or deny access to your CMK according to which service the request originated from.
+* Only for services that are integrated with KMS e.g. S3, EBS, RDS, Systems Manager, SQS, Lambda
+
+ViaServive example: CMK may be used for "Encrypt" action ONLY if request comes from EC2/RDS from the specified regions
+```json
+"Effect": "Allow",
+"Principal": {
+    "AWS": "arn:xxx:xxx:xxx/ExampleUser"
+},
+"Action":[
+    "kms:Encrypt",
+]
+"Resource":"*",
+"Condition":{
+    "StringEquals":{
+        "kms:ViaService":[
+            "ec2.us-west-2.amazonaws.com",
+            "rds.us-west-2.amazonaws.com",
+        ]
+    }
+}
+```
+
+## KMS Cross Account Access for CMKs
+
+2 steps to provide cross-account access.
+* Example: Users in account HELLO need to use a CMK in account WORLD
+1. Change the Key Policy for the CMK in account WORLD to allow ROOT USER in HELLO to have access. (doesn't have to be root account, can specify a specific user/role ARN instead)
+2. Set up an IAM user/role in HELLO with explicit permission to use the CMK in WORD.
+
+Example IAM policy in account HELLO for cross account access to CMK in WORLD
+```json
+{
+    "Statement":[
+        {
+            "Sid": "AllowUseOfCMKInAccountWORLD",
+            "Effect": "Allow",
+            "Action":[
+                "kms:Encrypt",
+                "kms:Decrypt",
+                "kms:ReEncrypt*",
+            ],
+            "Resource": "arn:aws:kms:us-west-2:WORLD:key/guid"
+        }
+    ]
+}
+```

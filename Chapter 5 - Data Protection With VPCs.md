@@ -74,10 +74,9 @@ VPC Peering: connect one VPC with another via. direct network route using privat
     * Allow inbound 22 SSH, 3306 MYSQL, 80/443 HTTP(S), 0-65535 ICMP PING with source = public subnet CIDR address (so EC2 in private subnet can talk to the webserver in the public subnet)
 8. Connect to the private EC2 from public EC2
     * Test connection by SSH into public EC2 and PING private EC2.
-    * _(WARNING: IN PRODUCTION, USE A BASTION HOST)_ Store private key for private EC2 on the public EC2 -> SSH into private EC2.
-    * NOTE: there will be no outbound route to the public from the private EC2.
-9. Provide internet connectivity to the private EC2 without placing into public subnet - for installing packages / patch OS.
-    *
+    * _(SECURITY WARNING: IN PRODUCTION, USE A BASTION HOST)_ Store private key for private EC2 on the public EC2 -> SSH into private EC2.
+    * NOTE: there will be no outbound route yet to the public from the private EC2.
+9. Create outbound route for the private EC2 w/o placing into public subnet - for installing packages / patch OS.
 
 The first 4 IP addresses and the last IP address of each subnet CIDR block can't be used as:
 * IP #1 reserved for the network address
@@ -89,3 +88,56 @@ The first 4 IP addresses and the last IP address of each subnet CIDR block can't
 SUBNETS: _The purpose of subnetting is to help relieve network congestion. If you have an excessive amount of traffic flow across your network, then that traffic can cause your network to run slowly. When you subnet your network, most of the network traffic will be isolated to the subnet in which it originated. Ideally, your subnet structure should mimic your network's geographic structure. Other benefits of subnetting include routing efficiency, easier network management and improving network security_
 
 ROUTE TABLES: _Route tables contain a set of rules (routes) that are used to determine where network traffic from your subnet or gateway is directed. It allows subnets to talk to each other. Every AWS subnet you provision will automatically be attached to your default/main route table. Ideally, you should create a separate route table that is internet accessible rather than use your default/main route table as every new subnet being provisioned will be associated with the default/main route table, hence become internet accessible._
+
+## NAT Instances (OLD METHOD)
+
+NOTE: Network Address Translation (NAT) is a process where a network device assigns a public IP address to a computer inside a private network. The purpose of a NAT is to limit the no. of public IP addresses a company must use for economic and security purposes.
+
+Launch and set up a NAT ec2 instance
+1. Find a NAT instance within community AMI's
+2. Place instance in the custom VPC.
+3. Place instance in the public subnet.
+4. Configure the Web-DMZ security group (with SSH22/HTTP80/HTTPS443 open).
+5. Launch the instance.
+6. Configure instance to _disable Source/Destination checks_ (used by normal ec2s) as a NAT instance is not the src/dest itself.
+
+Create a route OUT from the default route table via. NAT instance:
+1. Goto VPC -> Route Tables -> select default route table
+2. Edit default route table -> add destination `0.0.0.0/0`, with the `NAT instance` as the target.
+
+Test the route out:
+1. SSH into public instance -> SSH into private instance using key.
+2. Ping google or run `yum update` to test internet accessibility.
+
+NAT instance downsides:
+* Bottlenecks: single instance, single availability zone, limited network throughout.
+* The amount of traffic that NAT instances can support depends on instance size. You must increase instance size if more throughout is required.
+* Reliant on a single OS, any crashes = no internet access for any servers in the private subnet.
+* High availility requires using Autoscaling Groups, multiple subnets in different AZs and scripts to automate failover = pain in the ass.
+* Bad design in general to use NAT instances, as it can get complex to make it work efficiently.
+* __AWS new feature NAT gateway now should replace the use of a single NAT instances.__
+
+NAT instance can be used as a bastion server (server used to RDP/SSH into instances within your private subnet).
+
+
+## NAT Gateways (PREFERRED METHOD)
+
+Launch and set up a NAT gateway
+1. Goto VPC -> select NAT Gateway
+2. Select the `public subnet` in the custom VPC -> Select `create new EIP` to create an Elastic IP address.
+3. Click `create a NAT Gateway`
+4. Edit default route table -> add destination `0.0.0.0/0`, with the `NAT gateway` as the target.
+
+Test the route out by performing the same test as with the NAT instance.
+
+Comparison of NAT instances and NAT gateways: https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-comparison.html
+
+Benefits of NAT Gateways:
+* Preferred by enterprise.
+* Scales automatically up to 10Gbps.
+* Highly available, automatic failover.
+* NAT Gateways are managed by AWS (patching, antivirus etc. = more secure than NAT instances)
+* NAT Gateways don't need to sit behind a security group.
+* Automatically assigned with a public IP (no need to create EIP).
+
+Having 1 NAT Gateway in 1 AZ is not good enough, you need to have at least 1 NG per AZ so there is some form of redundancy in terms of AZ failure.

@@ -141,3 +141,29 @@ Benefits of NAT Gateways:
 * Automatically assigned with a public IP (no need to create EIP).
 
 Having 1 NAT Gateway in 1 AZ is not good enough, you need to have at least 1 NG per AZ so there is some form of redundancy in terms of AZ failure.
+
+## NACLs vs. Security Groups
+
+Network Access Control List (NACL) acts as a firewall for controlling traffic in/out of your subnets.
+* NACLs are stateless, responses to allowed inbound traffic are subject to the rules of outbound traffic (vice versa.)
+* You can only associate 1 subnet to 1 NACL, not 1 subnet to multiple NACLs
+* Subnets are automatically associated with the default VPC NACL.
+* NACLs can only be deployed to 1 VPC, they cannot span VPCs.
+* The _default VPC NACL_ will _ALLOW ALL_ traffic in/out of subnets associated with the NACL.
+* Any _custom NACLs_ created by default will _DENY ALL_ traffic in/out.
+
+Creating and configuring NACL (example: setting up webserver):
+1. Goto VPC -> Network ACLs -> `Create Network ACL`
+2. Add inbound rules `HTTP 80`, `HTTPS 443`, `SSH 22` ALLOW, leaving the DENY ALL.
+3. Add outbound rules `HTTP 80`, `HTTPS 443`, `Custom TCP 1024 - 65535` ALLOW, leaving the DENY ALL.
+4. Associate NACL with the public subnet. Since 1 subnet can only be associated with 1 NACL, the default NACL will be disassociated.
+
+Rules are evaluated in numerical order.
+* Example: Rule `#100 | HTTP 80 ALLOW ALL` vs. Rule `#101 | HTTP 80 DENY MY_IP`
+    * The website will work because Rule #100 overrides Rule #101.
+* Example: Rule `#100 | HTTP 80 ALLOW ALL` vs. Rule `#99| HTTP 80 DENY MY_IP`
+    * The website WON'T work anymore because Rule #99 overrides Rule #101.
+
+NACLs are assessed BEFORE Security Groups - traffic blocked on NACL level won't reach SG, even if SG allows HTTP80.
+
+You can block IP addresses using NACLs, not Security Groups.

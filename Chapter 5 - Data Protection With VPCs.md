@@ -142,6 +142,7 @@ Benefits of NAT Gateways:
 
 Having 1 NAT Gateway in 1 AZ is not good enough, you need to have at least 1 NG per AZ so there is some form of redundancy in terms of AZ failure.
 
+
 ## NACLs vs. Security Groups
 
 Network Access Control List (NACL) acts as a firewall for controlling traffic in/out of your subnets.
@@ -167,3 +168,13 @@ Rules are evaluated in numerical order.
 NACLs are assessed BEFORE Security Groups - traffic blocked on NACL level won't reach SG, even if SG allows HTTP80.
 
 You can block IP addresses using NACLs, not Security Groups.
+
+
+## Application Load Balancers and Custom VPC's
+
+Setting up an ALB
+* Goto EC2 -> `Create Load Balancer` -> `Application Load Balancer`
+* Select Scheme = `internet facing`
+* Select subnets from at least TWO public Availability Zones to increase the availability of your Load Balancer.
+
+

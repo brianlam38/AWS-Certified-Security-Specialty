@@ -172,9 +172,34 @@ You can block IP addresses using NACLs, not Security Groups.
 
 ## Application Load Balancers and Custom VPC's
 
-Setting up an ALB
+Setting up an ALB (a type of Elastic Load Balancer - AWS offers ELB options Application/Network/Classic)
 * Goto EC2 -> `Create Load Balancer` -> `Application Load Balancer`
 * Select Scheme = `internet facing`
 * Select subnets from at least TWO public Availability Zones to increase the availability of your Load Balancer.
+
+
+## Elastic Load Balancers and TLS/SSL Termination
+
+When using ELBs, you have the choice to terminate TLS/SSL on the Load Balancer or EC2 instances.
+
+Terminate at load balancer
+* ALB decrypts HTTPS request -> inspects HTTP headers -> routes request to EC2 as plaintext over the local private network in your VPC.
+* Benefits
+    * Offloads decryption overhead to ALB, meanings EC2 has more resources for application processing.
+    * More cost effective as you require less EC2 compute power, therefore can use smaller EC2 instances to handle application load.
+    * Reduces administrative overhead if you have many EC2 instances, from managing X509 certificates (used to encrypt/decrypt) individually on multiple EC2s.
+* Security implications
+    * Traffic between ALB and EC2 is unencrypted (however, AWS states that network traffic cannot be listened to by EC2s that aren't part of the connection, even if they are running within your own AWS account).
+    * Compliance / regulatory requirements to use end-to-end encrytion all the way to your EC2 may require you to terminate TLS/SSL on the EC2 instances.
+
+Which Load Balancer to use?
+* Application Load Balancer only supports TLS/SSL termination on the Load Balancer itself. Only supports HTTP/HTTPS.
+* Network Load Balancer supports TLS/SSL termination on your EC2 instances. You will need to use TCP protocol (load balancing at the TCP level).
+* Classic Load Balancer is a legacy option.
+
+Exam tips:
+* Best use of EC2 resources = use APPLICATION.
+* Regulatory / Compliance requirements for E2E-encryption = use NETWORK or CLASSIC.
+* For any other protocol that is not HTTP/HTTPS = use NETWORK or CLASSIC.
 
 

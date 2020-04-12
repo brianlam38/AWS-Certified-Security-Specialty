@@ -252,3 +252,17 @@ Highly available NAT instances will have a similar approach as Bastion instances
 NAT Gateways will automatically handle failover.
 
 
+## Session Manager
+
+Session Manager enables secure remote login to EC2 instances - alternative to SSH/RDP but more secure.
+
+Simple: manage both Windows/Linux inestances with the same tool
+Remote Login: browser-based, run an interactive session using Powershell/Bash.
+Secure:
+* TLS encryption;
+* No Bastion hosts.
+* No opening inbound ports required.
+Everything is logged
+* Connection history recorded in CloudTrail.
+* Keystroke logging and sent to CloudWatch/S3.
+

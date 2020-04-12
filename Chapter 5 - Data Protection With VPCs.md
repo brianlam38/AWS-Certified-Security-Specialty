@@ -237,3 +237,18 @@ Exam tips;
     * Traffic to reserved IP addresses (1st four and last IP) for the default VPC router.
 
 
+## NATs and Bastions
+
+NAT instance: used to provide internet traffic to EC2 instances in private subnets.
+Bastion instance (jump boxes): used to securely administer EC2 instances (using SSH/RDP) in private subnets.
+
+How to build a highly available Bastion instance:
+* High availability: at least 2x Bastion Instances in 2 public subnets in 2 AZ.
+* Autoscaling Groups: minimum of 1 Bastion, if Bastions goes down, ASG will deploy a Bastion into one AZ or the other.
+* Route53 running health checks on the Bastion server.
+
+Highly available NAT instances will have a similar approach as Bastion instances above.
+
+NAT Gateways will automatically handle failover.
+
+

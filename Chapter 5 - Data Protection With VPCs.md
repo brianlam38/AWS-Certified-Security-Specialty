@@ -280,3 +280,18 @@ Setting up Session Manager in AWS Systems Manager service
 SSM-user has root privileges by default.
 You can view session history / all the commands that were run during the session including all the output.
 
+
+## VPC Endpoints
+
+VPC Endpoint enables you to privately connect VPC to supported AWS Services, without needing to go through a NAT Gateway - it goes over the private network, instead of the public network.
+* Normal: VPC internal network -> NAT Gateway -> AWS S3.
+* VPC Endpoint: VPC internal network -> internal gateway -> AWS S3.
+
+Creating a VPC Endpoint
+1. Create an IAM role to enable EC2 to call S3 (Policy: `AmazonS3FullAccess`)
+2. Goto `EC2` -> change an attached EC2 role to the new role created above
+3. Goto `VPC` -> `Endpoints` -> `Create Endpoint` -> select the S3 service gateway -> select the VPC you want to have the gateway -> select the appropriate Route Table associated with the private subnet.
+
+You can now see the VPC Endpoint route in the chosen Route Table.
+You can also SSH into private EC2 and run `aws s3 ls` to test the route.
+

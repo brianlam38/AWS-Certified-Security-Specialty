@@ -252,7 +252,7 @@ Highly available NAT instances will have a similar approach as Bastion instances
 NAT Gateways will automatically handle failover.
 
 
-## Session Manager
+## Session Manager in AWS Systems Manager
 
 Session Manager enables secure remote login to EC2 instances - alternative to SSH/RDP but more secure.
 
@@ -265,4 +265,18 @@ Secure:
 Everything is logged
 * Connection history recorded in CloudTrail.
 * Keystroke logging and sent to CloudWatch/S3.
+
+Setting up Session Manager in AWS Systems Manager service
+1. Create an IAM role to enable EC2 to call Systems Manager (Policy: `AmazonEC2RoleforSSM`)
+2. Launch an EC2 using the role, with a Security Group that has no rules (since we don't need to open ports)
+3. Create a CloudWatch Log Group for Session Manager `SM_LogGroup`.
+4. Configure Session Manager #1: Goto `Systems Manager` -> `Session Manager` -> `Preferences` -> Enter the CloudWatch Log Group name you created above.
+5. Configure Session Manager #2: Choose from logging options
+* Encrypt session logs with KMS
+* Send session logs to an S3 bucket
+* Send session logs to CloudWatch logs.
+6. Start a sessions: Goto `Sessions` -> `Start a session` -> Select running EC2 instance to launch web shell.
+
+SSM-user has root privileges by default.
+You can view session history / all the commands that were run during the session including all the output.
 

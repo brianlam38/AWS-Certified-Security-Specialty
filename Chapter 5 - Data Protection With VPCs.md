@@ -403,7 +403,24 @@ Creating a VPC = automatically includes an AWS DNS server which is used to publi
 * Used for instances in your VPC which are communicating over the internet.
 * DNS server uses (one of the five) reserved IP address in your VPC CIDR range - `10.0.0.2`
 
-Using your own custom DNS server:
-1. Disable the AWS DNS server in your VPC settings -> DNS Resolution.
-2. Create a new DHCP Options set to use your own custom DNS.
+Using your own custom DNS server.
+1. Disable the AWS DNS server: Select `your VPC` -> `actions` -> `edit DNS Resolution` -> `Uncheck checkbox`.
+2. Use your own custom DNS: Goto `DHCP options set` -> `Create DHCP options set` -> fill in fields -> associate with your VPC.
+
+
+## AWS Transit Gateway
+
+VPC connectivity can be very messy. AWS Transit Gateway service helps simplify your network when you have multiple VPCs and your own datacentre and you need everything to communicate with each other (via. VPC peering).
+
+Non-Transit Gateway
+* Each VPC requires VPN connection and configuration to the On-Prem Network / Datacentre.
+* VPCs require peering between each other.
+* Hundreds of VPCs: difficult to manage, not scalable.
+
+Transit Gateway
+* Highly scalable: supports thousands of VPCs (hub-and-spoke architecture)
+* Centralised: Transit Gateway sits between all your VPCs and Datacentre. Only need to configure once. Any VPC connected via. Transit Gateway can communicate with every other connected VPC.
+* Route Tables are used to control which VPCs can communicate with each other.
+* Secure: communication between VPCs are done via. AWS private network. Inter-region traffic is supported.
+
 

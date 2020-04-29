@@ -82,7 +82,7 @@ VPC Peering: connect one VPC with another via. direct network route using privat
 The first 4 IP addresses and the last IP address of each subnet CIDR block can't be used as:
 * IP #1 reserved for the network address
 * IP #2 reserved for the VPC router
-* IP #3 reserved for DNS purposes
+* IP #3 reserved for DNS purposes `10.0.0.2`
 * IP #4 reserved for future use
 * IP #LAST reserved for network broadcast address
 
@@ -396,4 +396,14 @@ exit
 
 Exam Tip: Remember the 4 user types: PRECO | CO | CU | AU
 
+
+## AWS DNS and Custom VPCs
+
+Creating a VPC = automatically includes an AWS DNS server which is used to public DNS hostnames.
+* Used for instances in your VPC which are communicating over the internet.
+* DNS server uses (one of the five) reserved IP address in your VPC CIDR range - `10.0.0.2`
+
+Using your own custom DNS server:
+1. Disable the AWS DNS server in your VPC settings -> DNS Resolution.
+2. Create a new DHCP Options set to use your own custom DNS.
 

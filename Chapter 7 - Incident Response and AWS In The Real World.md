@@ -54,3 +54,14 @@ How to mitigate DDoS:
     * Always-on, flow-based monitored of network traffic and active application monitoring to provide near real-time notifications of DDoS attacks.
     * DDoS Response Team (DRT) 24/7 to manage and mitigate application-layer DDoS attacks.
     * Protects AWS bill against higher fees due to ELB, CloudFront and Route53 usage spikes during DDoS attacks.
+
+
+## WAF Integration into AWS
+
+WAF scenarios will be in the exam.
+
+WAF only integrates directly with __(1) Application Load Balancers__ and __(2) CloudFront Distributions__.
+
+WAF does NOT integrate with EC2, DynamoDB, Route53 or any other services.
+
+

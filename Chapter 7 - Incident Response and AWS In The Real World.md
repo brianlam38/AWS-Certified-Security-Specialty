@@ -61,7 +61,16 @@ How to mitigate DDoS:
 WAF scenarios will be in the exam.
 
 WAF only integrates directly with __(1) Application Load Balancers__ and __(2) CloudFront Distributions__.
-
 WAF does NOT integrate with EC2, DynamoDB, Route53 or any other services.
 
+
+## EC2 has been hacked - what to do?
+
+1. Stop the instance immediately.
+2. Take a snapshot of the EBS volume + terminate the instance.
+3. Deploy a copy of the instance in a totally __isolated environment__.
+* Isolated VPC, no internet access - ideally a private subnet.
+4. Access the instance using an __isolated forensic workstation__.
+* Don't do it on your normal laptop - use a dedicated workstation/device with an antivirus, no software on it except for forensic tools such as Wireshark, Kali etc.
+5. Read logs to figure out how they obtained access.
 

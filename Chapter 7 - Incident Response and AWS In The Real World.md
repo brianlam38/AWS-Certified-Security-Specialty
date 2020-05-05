@@ -74,3 +74,16 @@ WAF does NOT integrate with EC2, DynamoDB, Route53 or any other services.
 * Don't do it on your normal laptop - use a dedicated workstation/device with an antivirus, no software on it except for forensic tools such as Wireshark, Kali etc.
 5. Read logs to figure out how they obtained access.
 
+
+## Leaked Github keys - what to do?
+
+For IAM Users:
+1. Goto `IAM` -> De-activate the IAM User Access Key.
+2. Create a new IAM User Access Key.
+3. Delete the old IAM User Access Key.
+
+For Root User:
+1. Goto `My Security Credentials` (top nav / outside of IAM).
+2. Goto `Access Keys` -> De-activate Root User Access Key.
+3. Create a new Root User Access Key.
+4. Delete the old Root User Access Key.

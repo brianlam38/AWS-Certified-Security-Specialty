@@ -97,5 +97,5 @@ For Root User:
 Exam tips:
 * Understand that any API calls made in AWS are logged in CloudTrail.
 * Replicate CloudTrail logs to an audit account which no-one else has access to.
-
+* Any "performance" monitoring related questions would be CloudWatch, NOT CloudTrail.
 

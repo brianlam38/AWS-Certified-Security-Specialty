@@ -121,3 +121,34 @@ Prohibited Activities
 
 Other Simulated Events
 * Request authorization for other simulated events by emailing `aws-security-simulated-event@amazon.com`
+
+
+## AWS Certificate Manager (ACM)
+
+Use __AWS Certificate Manager (ACM)__ to provision a SSL certificate for a domain name you have registered.
+SSL certificates are automatically renewed provided you purchase the domain name from __Route53__.
+
+You can import your own certificate vs. you can request a certificate.
+
+Requesting a certificate
+1. Add your domain name
+2. Select your domain validation methods
+    * (1) DNS validation: requires you to modify DNS config for the domain in your certificate request.
+    * (2) Email validation: requires you to respond to an email sent to an email address under the domain.
+3. For DNS validation
+    * Add a CNAME record to the DNS config for your domain.
+    * Goto `Route53` -> create a record -> add the CNAME record.
+4. Wait ~5-10 minutes and the status of the certificate should be `Issued`.
+
+SSL/TLS certificate renewal
+* Auto-renewal: ACM provides autorenewal for Amazon-issued SSL/TLS certs.
+* Manual renewal: Imported SSL/TLS certs OR certs associated with R53 private hosted zones must be manually renewed.
+
+Using Amazon SSL certificates
+1. SSL/TLS cert with CloudFront
+* Goto `CloudFront` -> select a distribution -> select `Distribution Settings` -> edit to change from default CloudFront SSL cert to the new custom SSL certificate associated with your domain name.
+2. SSL/TLS cert with EC2
+* Goto `EC2` -> `Load Balancers` -> create a Load Balancer -> `choose a certificate from ACM`
+
+__NOTE: You CANNOT export Amazon-issued SSL/TLS certs and use it elsewhere, only within AWS services.__
+

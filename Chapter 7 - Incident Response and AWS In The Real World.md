@@ -99,3 +99,25 @@ Exam tips:
 * Replicate CloudTrail logs to an audit account which no-one else has access to.
 * Any "performance" monitoring related questions would be CloudWatch, NOT CloudTrail.
 
+
+## Penetration Testing in AWS
+
+Penetration Testing is allowed without prior approving for 8 services
+1. EC2
+2. RDS
+3. CloudFront
+4. Aurora
+5. API Gateway
+6. Lambda and Lambda Edge functions
+7. Lightsail resources
+8. Elastic Beanstalk environments
+
+Prohibited Activities
+1. DNS Zone walking via. Route53w Hosted Zones
+2. DDoS
+3. Port flooding
+4. Protocol flooding
+5. Request flooding (login request flooding, API request flooding)
+
+Other Simulated Events
+* Request authorization for other simulated events by emailing `aws-security-simulated-event@amazon.com`

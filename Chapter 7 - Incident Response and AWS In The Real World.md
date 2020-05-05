@@ -87,3 +87,15 @@ For Root User:
 2. Goto `Access Keys` -> De-activate Root User Access Key.
 3. Create a new Root User Access Key.
 4. Delete the old Root User Access Key.
+
+
+## Reading CloudTrail Logs
+
+1. Goto `CloudTrail` -> `View Trail`
+2. Select a trail -> select `S3 log bucket` -> Choose region -> date -> open a log S3 object.
+
+Exam tips:
+* Understand that any API calls made in AWS are logged in CloudTrail.
+* Replicate CloudTrail logs to an audit account which no-one else has access to.
+
+

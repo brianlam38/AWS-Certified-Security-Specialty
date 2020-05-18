@@ -152,3 +152,35 @@ Using Amazon SSL certificates
 
 __NOTE: You CANNOT export Amazon-issued SSL/TLS certs and use it elsewhere, only within AWS services.__
 
+
+## Securing Load Balancers using Perfect Forward Secrecy
+
+__Perfect Forward Secrecy__ 
+A property of secure communications protocols in which compromises of long-term (public/private key) keys DO NOT compromise past session keys. Forward secrecy protects past sessions against future compromises of secret keys or passwords.
+
+__Security Policy__ when setting up ALB:
+* Choose the `2016-08` Security Policy as it supports most ciphers.
+* Enable Perfect Forward Secrecy on your ALBs by selecting a Security Policy with a `ECDHE-X` cipher.
+
+
+## API Gateway - Throttling and Caching
+
+AWS API Gateway throttling
+* API Gateway throttles requests to your API, to prevent it from being overwhelmed by too many requests.
+* When request submissions exceed steady-state request rate or burst-limits, API Gateway fails the limit-exceeding requests and returns `429 Too Many Requests` to the client.
+* Limits
+    * `Steady-state` = 10,000 requests/second.
+    * `Burst-limit` (max concurrent requests that API Gateway can fulfil) = 5,000 requests across all APIs within an AWS account.
+* Examples
+    * Caller submits 10,000 requests/second period evenly (e.g. 10 requests/ms) = ALL REQUESTS SERVED.
+    * Caller submits 10,000 requests in the 1st millisecond = FIRST 5,000 SERVED -> THROTTLES REMAINING 5,000 FOR REMAINING 1 SECOND PERIOD.
+    * Caller submits 5,000 requests in the 1st millisecond, then evenly spreads another 5,000 requests through remaining 999 milliseconds. = SERVES ALL REQUESTS IN 1 SECOND PERIOD WITHOUT 429 RESPONSE.
+* Account-level rate limit and burst limit can be increased upon request e.g. Ticketmaster who will have huge traffic spikes.
+
+AWS API Gateway caching
+* Use API Caching in AWS API Gateway to cache endpoint's response.
+* Use caching to reduce number of calls made to your endpoint and also improve latency of requests to your API.
+* When caching is enabled for a stage (test, prod etc.), API caches responses from your endpoint for a specified __Time To Live (TTL)__.
+* `TTL 300` = default | `TTL 3600` = maximum | `TTL 0` = caching disabled.
+
+

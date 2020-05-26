@@ -197,3 +197,22 @@ __AWS Systems Manager__ is a service to manage EC2 systems at scale.
 Exam only requires high-level knowledge of AWS Systems Manager (Parameter Store)
 
 
+## AWS Systems Manager - EC2 Run Command
+
+The Systems Manager (SSM) __EC2 Run Command__ allows you to:
+* manage a large number of EC2 instances and on-premise systems.
+* automate admin tasks and adhoc config changes e.g installing apps, patching, joining new instances to a Windows domain without having to RDP into each instance.
+
+Using EC2 Run Command:
+1. Create a role for SSM - `EC2 role for Simple Systems Manager`
+2. Create an instance - Windows image, attach IAM role created above.
+3. Under `Actions` in SSM, click `Run a Command` -> choose a command document i.e. `Configure CloudWatch` -> select the target instance and then run.
+
+Exam tips:
+* Commands can be applied to a group of systems based on AWS instance tags or by selecting manually.
+* __SSM agent__ needs to be installed (it is installed by default on certain Windows and Linxu AMIs) and an IAM SSM role enabled on all your managed instances for Run Command to work.
+* The commands and parameters are defined in a __Systems Manager Document__
+* Commands can be issued using AWS Console, AWS CLI, AWS Tools for Windows PowerShell, Systems Manager API or Amazon SDKs.
+* You can use this service with your on-premise systems as well as EC2 instances.
+
+

@@ -184,3 +184,16 @@ AWS API Gateway caching
 * `TTL 300` = default | `TTL 3600` = maximum | `TTL 0` = caching disabled.
 
 
+## AWS Systems Manager - Parameter Store
+
+__AWS Systems Manager__ is a service to manage EC2 systems at scale.
+
+1. Create a parameter
+* Type: _String_ (plaintext), _String List_ (plaintext list), _Secure String_ (KMS encrypted)
+2. Store sensitive data inside
+3. Access parameters across different AWS services.
+* Accessed by EC2, EC2 Run Command, Lambda, CloudFormation etc.
+
+Exam only requires high-level knowledge of AWS Systems Manager (Parameter Store)
+
+

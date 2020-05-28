@@ -216,3 +216,39 @@ Exam tips:
 * You can use this service with your on-premise systems as well as EC2 instances.
 
 
+## Compliance Frameworks
+
+ISO27001
+* Specifies requirements for _establishing_, _implementing_, _operating_, _monitoring_, _reviewing_, _maintaining_ and _improving_ documented Information Security Management System (ISMS) within the context of the organization's overall business risks.
+
+FedRAMP (Federal Risk and Authorization Management Program)
+* Government-wide program that provides a standardised approach to security assessment, authorisation and continuous monitoring for cloud products and services.
+
+HIPAA (Federal Health Insurance Portability and Accountability Act of 1996)
+* Primary goal is to make it easier for people to keep health insurance, protect the confidentiality and security of healthcare info and to help the healthcare industry control administrative costs.
+* Primary goal: _lower cost of healthcare_ and _ensure good data security around people's healthcare info_.
+
+NIST (National Institute of Standards and Technology - U.S Department of Commerce)
+* A framework for improving critical infrastructure cybersecurity - a set of industry standards and best practices to help organisations manage cybersecurity risks.
+
+PCI DSS (Payment Card Industry Data Security Standard)
+* Widely accepted set of policies and procedures intended to optimise security of credit, debit and cash card transactions and protect cardholders against misuse of their personal info.
+
+PCI DSS requirements (not required for exam, but good for interviews):
+* __Build and Maintain a Secure Network and Systems__
+1. Install and maintain a firewall configuration to protect cardholder data.
+2. Do not use vendor-supplied defaults for system passwords and other security parameters.
+* __Protect Cardholder Data__
+3. Protect stored cardholder data.
+4. Encrypt transmission of cardholder data across open, public networks.
+* __Maintain a Vulnerability Management Program__
+5. Protect all systems against a malware and regularly update anti-virus software or programs.
+6. Develop and maintain secure systems and applications.
+* __Implement Strong Access Control Meaures__
+7. Restrict access to cardholder data by business need-to-know.
+8. Identify and authenticate access to system components. E.g. use IAM or services such as Auth0
+9. Restrict physical access to cardholder data. E.g. copies of credit card records
+* __Regularly Monitor and Test Networks__
+10. Track and monitor all access to network resources and cardholder data. E.g. CloudTrail, CloudWatch and other logging tools etc. or use a 3rd-party service to perform monitoring.
+11. Regularly test security systems and processes. E.g. Pentesting, simulated phishing etc.
+

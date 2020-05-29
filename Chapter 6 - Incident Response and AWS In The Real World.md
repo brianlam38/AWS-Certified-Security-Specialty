@@ -235,23 +235,29 @@ PCI DSS (Payment Card Industry Data Security Standard)
 * Widely accepted set of policies and procedures intended to optimise security of credit, debit and cash card transactions and protect cardholders against misuse of their personal info.
 
 PCI DSS 12 requirements (not required for exam, but good for interviews):
-__Build and Maintain a Secure Network and Systems__
+
+_Build and Maintain a Secure Network and Systems_
 1. Install and maintain a firewall configuration to protect cardholder data.
 2. Do not use vendor-supplied defaults for system passwords and other security parameters.
-__Protect Cardholder Data__
+
+_Protect Cardholder Data_
 3. Protect stored cardholder data.
 4. Encrypt transmission of cardholder data across open, public networks.
-__Maintain a Vulnerability Management Program__
+
+_Maintain a Vulnerability Management Program_
 5. Protect all systems against a malware and regularly update anti-virus software or programs.
 6. Develop and maintain secure systems and applications.
-__Implement Strong Access Control Meaures__
+
+_Implement Strong Access Control Meaures_
 7. Restrict access to cardholder data by business need-to-know.
 8. Identify and authenticate access to system components. E.g. use IAM or services such as Auth0
 9. Restrict physical access to cardholder data. E.g. copies of credit card records
-__Regularly Monitor and Test Networks__
+
+_Regularly Monitor and Test Networks_
 10. Track and monitor all access to network resources and cardholder data. E.g. CloudTrail, CloudWatch and other logging tools etc. or use a 3rd-party service to perform monitoring.
 11. Regularly test security systems and processes. E.g. Pentesting, simulated phishing etc.
-__Maintain an Information Security Policy__
+
+_Maintain an Information Security Policy_
 12. Maintain a policy that addresses information security for all personnel.
 
 SAS70

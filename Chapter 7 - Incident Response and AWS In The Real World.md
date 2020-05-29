@@ -251,4 +251,63 @@ PCI DSS requirements (not required for exam, but good for interviews):
 * __Regularly Monitor and Test Networks__
 10. Track and monitor all access to network resources and cardholder data. E.g. CloudTrail, CloudWatch and other logging tools etc. or use a 3rd-party service to perform monitoring.
 11. Regularly test security systems and processes. E.g. Pentesting, simulated phishing etc.
+* __Maintain an Information Security Policy__
+12. Maintain a policy that addresses information security for all personnel.
+
+SAS70
+* Statement of Auditing Standards No. 70
+SOC 1
+* Service Organization Controls - accounting standards.
+FISMA
+* Federal Information Security Modernization Act.
+
+FIPS 140-2 is a U.S government computer security standard used to approve cryptographic modules.
+* Rated from Level 1 to Level 4 (highest)
+* AWS CloudHSM meets Level 3.
+
+Check out https://aws.amazon.com/compliance.
+
+
+## Chapter 7 Summary
+
+AWS Shield
+* Free service that protects all AWS customers on _Elastic Load Balancers_, _CloudFront_ and _Route53_.
+* Protects against SYN/UDP Floods, Reflection Attacks and other layer 3/4 attacks.
+* Advanced Shield protects you against larger and more sophistcated attacks - $3,000 per month cost.
+AWS Advanced Shield
+* Always-on, flow-based monitoring of network traffic and active application monitoring.
+* Real-time notifications of DDoS attacks.
+* DDoS 24/7 Response Team to manage and mitigate application-layer DDoS attacks.
+* Protects AWS bill against higher fees due to ELB, CF, R53 usage spikes during DDoS.
+DDoS
+* Remember technology that can be used to mitigate a DDoS: _CloudFront, Route53, ELBs, WAFs, Autoscaling, CloudWatch_.
+EC2 has been hacked
+* Stop instance immediately.
+* Take snapshot of EBS volume.
+* Deploy instance in an isolated environment. Isolated VPC, no internet access - ideally private subnet.
+* Access instance via. forensic workstation.
+* Read through logs to figure out how (Windows Event Logs)
+Keys leaked on Github
+* Delete key from user's account + generate a new key.
+AWS Certificate Manager
+* SSL Certificates renew automatically, provided you purchase a domain name from Route53 and it's not for a Route53 Private Hosted Zone.
+* Use Amazon SSL Certificates with both Load Balancers and CloudFront.
+* You cannot export the Amazon SSL Certificates (so you can only use it on AWS infrastructure.)
+Perfect Forward Secrecy
+* Someone who compromises your private key cannot use it to decrypt past traffic.
+* __ECDHE__ TLS cipher is needed -> by default choose `2016-08` Security Policy.
+API Gateway Throttling
+* Prevents your API from being overwhelmed by too many requests.
+* When request submissions exceed steady-state request rate and burst limits, API Gateway fails all exceeding requests and returns a `429 Too Many Requests` response to the client.
+* Steady-state rate = 10,000 requests per second.
+* Account-level rate limit and burst limit can be increased upon request.
+API Gateway Caching
+* Cache your endpoint's response - reduce number of calls to the endpoint and improve latency of responese from endpoint.
+* API Gateway caches repsonse for a specified TTL (time-to-live) period in seconds.
+* Default TTL = 300 seconds | Maximum TTL = 3600 seconds | TTL = 0 disabled caching.
+AWS SSM Run Command
+* Commands applied to a group of instances based on AWS instance tags or by selecting manually.
+* SSM Agent needs to be installed (installed by default on some AMIs).
+* Systems Manager Document defines the commands and parameters run.
+* Works on-premise systems and EC2 instances.
 

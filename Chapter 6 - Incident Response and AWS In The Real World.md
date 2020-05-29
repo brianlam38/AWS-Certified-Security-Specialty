@@ -234,24 +234,24 @@ NIST (National Institute of Standards and Technology - U.S Department of Commerc
 PCI DSS (Payment Card Industry Data Security Standard)
 * Widely accepted set of policies and procedures intended to optimise security of credit, debit and cash card transactions and protect cardholders against misuse of their personal info.
 
-PCI DSS requirements (not required for exam, but good for interviews):
-* __Build and Maintain a Secure Network and Systems__
+PCI DSS 12 requirements (not required for exam, but good for interviews):
+__Build and Maintain a Secure Network and Systems__
 1. Install and maintain a firewall configuration to protect cardholder data.
 2. Do not use vendor-supplied defaults for system passwords and other security parameters.
-* __Protect Cardholder Data__
+__Protect Cardholder Data__
 3. Protect stored cardholder data.
 4. Encrypt transmission of cardholder data across open, public networks.
-* __Maintain a Vulnerability Management Program__
+__Maintain a Vulnerability Management Program__
 5. Protect all systems against a malware and regularly update anti-virus software or programs.
 6. Develop and maintain secure systems and applications.
-* __Implement Strong Access Control Meaures__
+__Implement Strong Access Control Meaures__
 7. Restrict access to cardholder data by business need-to-know.
 8. Identify and authenticate access to system components. E.g. use IAM or services such as Auth0
 9. Restrict physical access to cardholder data. E.g. copies of credit card records
-* __Regularly Monitor and Test Networks__
+__Regularly Monitor and Test Networks__
 10. Track and monitor all access to network resources and cardholder data. E.g. CloudTrail, CloudWatch and other logging tools etc. or use a 3rd-party service to perform monitoring.
 11. Regularly test security systems and processes. E.g. Pentesting, simulated phishing etc.
-* __Maintain an Information Security Policy__
+__Maintain an Information Security Policy__
 12. Maintain a policy that addresses information security for all personnel.
 
 SAS70
@@ -274,37 +274,46 @@ AWS Shield
 * Free service that protects all AWS customers on _Elastic Load Balancers_, _CloudFront_ and _Route53_.
 * Protects against SYN/UDP Floods, Reflection Attacks and other layer 3/4 attacks.
 * Advanced Shield protects you against larger and more sophistcated attacks - $3,000 per month cost.
+
 AWS Advanced Shield
 * Always-on, flow-based monitoring of network traffic and active application monitoring.
 * Real-time notifications of DDoS attacks.
 * DDoS 24/7 Response Team to manage and mitigate application-layer DDoS attacks.
 * Protects AWS bill against higher fees due to ELB, CF, R53 usage spikes during DDoS.
+
 DDoS
 * Remember technology that can be used to mitigate a DDoS: _CloudFront, Route53, ELBs, WAFs, Autoscaling, CloudWatch_.
+
 EC2 has been hacked
 * Stop instance immediately.
 * Take snapshot of EBS volume.
 * Deploy instance in an isolated environment. Isolated VPC, no internet access - ideally private subnet.
 * Access instance via. forensic workstation.
-* Read through logs to figure out how (Windows Event Logs)
+* Read through logs to figure out how (Windows Event Logs).
+
 Keys leaked on Github
 * Delete key from user's account + generate a new key.
+
 AWS Certificate Manager
 * SSL Certificates renew automatically, provided you purchase a domain name from Route53 and it's not for a Route53 Private Hosted Zone.
 * Use Amazon SSL Certificates with both Load Balancers and CloudFront.
 * You cannot export the Amazon SSL Certificates (so you can only use it on AWS infrastructure.)
+
 Perfect Forward Secrecy
 * Someone who compromises your private key cannot use it to decrypt past traffic.
 * __ECDHE__ TLS cipher is needed -> by default choose `2016-08` Security Policy.
+
 API Gateway Throttling
 * Prevents your API from being overwhelmed by too many requests.
 * When request submissions exceed steady-state request rate and burst limits, API Gateway fails all exceeding requests and returns a `429 Too Many Requests` response to the client.
 * Steady-state rate = 10,000 requests per second.
 * Account-level rate limit and burst limit can be increased upon request.
+
 API Gateway Caching
 * Cache your endpoint's response - reduce number of calls to the endpoint and improve latency of responese from endpoint.
 * API Gateway caches repsonse for a specified TTL (time-to-live) period in seconds.
 * Default TTL = 300 seconds | Maximum TTL = 3600 seconds | TTL = 0 disabled caching.
+
 AWS SSM Run Command
 * Commands applied to a group of instances based on AWS instance tags or by selecting manually.
 * SSM Agent needs to be installed (installed by default on some AMIs).

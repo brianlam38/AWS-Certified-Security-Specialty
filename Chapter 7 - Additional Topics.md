@@ -116,7 +116,7 @@ GuardDuty is a threat detection service which uses Machine Learning to continuou
 * Unusual API calls, calls from a known malicious IP.
 * Attempts to disable CloudTrail logging.
 * Unauthorized deployments.
-* Compromised instances.
+* Compromised EC2 instances.
 * Recon by would-be attackers.
 * Port scanning, failed logins.
 

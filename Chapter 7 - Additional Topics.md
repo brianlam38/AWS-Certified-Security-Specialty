@@ -80,9 +80,39 @@ LIMIT 100;
 
 ## Macie
 
+Macie helps protect sensitive data (e.g. PII) in S3.
+* Uses Machine Learning and Natural Language Processing (NLP) to discover, classify and protect sensitive data stored in S3.
+* Includes dashboard visualisation, reporting and alerts.
+* Great for PCI-DSS compliance and preventing identity theft.
+
+Personally Identifiable Information (PII)
+* Personal data used to establish an individual's identity.
+* Exploited for identity theft and financial fraud.
+* Includes: Home address, email address, SSN, Passport No., Drivers License, DOB, phone number, bank account number, credit card number.
+
+How does Macie work? It classifies your data by four different domains:
+1. By __Content Type__: JSON, PDF, Excel, TAR, ZIP, source code, XML.
+2. By __Theme__: Amex, Visa, Mastercard credit card keywords, banking or financial keywords, hacker and web exploit words.
+3. By __File Extension__: .bin .c .bat .exe .html .sql.
+4. By __Regular Expression__: aws_secret_key, RSA Private Key, SWIFT Codes, Cisco Router Config.
+
+How can Macie protect your data?
+1. Analyse and classify data.
+2. Dashboards, alerts and reports on the prescence of PII.
+3. Gives visibility on how the data is being accessed.
+4. Analyse CloudTrail logs and report on suspicious API activity.
+
+Using Macie:
+* Macie can only monitor S3 buckets within same region.
+* Macie uses a service-role `AWSServiceRoleForAmazonMacie` which cover mainly permissions for CloudTrail (creating/reading logs) and S3 (creating/deleting buckets and objects).
+* An S3 CloudTrail bucket will be created to capture all data events associated with Macie.
+* Select AWS ACCOUNT ID to integrate Macie with -> Select ALL BUCKETS -> START CLASSIFICATION.
+* Query S3 bucket/object properties to find PII / sensitive data.
 
 
 ## GuardDuty
+
+
 
 
 ## Secrets Manager

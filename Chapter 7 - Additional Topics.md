@@ -112,10 +112,31 @@ Using Macie:
 
 ## GuardDuty
 
+GuardDuty is a threat detection service which uses Machine Learning to continuously monitor for malicious behaviour, such as:
+* Unusual API calls, calls from a known malicious IP.
+* Attempts to disable CloudTrail logging.
+* Unauthorized deployments.
+* Compromised instances.
+* Recon by would-be attackers.
+* Port scanning, failed logins.
 
+Features:
+* Alerts in GuardDuty console and to CloudWatch events.
+* Receive feeds from 3rd-parties such as Crowdstrike and AWS Security, obtaining info about malicious domains / known IPs.
+* Monitors CloudTrail Logs for all API activity, VPC Flow Logs, DNS Logs (by default all EC2s use AWS DNS - GuardDuty records all requests to/from AWS DNS from your EC2 instances)
+* Centralise threat-detection across multiple AWS accounts.
+* Automated response: GuardDuty detects compromised instance -> trigger CloudWatch Events -> trigger Lambda e.g. to isolate EC2 by updating security group + take snapshot.
+* Machine Learning and anomoly detection.
+
+Setup:
+* Takes 7-14 days to establish a baseline - what is normal behaviour in your account?
+* Once active, findings will appear on GuardDuty console and in CloudWatch ONLY if GuardDuty detects behaviour it considers a threat.
+* 30 days free. Charged based on _quantity of CloudTrail events_ and _volume of DNS and VPC Flow Logs_.
 
 
 ## Secrets Manager
+
+
 
 
 ## Simple Email Service (SES)

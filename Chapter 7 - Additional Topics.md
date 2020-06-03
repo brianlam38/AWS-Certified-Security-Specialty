@@ -174,6 +174,18 @@ There is a 7-day minimum waiting period for deleting a secret.
 
 ## Simple Email Service (SES)
 
+AWS Simple Email Service is a cloud-based email service, which supports both sending/receiving emails from your apps.
+* Can be used to send marketing emails, transaction emails and email notifications from your apps.
+* SES can be accessed using a standard SMTP (Simple Mail Transfer Protocol) interface OR via. the SES API, to allow you to integrate with existing applications.
+* All connections to the SMTP endpoint must be encrypted in-transit using TLS.
+* There are several different SMTP endpoints you can use when configuring connections into SES. See https://docs.aws.amazon.com/ses/latest/DeveloperGuide/smtp-connect.html.
+    * Your EC2 instances will need to connect to these endpoints if it wants to send emails using SES.
+
+Configuring Access to SES for EC2 instances
+* Configure the Security Group associated with your EC2 instances to allow connections TO the SES SMTP endpoint.
+* Default port is `port 25`, but _EC2 throttles email traffic over port 25_ (you can raise request to increase limit).
+* However, avoid timeouts by using either `port 587` or `port 2587` instead.
+
 
 ## Security Hub
 

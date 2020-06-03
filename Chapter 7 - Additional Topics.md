@@ -136,7 +136,40 @@ Setup:
 
 ## Secrets Manager
 
+AWS Secrets Manager is a service which securely stores, encrypts and rotates DB credentials and other secrets.
+* Encryption in-transit and at-rest using KMS.
+* Automatically rotates credentials.
+* Apply fine-grained access control using IAM policies.
+* Your application makes an API call to Secrets Manager to retrieve the secret programatically.
+* Reduces the risk of credentials being compromised.
 
+What credentials can I store in secrets manager?
+* RDS credentials (most common use-case)
+* Credentials for non-RDS databases (e.g DynamoDB)
+* Any other type of secrets, as long as you can store it as a _key:value pair_ (SSH keys, API keys)
+
+Secrets Manager vs. Parameter Store
+* Secrets Manager (mainly for DB credentials / keyvalue pairs)
+    * Database credentials, API/SSH keys.
+    * Built-in integration with RDS: MySQL, PostgreSQL, Aurora. 
+    * Built-in rotation of RDS secrets, support for non-RDS using Lambda.
+    * $0.40/secret per month | $0.05 per 10,000 API calls.
+* Parameter Store
+    * Passwords, database strings, license codes, parameter values, config data.
+    * User-defined parameters.
+    * Values may be cleartext or encrypted (Secure String Parameter).
+    * No additional charge.
+    * Integrated with AWS Systems Manager.
+
+Secrets Manager - Automatic secrets rotation
+* Setting: `Enable Automatic Rotation`
+    * __WARNING: If you enable rotation, Secrets Manager immediately rotates the secret once to test the configuration. If your apps are using embedded (hardcoded) credentials, do not enable rotation as it will break your app__.
+    * This is the recommended setting if your apps are NOT using embedded (hardcoded) credentials
+* Setting: `Disable automatic rotation`
+    * This is the recommended setting if your apps are using embedded (hardcoded) credentials.
+    * Ensure that your apps are updated to retrieve credentials from Secrets Manager.
+
+There is a 7-day minimum waiting period for deleting a secret.
 
 
 ## Simple Email Service (SES)

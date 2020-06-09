@@ -189,6 +189,27 @@ Configuring Access to SES for EC2 instances
 
 ## Security Hub
 
+AWS Security Hub is
+1. _A central hub for Security Alerts_: a single place to manage / aggregate findings and alerts from key AWS security services. Centralised dashboard.
+2. _Automated checks_:
+    * PCI-DSS (payment card industry)
+    * CIS (Center for Internet Security)
+3. _Ongoing security audit for all AWS accounts_
+
+Security Hub integrates and with:
+* GuardDuty (threat detection).
+* Macie (PII and secrets in S3 buckets).
+* Inspection (checks for CVEs).
+* IAM Access Analyzer (scans IAM policies attached to resources that provide external access).
+* AWS Firewall Manager (centrally manage WAF and SGs across multiple AWS accounts)
+* External 3rd-party tools.
+    * Pulling in findings from CheckPoint, F5, AlertLogic etc.
+* CloudWatch (CloudWatch Events, to trigger a Lambda/SIEM/3rd-party system to take action).
+
+Additional notes:
+* Security Hub uses AWS Config for some CIS Benchmark checks (takes 12 hours from enabling AWS Config to notice changes).
+* Takes time to pull info from GuardDuty / Inspector etc.
+
 
 ## Network Packet Inspection
 

@@ -211,7 +211,20 @@ Additional notes:
 * Takes time to pull info from GuardDuty / Inspector etc.
 
 
-## Network Packet Inspection
+## Network Packet Inspection in AWS
+
+__Network Packet Inspection__ involves inspecting packet headers and data content of the packet (known as DPI - Deep Packet Inspection).
+* Filters non-compliant protocols, viruses, spam, intrusions.
+* Takes action by blocking, re-routing or logging.
+* IDS/IPS combined with a traditional firewall.
+
+None of the following AWS services provide Network Packet Inspection
+* VPC Flow Logs, AWS WAF, host-based firewalls like iptables and Windows Firewall.
+
+What to do?
+* Use a 3rd-party solution for Network Packet Inspections / IDS/IPS.
+* Install 3rd-party software on your EC2 instance.
+* Search the AWS Marketplace (Alert Logic, Trend Micro, McAfee) https://aws.amazon.com/marketplace.
 
 
 ## Active Directory with AWS

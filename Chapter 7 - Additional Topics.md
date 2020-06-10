@@ -271,7 +271,23 @@ AWS Artifact enables you to:
 
 ## Additional Resources for Exam Preparation
 
+AWS White Papers: https://aws.amazon.com/whitepapers
+* There is a whole section dedicated to security.
+* Important whitepapers to help pass Security Cert Exam: _KMS Best Practices, KMS Cryptographic Details, DDoS Best Practices, Logging in AWS, Well-Architected Framework - Security Pillar_
+* Tip: Read the intro, the summary and choose the sections that you are weaker in (don't need to read the whole thing).
+
+re:Invent Videos
+* Great videos for exam prep
+    * KMS Best Practices, AWS Encryption Deepdive, DDoS Best Practices
+* Become an IAM Policy Master, VPC Fundamentals & Connectivity Options, Advanced Security Best Practices Masterclass.
+
+Read FAQs on main security services.
+* https://aws.amazon.com/faqs/
+* Read all the FAQs under the _Security, Identity and Compliance_ heading.
+* Best to focus on are KMS and IAM FAQs.
+
 
 ## Free Practice Questions
+
 
 

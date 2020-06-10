@@ -227,10 +227,38 @@ What to do?
 * Search the AWS Marketplace (Alert Logic, Trend Micro, McAfee) https://aws.amazon.com/marketplace.
 
 
-## Active Directory with AWS
+## Active Directory Federation with AWS
+
+AD Federation with AWS
+* AWS allows federated sign-in to AWS using Active Directory credentials.
+* Minimises the admin overhead by leveraging existing user accounts, passwords, password policies and groups.
+* Provides SSO for users.
+* _Great for companies that have an existing Active Directory Domain and you have corporate users who have AD accounts - you don't want to recreate those accounts in AWS._
+
+Active Directory Terminology
+* __ADFS (Active Directory Federation Services)__: Provides Single Sign-On (SSO) and acts as an Identity Broker between the Active Directory Domain in your data centre and AWS.
+    * Runs directly inside your data centre.
+* __SAML 2.0 (Security Assertion Markup Langauge)__: An open standard for exchanging identity and security information between identity providers and applications. Enables SSO for AWS accounts.
+    * Allows users to use the AWS API and sign into AWS console using their corporate accounts.
+
+Establishing AD Federation with AWS: __2-way trust__:
+* Within AWS, you need to configure _ADFS = Trusted Identity Provider_.
+    * "You need to tell AWS, to trust ADFS to provide your users' identities."
+* Within ADFS, you need to configure _AWS = Trusted Relying Party_.
+    * "You need to tell ADFS, to trust AWS to consume your users' identities."
+
+Using ADFS to sign-in to AWS Console (after 2-way trust is configured0):
+1. User logs into ADFS using a special ADFS sign-in webpage. They provide their company AD/corporate username and password.
+2. ADFS will authenticate against the company Active Directory.
+3. ADFS sends back authentication response in the form of a SAML token.
+4. User's browser sends SAML token to AWS sign-in endpoint.
+5. AWS sign-in endpoint makes an `STS AssumeRoleWithSAML` request to request temporary credentials to AWS console and STS returns temporary crednetials.
+6. AWS sign-in endpoint redirects user to the AWS console and the user will use temporary credentials to get access to the console.
 
 
 ## AWS Artifact
+
+
 
 
 ## Additional Resources for Exam Preparation

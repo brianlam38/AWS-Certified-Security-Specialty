@@ -258,7 +258,15 @@ Using ADFS to sign-in to AWS Console (after 2-way trust is configured0):
 
 ## AWS Artifact
 
+__AWS Artifact__ is a central resource for compliance and security related information.
+* Download AWS security and compliance documents.
+* ISO 127001 certifications, PCI-DSS docs, SOC (Service Organizational Control) reports.
 
+AWS Artifact enables you to:
+* Demonstrate compliance to regulators.
+* Evaluate your own cloud architecture.
+* Assess the effectiveness of your company's internal controls.
+* _Example: if your company plans to launch a new credit card, AWS Artifact can help with the above_
 
 
 ## Additional Resources for Exam Preparation

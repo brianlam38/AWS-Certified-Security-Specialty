@@ -289,5 +289,18 @@ Read FAQs on main security services.
 
 ## Free Practice Questions
 
+AWS Certification Quiz Shows
+* Video with a focus on Security Specialty Exam.
+* Explains how to approach the exam.
+* Video 1: https://www.twitch.tv/aws/video/467770461
+* Video 2: https://www.aws.training/Details/Video?id=37283
+* Video 3: https://www.aws.training/Details/Video?id=37284
+* Video 4: https://www.aws.training/Details/Video?id=37293
 
+Other resources
+* Mock exams in AWS Training ($20 each): semi-realistic questions to what you will see in the real exam.
+* Free course: https://www.aws.training/Details/eLearning?id=49720
 
+Other tips
+* Do practise tests.
+* Go through the explanation for BOTH incorrect and correct answers and study the AWS documentation associate with the answer to make sure you understand the subject well.

@@ -364,6 +364,42 @@ SCPs enable you to restrict, at the account level of granularity, what services 
 https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scp.html
 
 
+## IAM Credential Report
+
+IAM Credential Report is a CSV-formatted report which lists all users in the accounts + status of their various credentials, including
+* Passwords: enabled, last used, last rotated, next rotation.
+* Access Keys: similar to above + last used.
+* MFA devices: similar to above.
+
+CLI commands for IAM Credential Reports
+```bash
+# generate a credential report
+aws iam generate-credential-report
+# download a credential report / same API call but base64 decode
+aws iam get-credential-report
+aws iam get-credential-report --output text --query Content | base64 -D
+```
+
+Required permissions to generate IAM Credential Reports
+* `GenerateCredentialReport`: create report
+* `GetCredentialReport`: download report
+
+An IAM Policy with permissions to generate IAM Credential Reports
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [{
+        "Sid": "VisualEditor0",
+        "Effect": "Allow",
+        "Action": [
+            "iam:GenerateCredentialReport"
+        ],
+        "Resource": "*"
+    }]
+}
+```
+
+
 ## Summary / Exam Tips
 
 Resetting Root Users

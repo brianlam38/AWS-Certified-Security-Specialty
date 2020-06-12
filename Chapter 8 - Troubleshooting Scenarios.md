@@ -89,6 +89,61 @@ Exam tips
 
 ## Troubleshooting Authentication & Authorization
 
+Authentication & Authorization issues: "Giving users the ability to access resources they need to perform their job, no more and no less".
+
+Common issues with Conflicting Policies
+* AWS authZ/authN takes a least privilege approach: all actions are DENY BY DEFAULT. You need to EXPLICITLY ALLOW permissions for actions you want users to perform.
+* Explicit deny will always override an allow.
+* With multiple policies in play e.g. IAM Policy, S3 Bucket Policy, S3 ACL, Key Policy, an action is only allowed if NO METHOD EXPLICTLY DENIES and AT LEAST ONE METHOD EXPLICITLY ALLOWS access.
+* If you are using AWS Organisations: check if there is a PERMISSIONS BOUNDARY preventing the action.
+
+Conflicting Policy Example: S3 Bucket Policy allowing all S3 actions for IAM user `FAYE` on all S3 resources, conflicting with an IAM Policy.
+```json
+// S3 Bucket Policy for LOG S3 bucket
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        "Effect":"Allow",
+        "Action":"s3:*",
+        "Principal": {
+            "AWS": "arn:aws:iam::11223344:user/brian"
+        },
+        "Resource":"*"
+    ]
+}
+
+// IAM Policy attached to user brian
+{
+    "Statement": [
+        { 
+            "Sid":"AllowS3AccessToMyOwnBucket",
+            "Effect":"Allow",
+            "Action":"s3:*",
+            "Resource": [
+                "arn:aws:s3::::mybucket/*"
+            ]
+        }
+        // This DENY statement overrides ALLOW statement in the S3 Bucket Policy
+        {
+            "Sid":"DenyS3AccessToLogsBucket",
+            "Effect":"Deny",
+            "Action":"s3:*",
+            "Resource": [
+                "arn:aws:s3::::*log/*"
+            ]
+        }
+    ]
+}
+```
+
+Troubleshooting Identity Federation
+* Use the correct API for the job
+* Authenticated by a Web Identity Provider (Facebook etc.): `STS:AssumeRoleWithWebIdentity` API call.
+* Authenticated by a SAML Compliant ID Provider (Active Directory etc.): `STS:AssumeRoleWithSAML` API call.
+* Authenticated by AWS: `STS:AssumeRole` API call.
+
+Read more about Policy Evaluation Logic (worth reading): https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html
+
 
 ## Troubleshooting Cross Account Access With STS:AssumeRole
 

@@ -47,9 +47,24 @@ Lambda _Function Policy_: defines which AWS resources are allowed to invoke your
 Lambda _Execution Role_: defines which AWS resources your Lambda function can access, and what actions can be taken against those AWS resources.
 
 
-## Troubleshooting Logging
+## Troubleshooting CloudTrail Logging
+
+Common issue: _Logging not working_ (CloudTrail logs not appearing in S3)
+* Is CloudTrail enabled?
+* Have you provided the correct S3 bucket name?
+* Is the S3 Bucket Policy / S3 Access Control List correct?
 
 
+Common issue: _Added costs_
+* S3 Data Events and Lambda Data Events are high volume / high cost.
+    * Data  Events are NOT enabled by default.
+    * S3 Data Events: record S3 object-level API activity (e.g `GetObject` and `PutObject`) for individual or ALL buckets.
+    * Lambda Data Events: record invoke API operations for individual or ALL functions.
+
+Common issue: _Auditor is not able to access logs_
+* Does the Auditor's account read access to CloudTrail?
+    * By default, normal IAM users don't have access to CloudTrail logs. Explicit access is needed.
+    * `AWSCloudTrailReadOnlyAccess` IAM Policy will allow access to CloudTrail logs.
 
 
 ## Troubleshooting Secure Network Infrastructure

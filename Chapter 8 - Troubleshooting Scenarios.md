@@ -41,10 +41,15 @@ Exam tips
 * For CloudWatch Events, make sure the _Event Target_ (Lambda, SNS, SQS, Kinesis) has the correct permissions to take whatever action it needs to e.g. _does the Lambda execution role include permissions to terminate an EC2?_
 
 
-## Lambda Lab
+## Lambda permissions
+
+Lambda _Function Policy_: defines which AWS resources are allowed to invoke your function.
+Lambda _Execution Role_: defines which AWS resources your Lambda function can access, and what actions can be taken against those AWS resources.
 
 
 ## Troubleshooting Logging
+
+
 
 
 ## Troubleshooting Secure Network Infrastructure

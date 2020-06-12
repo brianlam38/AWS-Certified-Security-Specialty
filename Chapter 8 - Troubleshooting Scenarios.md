@@ -67,7 +67,24 @@ Common issue: _Auditor is not able to access logs_
     * `AWSCloudTrailReadOnlyAccess` IAM Policy will allow access to CloudTrail logs.
 
 
-## Troubleshooting Secure Network Infrastructure
+## Troubleshooting Secure Network Infrastructure - VPC
+
+Troubleshooting VPCs
+* Check routing tables, Security Groups, NACLs.
+    * _Public traffic -> Public subnets_: make sure routing table is routing internet traffic to the INTERNET GATEWAY.
+        * FLOW: Internet traffic -> VPC Internet Gateway -> VPC Router -> Routing Table -> NACL -> Security Group -> Public subnet.
+    * _VPN traffic -> Private subnets_: make sure routing table is routing any traffic to your own datacenter through the VIRTUAL PRIVATE.
+        * FLOW: VPN traffic -> VPC Virtual Private Gateway -> VPC Router -> Routing Table -> NACL -> Security Group -> Private subnet.
+    * Check that _Security Groups_ and _Network Access Control Lists_ are permitting the traffic.
+* Internet access - NAT Gateway, Internet Gateway.
+* Check VPC Flow Logs to view `ALLOW` or `DENY` messages.
+    * `DENY` messages should give you a clue as to where the problem might be.
+
+Exam tips
+* NACLs are stateless: you need to configure both INBOUND and OUTBOUND rules.
+* Security Groups deny by default, use NACL to explicitly deny.
+* If you are peering 2 VPCs, remember to configure routing tables in both VPCs so they know how to route traffic to each other.
+* Problems with internet access: make sure you have configured your Routing Tables correctly, to use either a NAT Gateway OR Internet Gateway.
 
 
 ## Troubleshooting Authentication & Authorization

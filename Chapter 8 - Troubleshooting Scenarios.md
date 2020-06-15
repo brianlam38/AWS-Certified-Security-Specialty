@@ -145,7 +145,73 @@ Troubleshooting Identity Federation
 Read more about Policy Evaluation Logic (worth reading): https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html
 
 
-## Troubleshooting Cross Account Access With STS:AssumeRole
+## Troubleshooting Cross Account Access with STS:AssumeRole API
+
+_This definitely comes up in the exam._
+
+Example: Dev users ReadOnly access to a Prod S3 bucket (cross-account access).
+1. Create Prod IAM Role with ReadOnly access to Prod S3 bucket.
+2. Allow Dev IAM User to assume the above role via. Trusted Relationship statement.
+
+Common issue: _Check external account (Dev account) has permission to call `STS:AssumeRole`_
+```json
+// Dev IAM Policy attached to Dev IAM User - assume Prod IAM Role
+"Statement":[
+    {
+        "Effect": "Allow",
+        "Action": "sts:AssumeRole",
+        "Resource": "arn:aws:iam::PRODUCTION_ACCOUNT-ID:role/ROLE-NAME"
+    }
+]
+```
+
+Common issue: _Check the external account is trusted AND has permission to perform the action you are attempting - Prod Account, Role._
+```json
+// Prod IAM Role - Add Trusted Relationship statement / Configure Dev account as a Trusted Entity + give permission to perform the STS:AssumeRole action.
+"Version": "2012-10-17",
+"Statement":[
+    {
+        "Effect": "Allow",
+        "Principal": {
+            "AWS": [
+                "arn:aws:iam::DEVELOPMENT_ACCOUNT-ID:root"
+            ]
+        },
+        "Action": "sts:AssumeRole"
+    }
+]
+```
+
+Example: Cross-account KMS access.
+
+Common issue: _Key Policy needs to trust external account_.
+1. Go to Prod Account KMS -> your CMK which you want to allow external access.
+2. Select "Other AWS Accounts" add AWS account ID.
+
+Common issue: _External account needs IAM Policy allowing users to run specific API calls related to resource (CMK in this case)_
+```json
+// Dev IAM Policy
+"Statement":[
+    {
+        "Sid": "AllowUseOfCMKInAccount444455556666",
+        "Effect": "Allow",
+        "Action":[
+            "kms:Encrypt",
+            "kms:Decrypt",
+            "kms:DescribeKey"
+        ],
+        "Resource": "arn:aws:kms:us-west-2:444455556666:key/1a2b3c"
+    }
+]
+```
+
+Exam Tips:
+* _For cross-account access to S3_:
+    1. Check that the IAM Policy in EXTERNAL account (Dev) needs to allow the user to call `STS:AssumeRole`
+    2. Check that the IAM Policy in TRUSTING account (Prod) needs to allow the action.
+* _For cross-account access to KMS_:
+    1. Check that you have configured the `Key Policy` to allow access to the EXTERNAL account in the TRUSTED account.
+    2. Check that you have configured the IAM Policy in the EXTERNAL account to take KMS actions on the TRUSTED account.
 
 
 ## Troubleshooting Lambda Access

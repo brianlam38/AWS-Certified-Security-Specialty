@@ -214,10 +214,33 @@ Exam Tips:
     2. Check that you have configured the IAM Policy in the EXTERNAL account to take KMS actions on the TRUSTED account.
 * THE TWO MAIN IDEAS FOR CROSS-ACCOUNT ACCESS:
     1. Enable access within the TRUSTED account sharing the resource.
-    2. IAM Polcy in the EXTERNAL account, allowing actions by a role/user in the account.
+    2. IAM Polcy in the EXTERNAL account, allowing actions by a role/user in the account. 
 
 
 ## Troubleshooting Lambda Access
+
+Example: You want Lambda executions to be logged in CloudWatch.
+Common issue: _Lambda require permissions to write to CloudWatch Logs_
+* This is defined by the Lambda EXECUTION ROLE, similar to EC2 Service Role (NOT Function Policy).
+* NOTE: _Lambda Execution Role_ defines what the Lambda fn can do.
+* NOTE: _Function Policy_ defines which services can invoke the Lambda fn.
+
+Example: You want a Lambda fn to access a RDS database
+Common issue: _Lambda requires permissions to access Secrets Manager (RDS db credentials held there)_
+* This is defined by the Lambda EXECUTION ROLE.
+
+Example: You want CloudTrail to report certain type of Events into CloudWatch Events, then invoke Lambda
+Common issue: _Does the Lambda Function Policy allow CloudWatch Events to invoke the Lambda?_
+
+Exam tips:
+* _Lambda cannot perform an action_
+    * E.g. write to S3, log to CloudWatch, Terminate Instances, use a CMK, use Secrets Manager
+    * Check the LAMBDA EXECUTION ROLE allows the actions.
+* _Lambda cannot be invoked by service_
+    * E.g. CloudWatch Event invoking Lambda fn.
+    * Check the LAMBDA FUNCTION POLICY allows the service.
+* Remember that some services have their own resource-based policies which will impact access to the resource
+    * E.g S3 Bucket Policy, KMS Key Policies etc.
 
 
 ## Troubleshooting Access To CMKs in KMS

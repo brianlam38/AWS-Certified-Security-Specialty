@@ -244,3 +244,12 @@ Exam tips:
 
 
 ## Troubleshooting Access To CMKs in KMS
+
+Example: Accessing a CMK in KMS
+Common issue: _Check that IAM user, group or role has permissions for the action they are attempting_
+*
+Access to use KMS Customer Master Keys is defined by:
+1. __IAM Policy__ attached to User, Group or Role.
+    * Defines actions such as `kms:ListKeys`, `kms:Encrypt`, `kms:Decrypt`.
+2. __CMK Key Policy__
+    * Defines `Key Admins`, `Key Users`, `trusted external accounts`.

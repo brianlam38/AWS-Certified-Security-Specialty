@@ -376,5 +376,44 @@ Microservices
 * Scale only components you need to = highly flexible and cost efficient applications.
 
 
-## Containers and Container Security
+## Containers in AWS
 
+Containers are a virtual operating environment.
+* A standardised unit with everything that the software needs to run e.g. libraries, system code and runtime.
+* Used to support microservices architecture.
+* Use Docker to create Linux containers.
+* Use Windows Containers for Windows workloads.
+
+Architecture of a Docker container
+* Container components:
+    * (1) Code (2) Libraries (3) Virtual Kernel.
+    * Runs on Docker.
+    * Installed on host Operating System.
+* Scaling application or building new features for the application = add more containers.
+
+Where to run containers in AWS
+* __Elastic Container Service (ECS)__
+    * Fargate is the preferred option - Serverless.
+    * Or managed clusters of EC2 instances.
+    * Deep integration with AWS services e.g. IAM, VPC, Route53.
+    * Used internally e.g. amazon.com, Sagemaker, Amazon Lex.
+* __Elastic Kubernetes Service (EKS)__
+    * Fargate is the preferred option - Serverless.
+    * Or managed clusters of EC2 instances.
+    * Certified Kubernetes conformant.
+    * Benefit of open-source tooling from the community.
+* Both above services are used for running and orchestrating containers and are a fully-managed Platform-As-A-Service (PaaS) service offering e.g. no need to install Docker, configure clusters, managing shared storing etc.
+* Both provide a managed environment to run your containers.
+* ECS has deep integration with AWS services vs. EKS benefits from the open-source community.
+
+Elastic Container Service (ECS)
+1. Container definition: choose a container image.
+2. Task definition: describes your container attributes.
+    * VPC, task execution role, Fargate/EC2, task memory, task CPU.
+    * You can group multiple containers under a single task.
+3. Service definition: a services allows you to run and maintain a specified number of simultaneous instances of a desk definition in an ECS cluster.
+    * This makes sure an application remains up and running if something fails, as another instance of the task will be launched.
+4. Configure cluster.
+
+
+## Container Security

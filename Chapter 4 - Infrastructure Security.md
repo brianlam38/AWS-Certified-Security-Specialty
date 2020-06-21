@@ -354,6 +354,26 @@ Example IAM policy in account HELLO for cross account access to CMK in WORLD
 
 ## Microservices
 
+Monolithic applications
+* Difficult to change.
+* Can't make it bigger.
+* One small mistake affects entire application.
+
+Microservices
+* Software is composed of small, independent services that communicate over well-defined APIs.
+* Modern apps are usually made up of containers - a standardised unit which includes everything that your software needs to run e.g. libraries, system tools, runtime environment.
+
+(ADVANTAGE #1) Serviceability: Easy to fix problems
+* if one component breaks... Not A Disaster: the rest of the application keeps running.
+* if one component breaks... Quick To Fix: deploy a new instance of your microservice/container to replace the broken one.
+
+(ADVANTAGE #2) Flexibility: Easy to make changes
+* to upgrade a Shopping Cart feature... you only need to replace the shopping cart microservice / deploy new containers.
+* to add new features... e.g. add a product search feature, just add it as a new microservice. No need to redeploy the entire application.
+
+(ADVANTAGE #2) Scalability: Easy to scale
+* to scale the Shopping Cart microservice due to increased customer demand... just add more containers running Shopping Carts.
+* Scale only components you need to = highly flexible and cost efficient applications.
 
 
 ## Containers and Container Security

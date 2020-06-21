@@ -417,3 +417,29 @@ Elastic Container Service (ECS)
 
 
 ## Container Security
+
+1. Don't store secrets
+* Use IAM roles instead of harcoding user credentials.
+* Use Secrets Manager for RDS credentials, API keys.
+* Use Amazon Certicate Manager (ACM) if you have TLS certificates to store and manage.
+
+2. Don't run as root
+* Don't run containers using your AWS Root account.
+* Don't run containers in EC2 as Root.
+
+3. Less is more
+* Minimise your attack surface: only run one service in your container.
+* Avoid unnecessary libraries: remove code/libraries you don't need in your container image.
+
+4. Use trusted images only
+* Avoid public repositories, where you don't know the origin of the code.
+* Use images from a trusted source or ones created inhouse.
+* Scan for CVE's.
+* __AWS Elastic Container Registry (ECR)__: a container registry where you can store your own container images e.g. Docker or Windows Container images and make them available to ECS.
+    * AWS provides image scanning for container images stored in ECR and reports on any CVEs.
+
+5. Infrastructure security
+* Avoid the public internet use ECS Interface Endpoints (similar to VPC endpoints).
+* If you must use public internet, Use TLS to secure end-to-end communication between end-users and your applications running in containers.
+* If you are using TLS certificates, best-practice is to use __Amazon Certificate Manager (ACM)__ as it provides a single, central interface for storing and managing certificates and it integrates well with many AWS services.
+* Read https://aws.amazon.com/blogs/compute/maintaining-transport-layer-security-all-the-way-to-your-container-part-2-using-aws-certificate-manager-private-certificate-authority/.

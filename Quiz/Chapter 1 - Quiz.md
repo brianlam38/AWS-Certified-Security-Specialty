@@ -3,7 +3,7 @@
 ```
 Configuration of managed Services like S3 and DynamoDB
 Configuration of hypervisors
->Configuration of the Operating System running on EC2 instances
+>> Configuration of the Operating System running on EC2 instances
 Physical security of the data center
 ```
 
@@ -11,7 +11,7 @@ Physical security of the data center
 
 ```
 CodeDeploy
->OpsWorks
+>> OpsWorks
 Elastic Beanstalk
 API Gateway
 ```
@@ -21,14 +21,14 @@ API Gateway
 ```
 Applying security updates and patching DynamoDB
 Applying security updates and patching the hypervisor
->Configuring IAM
->Applying security updates and patching the Operating System running on EC2 instances
+>> Configuring IAM
+>> Applying security updates and patching the Operating System running on EC2 instances
 ```
 
 ### Which of the following is a multi-tenant managed service which allows you to securely store and manage your encryption keys?
 
 ```
->KMS
+>> KMS
 CloudTrail
 CloudHSM
 Config
@@ -37,8 +37,8 @@ Config
 ### Which of the following AWS services can be used to enable customers to quickly adapt to the changing needs of their business? (Choose 2)
 
 ```
->Elastic BeanStalk
->CloudFormation
+>> Elastic BeanStalk
+>> CloudFormation
 CloudTrail
 Config
 ```
@@ -47,7 +47,7 @@ Config
 
 ```
 Lambda
->EC2
+>> EC2
 RDS
 DynamoDB
 ```
@@ -56,7 +56,7 @@ DynamoDB
 
 ```
 Trusted Advisor
->CloudTrail 
+>> CloudTrail 
 CloudWatch
 Config
 ```
@@ -66,7 +66,7 @@ Config
 ```
 Config
 CloudFormation
->Trusted Advisor 
+>> Trusted Advisor 
 CloudWatch
 ```
 
@@ -74,7 +74,7 @@ CloudWatch
 
 ```
 CloudFormation
->CloudWatch 
+>> CloudWatch 
 Config
 Trusted Advisor
 ```
@@ -83,7 +83,7 @@ Trusted Advisor
 
 ```
 CloudTrail
->AWS Config 
+>> AWS Config 
 CloudFormation
 Trusted Advisor
 ```

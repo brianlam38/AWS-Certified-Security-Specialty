@@ -70,23 +70,26 @@ Application Layer Defenses
 
 Resources that are NOT EXPOSED TO THE INTERNET are more difficult to attack, limiting the options an attacker has to target your application's availability.
 
-BLOCKING ACCESS TO ORIGIN #1: by using __Security Groups__ and __Network Access Control Lists__.
+Blocking access to origin #1: by using __Security Groups__ and __Network Access Control Lists__.
 * Security Group Example: Webapp that uses an ELB and several EC2s
     1. Create an SG for the ELB and SG for the instances.
     2. Create an ALLOW rule to permit internet traffic to ELB SG + rule to permit traffic from ELB SG to the EC2s' SG = more difficult for attacker to learn about and impact the webapp.
 * NACL: Use NACLs to explicitly deny certain types of traffic e.g. deny certain CIDR ranges, protocols, signatures based off known DDoS IPs etc.
 * Use __AWS Shield Advanced to register Elastic IPs as Protected Resources__. DDoS against EIPs will be detected more quickly, resulting in faster mitigation.
 
-BLOCKING ACCESS TO ORIGIN #2: by __only allowing requests from CloudFront__. Malicious traffic cannot bypass CF and WAF and hit your origin directly.
+Blocking access to origin #2: by __only allowing requests from CloudFront__. Malicious traffic cannot bypass CF and WAF and hit your origin directly.
 1. Create a Security Group, allowing only traffic from CloudFront to your ELB or EC2s.
 2. Create Lambda to update SG rules dynamically, triggered by an `AmazonIPSpaceChanged` SNS topic (AWS updating their internal IP ranges).
 3. Use the `X-Shared-Secret` header to validate that requests sent to your origin are coming from CloudFront.
 
-PROTECTING API ENDPOINTS: by using __Amazon API Gateway__.
+Protectin API endpoints: by using __Amazon API Gateway__.
 * Configure CF distributions to include the a custom header `x-api-key`, sent to your origin endpoint.
 * Configure standard or burst rate limits for each REST API method.
 
 ## Operational Techniques
 
+It is useful to know WHEN a DDoS attack is targeting your application so you can take mitigation steps.
 
+Visibility
+* 
 

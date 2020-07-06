@@ -91,5 +91,16 @@ Protectin API endpoints: by using __Amazon API Gateway__.
 It is useful to know WHEN a DDoS attack is targeting your application so you can take mitigation steps.
 
 Visibility
-* 
+* __Amazon CloudWatch__ to monitor apps running on AWS - collect and track metrics, log files, set alarms and automatically respond to changes in your AWS resources. E.g. AWS WAF `BlockedRequests` or `CountedRequests` metrics.
+* __AWS Shield Advanced__ provides additional metrics to indicate if your app is being targeted. E.g. `DDoSDetected` or volume-based metrics `DDoSAttackBitsPerSecond`, `DDoSAttackPacketsPerSecond` or
+`DDoSAttackRequestsPerSecond`. Can be integrated with CloudWatch or 3rd-party tools e.g. Slack/PagerDuty.
+* __VPC Flow Logs__ to capture information about the IP traffic going to and from your network interfaces in your VPC.
+    * Each flow records _src ip, dest ip, src port, dest port, protocol, no. of packets and bytes transferred_. Use this info to identify anomalies in network traffic and to identify a specific attack vector. E.g. UDP reflection attacks = src port 53 for DNS reflection.
+
+Support
+* Subscribe to __Business Support__ to get 24x7 access to Cloud Support Engineers who can assist with DDoS attack issues.
+* Subscribe to __Enterprise Support__ for the ability to open CRITICAL CASES and receive the FASTEST RESPONSE from a Senior Cloud Support Engineer.
+* Subscribe to __AWS Shield Advanced__ to escalate cases to the __AWS DDoS Response Team (DRT)__.
+* Use the __AWS Shield Engagement Lambda__ to more quickly initiate contact with the DRT. E.g. use an AWS IoT button to trigger the AWS Lambda function if you have an emergency situation (emergency panic red button).
+
 

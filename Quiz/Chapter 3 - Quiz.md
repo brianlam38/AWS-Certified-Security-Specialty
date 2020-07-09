@@ -3,17 +3,17 @@
 ```
 It allows you to perform near real-time intrusion detection
 It enables after-the-fact incident investigation
->>It prevents unauthorized users from accessing your account and launching AWS resources
+>> It prevents unauthorized users from accessing your account and launching AWS resources
 It enables you to comply with industry and internal compliance requirements
 ```
 
 # Which of the following tasks can you accomplish using CloudWatch? (Choose 3)
 
 ```
->>Resource utilization and monitoring
+>> Resource utilization and monitoring
 All of these are correct
->>Trigger Lambda functions
->>Log aggregation and analysis
+>> Trigger Lambda functions
+>> Log aggregation and analysis
 Log all API calls in your AWS account
 ```
 
@@ -23,7 +23,7 @@ Log all API calls in your AWS account
 Amazon Guard Duty
 AWS Config
 AWS Trusted Advisor
->>Amazon Inspector
+>> Amazon Inspector
 ```
 
 Amazon Inspector is an automated security assessment service that helps improve the security and compliance of applications deployed on AWS. Further information: https://aws.amazon.com/inspector/https://aws.amazon.com/config/https://aws.amazon.com/guardduty/https://aws.amazon.com/inspector/
@@ -34,7 +34,7 @@ Amazon Inspector is an automated security assessment service that helps improve 
 Ensure your S3 bucket policy and IAM policies adhere to the Least Privilege model
 Create a CloudWatch Event Rule to alert you of any modifications to the file
 Encrypt your CloudTrail files using SSE:KMS
->>Use CloudTrail log Integrity Validation
+>> Use CloudTrail log Integrity Validation
 ```
 
 To determine whether a log file was modified, deleted, or unchanged after CloudTrail delivered it, you can use CloudTrail log file integrity validation. Further information: https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-log-file-validation-intro.html
@@ -42,7 +42,7 @@ To determine whether a log file was modified, deleted, or unchanged after CloudT
 # You would like you be notified if any of the systems administrators in your organization creates a security group with SSH open to the world, which service allows you to easily do this?
 
 ```
->>Create a rule in AWS Config to notify you using SNS if this happens
+>> Create a rule in AWS Config to notify you using SNS if this happens
 Create a rule in CloudTrail to notify you if this happens
 Create a rule in CloudWatch Logs to notify you if this happens
 Create an SNS topic to notify you if this happens
@@ -54,7 +54,7 @@ Use AWS Config to evaluate the configuration settings of your AWS resources. You
 
 ```
 CloudWatch
->>Config
+>> Config
 CloudTrail
 OpsWorks
 ```
@@ -64,8 +64,8 @@ OpsWorks
 ```
 Common Vulnerabilities and Exposures
 Runtime Behaviour Analysis
->>Security Best Practices
->>Center For Internet Security Benchmarks
+>> Security Best Practices
+>> Center For Internet Security Benchmarks
 Network Reachability
 ```
 
@@ -74,10 +74,10 @@ Security Best Practices will report on instances which allow root login over SSH
 # How can you protect your CloudTrail logs from unauthorized access? (Choose 3)
 
 ```
->>Use IAM policies to restrict access to the S3 bucket containing the logs
->>Use S3 bucket policies to restrict access to the S3 bucket containing the logs
+>> Use IAM policies to restrict access to the S3 bucket containing the logs
+>> Use S3 bucket policies to restrict access to the S3 bucket containing the logs
 Compress the log files
->>Encrypt the log files
+>> Encrypt the log files
 ```
 
 You can use AWS Identity and Access Management to control which AWS users can create, configure, or delete AWS CloudTrail trails, start and stop logging, and access the S3 buckets that contain log information. By default logs are encrypted using SSE-S3 or you can also configure encryption using SSE-KMS. Compressing the files will not protect them from unauthorized access. Further information:
@@ -91,7 +91,7 @@ CloudWatch monitoring end-to-end network latency monitoring for web applications
 
 CloudWatch monitoring provides intrusion detection and monitoring in your environment, CloudWatch Logs allows you to log security breaches in your applications and systems, CloudWatch Events provides a near real-time stream of security related events within your environment.
 
->>CloudWatch monitoring provides monitoring of performance metrics in your environment, CloudWatch Logs allows you to aggregate and monitor logs from your applications and systems, CloudWatch Events provides a near real-time stream of events within your AWS account which can be used to trigger actions such as triggering a Lambda function to perform a task.
+>> CloudWatch monitoring provides monitoring of performance metrics in your environment, CloudWatch Logs allows you to aggregate and monitor logs from your applications and systems, CloudWatch Events provides a near real-time stream of events within your AWS account which can be used to trigger actions such as triggering a Lambda function to perform a task.
 
 CloudWatch monitoring provides monitoring of all user activity in your AWS account, CloudWatch Logs gives visibility of the network flows between application components in your environment, CloudWatch Events provides visibility of data center related events which could affect customers, like operating system upgrades and planned hardware maintenance.
 ```
@@ -104,7 +104,7 @@ CloudWatch collects monitoring and operational data in the form of logs, metrics
 AWS Config
 Amazon Inspector
 Amazon Guard Duty
->>AWS Trusted Advisor
+>> AWS Trusted Advisor
 ```
 
 AWS Trusted Advisor is an online tool that provides you real time guidance to help you provision your resources following AWS best practices. Further information: https://aws.amazon.com/premiumsupport/technology/trusted-advisor/https://aws.amazon.com/inspector/https://aws.amazon.com/guardduty/https://aws.amazon.com/config/
@@ -115,14 +115,14 @@ AWS Trusted Advisor is an online tool that provides you real time guidance to he
 Amazon Guard Duty
 AWS Trusted Advisor
 AWS Config
->>Amazon Inspector
+>> Amazon Inspector
 ```
 
 # Which of the following services integrates with CloudTrail to send a notification to users that a log file has been created?
 
 ```
 Simple Queue Service
->>Simple Notification Service
+>> Simple Notification Service
 Simple Text Message Service
 Lambda
 ```

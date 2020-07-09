@@ -1,7 +1,7 @@
 ### Which of the following steps would you need to complete in order to configure Cross Region Replication where source and destination buckets are owned by different accounts?
 
 ```
->The owner of the destination bucket must grant the owner of the source bucket permissions to replicate objects with a bucket policy.
+>> The owner of the destination bucket must grant the owner of the source bucket permissions to replicate objects with a bucket policy.
 The owner of the source bucket must grant the owner of the destination bucket permissions to replicate objects with a bucket policy.
 The owner of the source bucket must grant the owner of the destination bucket permissions to replicate objects with a bucket policy AND the owner of the destination bucket must grant the owner of the source bucket permissions to replicate objects with a bucket policy.
 The source and destination bucket must be owned by the same account otherwise Cross Region Replication will not work
@@ -14,7 +14,7 @@ If you are setting up Cross Region Replication in a cross-account scenario, wher
 
 ```
 Customer Managed Policy
->AWS Managed Policy
+>> AWS Managed Policy
 Inline Policy
 All IAM Policies
 ```
@@ -25,7 +25,7 @@ An AWS managed policy is a standalone policy that is created and administered by
 ### Which of the following approaches would you use to enable an application running on EC2 to read objects located in an S3 bucket?
 
 ```
->Create an IAM role with read access to the bucket and associate the role with the EC2 instance>
+>> Create an IAM role with read access to the bucket and associate the role with the EC2 instance>> 
 Create an IAM user with read access to the bucket and embed the user's credentials in your application code.
 Create an IAM policy which allows read access to the bucket and attach the policy directly to the EC2 instance
 Create an IAM group with read access to the bucket and add the EC2 instance to the group
@@ -40,7 +40,7 @@ Embedding user credentials in application code is insecure and not recommended. 
 Modify the Vault Lock and update the retention period to 1 year
 Abort the Vault Lock and create a new one to fit the new requirement
 Delete the Vault Lock completely and suggest using S3 lifecycle policies instead
->Go back to the CTO and explain that once the Vault Lock is in place, it cannot be changed>
+>> Go back to the CTO and explain that once the Vault Lock is in place, it cannot be changed>> 
 ```
 
 A vault lock policy is different than a vault access policy. Both policies govern access controls to your vault. However, a vault lock policy can be locked to prevent future changes, providing strong enforcement for your compliance controls. Further information: https://docs.aws.amazon.com/amazonglacier/latest/dev/vault-lock.html
@@ -49,10 +49,10 @@ A vault lock policy is different than a vault access policy. Both policies gover
 ### Which of the following does AWS IAM enable you to do? (Choose 4)
 
 ```
->Manage user access to the AWS Console>
->Identity Federation with Web Identity providers>
->Identity Federation with Active Directory>
->Multi-Factor Authentication>
+>> Manage user access to the AWS Console>> 
+>> Identity Federation with Web Identity providers>> 
+>> Identity Federation with Active Directory>> 
+>> Multi-Factor Authentication>> 
 Biometric verification
 ```
 
@@ -63,10 +63,10 @@ AWS Identity and Access Management (IAM) enables you to manage access to AWS ser
 
 ```
 Kubernetes Federation
->Web Identity Federation>
->Active Directory Federation>
+>> Web Identity Federation>> 
+>> Active Directory Federation>> 
 Azure AD Federation
->Cross Account Access>
+>> Cross Account Access>> 
 ```
 
 STS enables Web ID Federation, AD Federation and Cross Account Access. Further information: https://docs.aws.amazon.com/STS/latest/APIReference/Welcome.htmlhttps://aws.amazon.com/identity/federation/
@@ -76,7 +76,7 @@ STS enables Web ID Federation, AD Federation and Cross Account Access. Further i
 
 ```
 It is used to prevent resources based in one region form accessing resources based in another
->It is used to limit the maximum permissions for a user, group or role>
+>> It is used to limit the maximum permissions for a user, group or role>> 
 It is used to prevent on AWS account from accessing resources belonging to another account
 It is used to limit the privileges of the Root user
 ```
@@ -88,12 +88,12 @@ A permissions boundary is an advanced feature in which you use a managed policy 
 
 ```
 Delete all IAM accounts and recreate them with new credentials
->Delete any root owned access keys if they exist
+>> Delete any root owned access keys if they exist
 Delete the root account and recreate it with new credentials
 Create new access keys for root
->Change the root password>
->Review your IAM accounts and delete any account which belongs to the user who has left the company
->Deactivate and reactivate Multi Factor Authentication
+>> Change the root password>> 
+>> Review your IAM accounts and delete any account which belongs to the user who has left the company
+>> Deactivate and reactivate Multi Factor Authentication
 ```
 
 The following best practices are recommended in order to secure the root account: configure MFA, use a strong password and rotate it regularly and delete the root access key and secret access key. It is also best practise to delete any account associated with a user who has left the company. Further information: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_root-user.html
@@ -103,9 +103,9 @@ The following best practices are recommended in order to secure the root account
 
 ```
 Self-service password resets for Facebook users
->Federated access to your web application for Facebook users
+>> Federated access to your web application for Facebook users
 Federated access to your web application for Active directory users outside your organisation
->Anonymous guest access to your web application
+>> Anonymous guest access to your web application
 ```
 
 Amazon Cognito provides authentication, authorization, and user management for your web and mobile apps. Your users can sign in directly with a user name and password, or through a third party such as Facebook, Amazon, or Google. Further information:
@@ -114,9 +114,9 @@ Amazon Cognito provides authentication, authorization, and user management for y
 ### To which of the following entities can you attach an IAM Policy? (Choose 2)
 
 ```
->IAM Roles
+>> IAM Roles
 EC2 Instances
->IAM Groups
+>> IAM Groups
 S3 Buckets
 ```
 
@@ -126,7 +126,7 @@ You manage access in AWS by creating policies and attaching them to IAM identiti
 ### Which of the following types of IAM Policy is created and administered by you and can be attached to multiple users, groups or roles within your account?
 
 ```
->Customer Managed Policies>
+>> Customer Managed Policies>> 
 All IAM Policies
 Inline Policies
 AWS Managed Policies
@@ -141,7 +141,7 @@ Customer Managed Policies are created and administered by you and can be attache
 Web Identity Federation
 AWS IAM
 Cross Account Access
->AWS Organizations>
+>> AWS Organizations>> 
 ```
 
 Using AWS Organizations, you can create Service Control Policies (SCPs) that centrally control AWS service use across multiple AWS accounts, consolidate billing for multiple accounts and create groups of accounts and apply and manage policies for those groups.. Further information: https://aws.amazon.com/organizations/
@@ -153,7 +153,7 @@ Using AWS Organizations, you can create Service Control Policies (SCPs) that cen
 Use an S3 Bucket policy which prevents users from deleting archives which are less than 5 years in age
 Use a lifecycle policy which moves all archives less than 5 years in age to WORM storage
 Use a Vault Access Policy which prevents users from deleting archives which are less than 5 years in age
->Use a Vault Lock Policy which prevents any user from deleting archives which are less than 5 years in age
+>> Use a Vault Lock Policy which prevents any user from deleting archives which are less than 5 years in age
 ```
 
 A vault lock policy is different than a vault access policy. Both policies govern access controls to your vault. However, a vault lock policy can be locked to prevent future changes, providing strong enforcement for your compliance controls. You can use the vault lock policy to deploy regulatory and compliance controls, which typically require tight controls on data access. In contrast, you use a vault access policy to implement access controls that are not compliance related, temporary, and subject to frequent modification. Vault lock and vault access policies can be used together.
@@ -164,7 +164,7 @@ https://docs.aws.amazon.com/amazonglacier/latest/dev/vault-lock.html
 ### Which of the following best describes a Glacier Vault?
 
 ```
->A container which stores one or more Glacier archives>
+>> A container which stores one or more Glacier archives>> 
 A container which stores multiple S3 buckets
 A secure place to store security tokens, passwords, certificates, API keys, and other secrets
 A single file or multiple files stored in a .tar or .zip format within Glacier
@@ -176,10 +176,10 @@ In Amazon S3 Glacier (Glacier), a vault is a container for storing archives, and
 ### You have created a website hosted in S3 and configured a CloudFront web distribution. Which steps do you need to take to force your users to access your site using CloudFront and not directly using the S3 url? (Choose 3)
 
 ```
->Select "Restrict Bucket Access" in the Origin Settings of your CloudFront Distribution
+>> Select "Restrict Bucket Access" in the Origin Settings of your CloudFront Distribution
 Change the permissions on your Amazon S3 bucket so that only the CloudFront endpoint has access
->Configure the bucket policy on your Amazon S3 bucket so that only the origin access identity has read permission for objects in the bucket
->Create an origin access identity for your S3 origin
+>> Configure the bucket policy on your Amazon S3 bucket so that only the origin access identity has read permission for objects in the bucket
+>> Create an origin access identity for your S3 origin
 Create an origin access identity, which is a special CloudFront user, associate the origin access identity with your distribution.
 Change the permissions either on your Amazon S3 bucket or on the files in your bucket so that only the origin access identity has read permission (or read and download permission).
 ```
@@ -190,9 +190,9 @@ When your users access your Amazon S3 files through CloudFront, the CloudFront o
 ### Which of the following is correct in relation to Service Control Policies? (Choose 2)
 
 ```
->An SCP applies to all Organizational Units and accounts below the Organizational Unit to which it has been attached
+>> An SCP applies to all Organizational Units and accounts below the Organizational Unit to which it has been attached
 They can be used to allow or deny access to AWS resources
->They can only be used to limit permissions to AWS resources
+>> They can only be used to limit permissions to AWS resources
 They are deny by default and can only be used to allow access to AWS resources
 ```
 
@@ -202,8 +202,8 @@ SCPs enable you to restrict, at the account level of granularity, what services 
 ### Which of the following IAM Policies can you change to update them when the needs of your organization change? (Choose 2)
 
 ```
->Inline Policies
->Customer Managed Policies
+>> Inline Policies
+>> Customer Managed Policies
 AWS Managed Policies
 All IAM Policies
 ```
@@ -216,7 +216,7 @@ AWS Managed Policies cannot be changed, only Customer Managed and Inline Policie
 ```
 REST
 SAML 2.0
->Security Token Service
+>> Security Token Service
 Cognito
 ```
 
@@ -228,7 +228,7 @@ The AWS Security Token Service (STS) is a web service that enables you to reques
 ```
 The principal specifies the AWS root account ID
 The principal specifies the name of the resource to which you are either allowing or denying access to
->The principal specifies the user, account, service, or other entity that is allowed or denied access to a resource
+>> The principal specifies the user, account, service, or other entity that is allowed or denied access to a resource
 The principal is used to define which region the permissions you are specifying will apply to
 ```
 
@@ -240,8 +240,8 @@ The Principal element specifies the user, account, service, or other entity that
 ```
 The user is able to add objects to any S3 bucket
 The user is able to delete objects from any S3 bucket
->The user is able to read objects in any S3 bucket
->The user is able to list the objects in any S3 bucket
+>> The user is able to read objects in any S3 bucket
+>> The user is able to list the objects in any S3 bucket
 ```
 
 The user is only able to read and list objects in any S3 bucket. all other actions are denied by default. If you want to enable write access then you will need to add further permissions. Further information: https://aws.amazon.com/blogs/security/writing-iam-policies-how-to-grant-access-to-an-amazon-s3-bucket/
@@ -251,7 +251,7 @@ The user is only able to read and list objects in any S3 bucket. all other actio
 
 ```
 IAM Role
->IAM Policy
+>> IAM Policy
 IAM User
 IAM Group
 ```
@@ -262,7 +262,7 @@ You manage access in AWS by creating policies and attaching them to IAM identiti
 ### You would like to give a user temporary access to a single object in your S3 bucket, which of the following is the most secure way to do this?
 
 ```
->Create a presigned url and share it with the user
+>> Create a presigned url and share it with the user
 Configure read only access to the object using a bucket Access Control List, then remove the access after a set number of hours has elapsed
 Give the user read access to the bucket
 Change the ownership of the object to the user who needs to access it
@@ -275,7 +275,7 @@ All objects by default are private. Only the object owner has permission to acce
 
 ```
 Configure an IAM policy which includes a condition statement which denies requests which do not use aws:SecureTransport
->Configure a bucket policy which includes a condition statement which denies requests which do not use aws:SecureTransport
+>> Configure a bucket policy which includes a condition statement which denies requests which do not use aws:SecureTransport
 Configure key policy which includes a condition statement which denies requests which do not use aws:SecureTransport
 Configure an ACL which includes a condition statement which denies requests which do not use aws:SecureTransport
 ```
@@ -288,7 +288,7 @@ Use a bucket policy which includes a condition statement denying access to anyon
 ```
 The IAM policy doesn't allow the user to access the bucket
 It takes a few minutes for a bucket policy to take effect
->An explicit deny always overrides an allow, so access will be denied
+>> An explicit deny always overrides an allow, so access will be denied
 You need to update the ACL in the bucket
 ```
 
@@ -300,8 +300,8 @@ An explicit deny always overrides an allow, so access will be denied. - Even if 
 ```
 S3 Access Control Policies
 S3 Object Policy
->S3 Bucket Policy
->IAM Policy
+>> S3 Bucket Policy
+>> IAM Policy
 ```
 
 An IAM Policy is an entity that, when attached to an identity or resource, defines their permissions. A Bucket Policy is a resource-based AWS Identity and Access Management (IAM) policy. You add a bucket policy to a bucket to grant other AWS accounts or IAM users access permissions for the bucket and the objects in it. IAM Policies and Bucket Policies work together in combination to determine who or what can access an S3 bucket and what actions they are allowed to take. Further information: https://docs.aws.amazon.com/AmazonS3/latest/dev/using-iam-policies.html
@@ -312,7 +312,7 @@ An IAM Policy is an entity that, when attached to an identity or resource, defin
 ```
 AWS Managed Policy
 Customer Managed Policy
->Inline Policy
+>> Inline Policy
 Any IAM Policy type can be configured to enforce this
 ```
 
@@ -322,7 +322,7 @@ Only an Inline Policy enforces a strict one-to-one relationship between the poli
 ### You would like to restrict access to S3 across a number of different AWS accounts in your organization. Which AWS feature can you use to do this?
 
 ```
->Service Control Policy
+>> Service Control Policy
 Consolidated Billing
 S3 bucket policies
 IAM Policies
@@ -334,7 +334,7 @@ SCPs enable you to restrict, at the account level of granularity, what services 
 ### You have configured Cross Region Replication on your S3 bucket and would like to enforce the use of SSL. How would you approach this?
 
 ```
->Do nothing, SSL is enabled by default when you configure Cross Region Replication
+>> Do nothing, SSL is enabled by default when you configure Cross Region Replication
 Select SecureTransport in the console when configuring cross Region Replication
 Configure a bucket policy which includes a condition statement which denies requests which do not use aws:SecureTransport
 Select Use SSL in the console when configuring cross Region Replication
@@ -349,7 +349,7 @@ Amazon S3 encrypts all data in transit across AWS Regions using Secure Sockets L
 Configure public access on the S3 bucket
 Create an IAM policy allowing read / write access to only this bucket and attach it to each user in the Development, Test and QA teams
 Attach an IAM policy which gives S3FullAccess to the Development, Test and QA IAM groups
->Use a bucket policy to allow read and write access to the Development, Test and QA IAM groups
+>> Use a bucket policy to allow read and write access to the Development, Test and QA IAM groups
 ```
 
 Allowing public access allows access for everyone, S3FullAccess will give the groups full access to all S3 buckets, attaching an IAM policy to each user in turn adds complexity as well as administrative overhead. The simplest way to do this is to use a bucket policy. Further information: https://docs.aws.amazon.com/AmazonS3/latest/dev/example-bucket-policies.html
@@ -358,7 +358,7 @@ Allowing public access allows access for everyone, S3FullAccess will give the gr
 ### Which four things are returned by GetFederationToken when a user successfully logs to AWS in using their Active Directory credentials?
 
 ```
->Access key, secret access key, session token, expiration
+>> Access key, secret access key, session token, expiration
 User name, temporary password, SAML token, expiration
 Access key, secret access key, token, presigned url
 A presigned url, secret access key, session token, expiration
@@ -370,7 +370,7 @@ A successful call to GetFederationToken returns: AccessKeyId, SecretAccessKey, S
 ### Which of the following mechanisms would you use to apply fine grained permissions on an object in S3?
 
 ```
->S3 ACL
+>> S3 ACL
 Key Policy
 Bucket Policy
 IAM Policy
@@ -382,9 +382,9 @@ Only ACLs allow you define object level permissions in S3. Further information: 
 ### Which of the following statements is correct in relation to user federation with Active Directory? (Choose 2)
 
 ```
->The user must browse to the ADFS sign-in page
+>> The user must browse to the ADFS sign-in page
 The user must browse to the AWS sign-in page
->Users do not need to have IAM credentials
+>> Users do not need to have IAM credentials
 All Active Directory users require corresponding IAM credentials within your AWS account
 ```
 
@@ -394,7 +394,7 @@ https://aws.amazon.com/blogs/security/enabling-federation-to-aws-using-windows-a
 ### Which of the following statements is correct in relation to S3 cross-region replication?
 
 ```
->SSL is enabled by default
+>> SSL is enabled by default
 SSL is disabled by default
 The source and destination bucket may be in the same region
 You are charged extra for SSL
@@ -406,7 +406,7 @@ S3 encrypts all data in transit across AWS Regions using Secure Sockets Layer (S
 ### You are configuring a CloudFront web distribution for your website hosted in S3. Your marketing team has already purchased a registered domain name that they would like to use for the new website. Which kind of SSL certificate would you use in this configuration?
 
 ```
->Use a custom SSL certificate with the certificate stored in ACM in us-east-1
+>> Use a custom SSL certificate with the certificate stored in ACM in us-east-1
 Use the default CloudFront certificate with the certificate stored in ACM in us-east-1
 Use the default CloudFront certificate with the certificate stored in IAM
 Use a custom SSL certificate with the certificate stored in ACM in us-east-2

@@ -13,11 +13,11 @@ Key Policy - a resource-based policy attached to CMKs which control access to th
 * `kms:viaService`: constrain CMK access so that it can only be used specified AWS services.
 
 Key Policy Example - create and use an encrypted Amazon Elastic Block Store (EBS) volume.
-```javascript
-// Allow IAM principal to generate a data key (encrypted by CMK) + decrypt data key (using same CMK)
-// Data key: used to encrypt data.
+```python
+# Allow IAM principal to generate a data key (encrypted by CMK) + decrypt data key (using same CMK)
+# Data key: used to encrypt data.
 {
-    "Sid": "Allow for use of this Key", // sid = a description for policy statements
+    "Sid": "Allow for use of this Key", # sid = a description for policy statements
     "Effect": "Allow",
     "Principal": {
         "AWS": "arn:aws:iam::111122223333:role/UserRole"
@@ -28,8 +28,8 @@ Key Policy Example - create and use an encrypted Amazon Elastic Block Store (EBS
     ],
     "Resource": "*"
 },
-// Allow IAM principal to create, list, revoke GRANTS (used to delegate subset of permissions to AWS services/principals to use your keys) for EC2 service.
-// EC2 will use delegated permissions to access an encrypted EBS volume, to re-attach it back to an instance if the volume gets detached due to a planned or unplanned outage.
+# Allow IAM principal to create, list, revoke GRANTS (used to delegate subset of permissions to AWS services/principals to use your keys) for EC2 service.
+# EC2 will use delegated permissions to access an encrypted EBS volume, to re-attach it back to an instance if the volume gets detached due to a planned or unplanned outage.
 {
     "Sid": "Allow for EC2 Use",
     "Effect": "Allow",

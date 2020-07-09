@@ -13,7 +13,7 @@ Key Policy - a resource-based policy attached to CMKs which control access to th
 * `kms:viaService`: constrain CMK access so that it can only be used specified AWS services.
 
 Key Policy Example - create and use an encrypted Amazon Elastic Block Store (EBS) volume.
-```json
+```javascript
 // Allow IAM principal to generate a data key (encrypted by CMK) + decrypt data key (using same CMK)
 // Data key: used to encrypt data.
 {

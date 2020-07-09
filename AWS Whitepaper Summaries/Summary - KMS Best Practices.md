@@ -51,8 +51,8 @@ Key Policy Example - create and use an encrypted Amazon Elastic Block Store (EBS
 ```
 
 Key Policies - Least Privilege / Separation of Duties
-* Ensure __Separation of Duty__ by NOT using __kms:*__ in an IAM or Key Policy: this grants both ADMINISTRATIVE and USAGE permissions on all CMKs to which the principal has access to.
-* Ensure __"Effect":"Deny"__ is NOT used with __"NotPrincipal"__: permissions are explicitly denied to all principals EXCEPT for the principals specified under `NotPrincipal`.
+* __Ensure Separation of Duty by NOT using "kms:*"__ in an IAM or Key Policy: this grants both ADMINISTRATIVE and USAGE permissions on all CMKs to which the principal has access to.
+* __Ensure "Effect":"Deny" is NOT used with "NotPrincipal"__: permissions are explicitly denied to all principals EXCEPT for the principals specified under `NotPrincipal`.
 
 Cross Account Sharing of Keys
 

@@ -12,7 +12,8 @@ Key Policy - a resource-based policy attached to CMKs which control access to th
 * To access an encrypted resource: (1) Principal needs permissions to use the resource (2) Principal needs permission to use the encryption key that protects the resource
 * `kms:viaService`: constrain CMK access so that it can only be used specified AWS services.
 
-Key Policy Example - create and use an encrypted Amazon Elastic Block Store (EBS) volume.
+Key Policy Example - create and delegate use of an encrypted Amazon Elastic Block Store (EBS) volume to an EC2.
+* __CMK Grants__ are used to delegate subset of permissions to AWS services/principals to use your keys.
 ```javascript
 // Allow IAM principal to generate a data key (encrypted by CMK) + decrypt data key (using same CMK)
 // Data key: used to encrypt data.
@@ -28,7 +29,7 @@ Key Policy Example - create and use an encrypted Amazon Elastic Block Store (EBS
     ],
     "Resource": "*"
 },
-// Allow IAM principal to create, list, revoke GRANTS (used to delegate subset of permissions to AWS services/principals to use your keys) for EC2 service.
+// Allow IAM principal to create, list, revoke CMK Grants for EC2 service.
 // EC2 will use delegated permissions to access an encrypted EBS volume, to re-attach it back to an instance if the volume gets detached due to a planned or unplanned outage.
 {
     "Sid": "Allow for EC2 Use",
@@ -51,14 +52,19 @@ Key Policy Example - create and use an encrypted Amazon Elastic Block Store (EBS
 ```
 
 Key Policies - Least Privilege / Separation of Duties
-* __Ensure Separation of Duty by NOT using "kms:*"__ in an IAM or Key Policy: this grants both ADMINISTRATIVE and USAGE permissions on all CMKs to which the principal has access to.
+* __Ensure Separation of Duty by NOT using "kms:*"__: in an IAM or Key Policy: this grants both ADMINISTRATIVE and USAGE permissions on all CMKs to which the principal has access to. Users with `kms:PutKeyPolicy` permission for a CMK can completely replace the Key Policy.
 * __Ensure "Effect":"Deny" is NOT used with "NotPrincipal"__: permissions are explicitly denied to all principals EXCEPT for the principals specified under `NotPrincipal`.
 
-Cross Account Sharing of Keys
+Cross Account Sharing of Keys (2 steps)
+1. __Key Policy__ for the CMK must give the __root principal of external account__ (or users/roles in the external account) permission to use the CMK.
+2. __IAM Policy__ must be attached to IAM users/roles in the external account to delegate permissions specified in the Key Policy. This is reliant on the trusted account to ensure that delegated permissions are LEAST PRIVILEGE..
 
-CMK Grants
-
-Encryption Context
+Encryption Context - an additional layer of authentication for KMS API calls
+* A optional key-value pair of data that can contain contextual information that you want associated with KMS-protected information. 
+* The key-value pair is incorporated into __Additional Authentication Data (AAD)__ in KMS-encrypted ciphertext.
+* If you use the encryption context value in ENCRYPTION, you must also use it in DECRYPTION of ciphertext.
+* The encryption context is NOT a secret - it appears in plaintext in CloudTrail Logs so you can use it to identity/categorise your cryptographic operations.
+* You can use encryption context inside Key Policies to enforce tighter controls for your encrypted resources.
 
 Multi-Factor Authentication
 

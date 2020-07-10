@@ -1,7 +1,5 @@
 # AWS Key Management Service Best Practices
 
-Test
-
 ## Identity and Access Management
 
 AWS KMS and IAM policies - use IAM Policies in combination with Key Policies to control access to CMKs
@@ -62,22 +60,51 @@ Cross Account Sharing of Keys (2 steps)
 2. __IAM Policy__ must be attached to IAM users/roles in the external account to delegate permissions specified in the Key Policy. This is reliant on the trusted account to ensure that delegated permissions are LEAST PRIVILEGE..
 
 Encryption Context - an additional layer of authentication for KMS API calls
-* A optional key-value pair of data that can contain contextual information that you want associated with KMS-protected information. 
-* The key-value pair is incorporated into __Additional Authentication Data (AAD)__ in KMS-encrypted ciphertext.
-* If you use the encryption context value in ENCRYPTION, you must also use it in DECRYPTION of ciphertext.
-* The encryption context is NOT a secret - it appears in plaintext in CloudTrail Logs so you can use it to identity/categorise your cryptographic operations.
-* You can use encryption context inside Key Policies to enforce tighter controls for your encrypted resources.
+* A optional key-value pair of data that can contain contextual information that you want associated with KMS-protected information. IF encryption context value is used in ENCRYPTION <-> must be used also in DECRYPTION.
+* __Additional Authentication Data (AAD)__: encryption context key-value pair is incorporated into AAD in KMS-encrypted ciphertext.
+* __Not a secret__: encryption context appears in plaintext in CloudTrail Logs so you can use it to identify/categorise cryptographic operations. Do NOT store sensitive info in the key-value pair.
+* __Limiting access/scope__: encryption context can be used to limit access to your resources e.g. only S3 buckets with context `bucket-name:helloworld` can be encrypted/decrypted under the CMK.
 
-Multi-Factor Authentication
+Multi-Factor Authentication - can be added via. conditional statement in CMK Key Policy to protect critical KMS calls
+* Example: Key Policy with critical KMS calls: `PutKeyPolicy`, `ScheduleKeyDeletion`, `DeleteAlias` and `DeleteImportedKeyMaterial`
+```javascript
+{
+    "Sid": "MFACriticalKMSEvents",
+    "Effect": "Allow",
+    "Principal": {
+        "AWS": "arn:aws:iam::111122223333/user/ExampleUser"
+    },
+    "Actions": [
+        "kms:DeleteAlias",
+        "kms:DeleteImportedKeyMaterial",
+        "kms:PutKeyPolicy",
+        "kms:ScheduleKeyDeletion"
+    ],
+    "Resource": "*",
+    "Condition": {
+        "NumericLessThan": {
+            "aws: MultiFactorAuthAge": "300"
+        }
+    }
+}
+```
 
 ## Detective Controls
 
-CMK Auditing
+_Detective Controls ensures that you properly configure AWS KMS to log the necessary information you need to gain greater visibility into your environment._
 
-CMK Use Validation
-* Key Tags
+CMK Auditing - KMS is integrated natively with CloudTrail
+* All KMS calls are automatically logged in files delivered to an S3 bucket that you specify.
+* Monitor for specific KMS calls such as `ScheduleKeyDeletion`, `PutKeyPolicy`, `DeleteAlias`, `DisableKey`, `DeleteImportedKeyMaterial` on your KMS keys.
+* KMS also produces CloudWatch Events when your CMK is rotated, deleted, and imported key material expires.
+
+CMK Use Validation - validate that your CMKs are being used properly / aigns with best practices
+* __AWS Config__: E.g. Config rule `ENCRYPTED_VOLUMES` can be used to validate that attached EBS volumes are encrypted.
+* __Key Tags__: A CMK can a tag applied to it, to correlate back to a business category e.g. cost center, application name, owner etc. Use CloudTrail to verify that the CMK being used belongs to the same cost center of the resource that the CMK is used on (e.g. Marketing CMK used on Marketing S3 Storage).
 
 ## Infrastructure Security
+
+_Infrastructure Security provides you with the best practices on how to configure AWS KMS to ensure that you have an agile implementation that can scale with your business, while protecting your sensitive information._
 
 Customer Master Keys: AWS-managed and Customer-managed CMKs
 

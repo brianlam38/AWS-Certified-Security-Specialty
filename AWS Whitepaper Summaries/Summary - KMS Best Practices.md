@@ -106,26 +106,59 @@ CMK Use Validation - validate that your CMKs are being used properly / aigns wit
 
 _Infrastructure Security provides you with the best practices on how to configure AWS KMS to ensure that you have an agile implementation that can scale with your business, while protecting your sensitive information._
 
-Customer Master Keys: AWS-managed and Customer-managed CMKs
+Customer Master Keys (CMKs) are used to:
+1. Encrypt DATA BLOCKS of up to __4KB__. OR;
+2. Encrypt DATA KEYS, which protect underlying data of ANY SIZE.
 
-Customer Master Keys: Key Creation and Management
+CMKs - AWS-managed CMK vs Customer-managed CMKs
+* __Creation__: AWS generated || Customer generated
+* __Rotation__: Once/3years automatically || Once/year opt-in manually
+* __Deletion__: Can't be deleted || Can't be deleted
+* __Scope of Use__: Limited to specific AWS service || Controlled via. KMS Key Policy /IAM Policy
+* __Key Access Policy__: AWS managed || Customer managed
+* __User Access Mgmt__: IAM policy || IAM policy
 
-Customer Master Keys: Key Aliases
+Customer-managed CMKs - 2 options for creating underlying key material
+1. KMS generates cryptographic key material for you.
+2. Customer imports their own cryptographic key material. Benefits include:
+    * Allows you to meet compliance requirements.
+    * Ability to set an expiration time for key material in AWS and manually delete it, but also make it available again in the future.
+    * Additional durability and disaster recovery as you can keep the key material outside of AWS.
 
-Using AWS KMS at Scale
+CMK Key Aliases - abstract CMK users away from underlying Region-specific key ID and key ARN
+* __Multi-region apps__: can benefit from using the same key alias to refer to CMKs in multiple-regions without worrying about key ID or key ARN.
+* __Recommended alias format__: `alias/<Environment>-<Function>-<Team>` e.g. `alias/development-mfakey-integrations`
+* CMK aliases can't be used within policies (Key Policies, IAM Policies, KMS Grants) as mapping of alias to keys can be manipulated outside the policy, which would allow privilege escalation.
+
+Using AWS KMS at Scale - Envelope Encryption
+* __Envelope Encryption__ can be used to encrypt a unique Data Key, which is used to encrypt plaintext data.
+* __Reduce no. of requests to AWS KMS__: decrypt the encrypted Data Key with the CMK once, then cache the plaintext Data Key for repeated use for X period of time.
+* __Enable Disaster Recovery__ by copying your encrypted data between Regions and only re-encrypting Data Keys with Region-specific CMKs.
+
 
 ## Data Protection
 
-Common AWS KMS Use Cases
+_Data Protection addresses some of the common use cases for using KMS to protect sensitive info_
 
-* Encrypting PCI Data Using AWS KMS
-* Secret Management Using AWS KMS and Amazon S3
-* Encrypting Lambda Environment Variables
-* Encryption Data within Systems Manager Paramter Store
-* Enforcing Data at Rest Encryption within AWS Services
-* Data at Rest Encryption with Amazon S3
-* Data at Rest Encryption with Amazon EBS
-* Data at Rest Encryption with Amazon RDS
+USE CASE: Encrypting PCI Data Using AWS KMS
+* KMS service meets requirements of PCI DSS Level 1 certification.
+* __Reduce burden of managing encryption libraries__: encrypt Primary Account Number (PAN) data with a CMK.
+* __KMS requests are logged in CloudTrail__: CMK use can be audited easily.
+
+USE CASE: Secret Management Using AWS KMS and Amazon S3
+* 
+
+Encrypting Lambda Environment Variables
+
+Encryption Data within Systems Manager Paramter Store
+
+Enforcing Data at Rest Encryption within AWS Services
+
+Data at Rest Encryption with Amazon S3
+
+Data at Rest Encryption with Amazon EBS
+
+Data at Rest Encryption with Amazon RDS
 
 ## Incident Response
 

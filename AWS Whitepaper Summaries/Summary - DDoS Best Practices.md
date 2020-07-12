@@ -82,7 +82,7 @@ Blocking access to origin #2: by __only allowing requests from CloudFront__. Mal
 2. Create Lambda to update SG rules dynamically, triggered by an `AmazonIPSpaceChanged` SNS topic (AWS updating their internal IP ranges).
 3. Use the `X-Shared-Secret` header to validate that requests sent to your origin are coming from CloudFront.
 
-Protectin API endpoints: by using __Amazon API Gateway__.
+Protecting API endpoints: by using __Amazon API Gateway__.
 * Configure CF distributions to include the a custom header `x-api-key`, sent to your origin endpoint.
 * Configure standard or burst rate limits for each REST API method.
 

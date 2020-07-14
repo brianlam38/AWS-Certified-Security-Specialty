@@ -1,31 +1,23 @@
-# Intro
+# AWS Security 101
 
-## Exam
-
-Must hold an AWS Certified Associate certification to take the exam.
-
-IAM will be the majority of the exam = the key to pass the exam.
-
-
-
-## Security Basics
+### Security Basics
 
 CIA
-* Confidentiality: IAM, MFA, bucket policies, security groups, ACL's within VPC's, KMS encryption etc.
-* Integrity: Certificate Manager (SSL), IAM, bucket policies, S3 version control, MFA for S3 deletion etc.
-* Availability: Autoscaling, Multi-AZs, Route53 health checks etc.
+* __Confidentiality__: IAM, MFA, bucket policies, security groups, ACL's within VPC's, KMS encryption etc.
+* __Integrity__: Certificate Manager (SSL), IAM, bucket policies, S3 version control, MFA for S3 deletion etc.
+* __Availability__: Autoscaling, Multi-AZs, Route53 health checks etc.
 
 AAA
-* Authentication: auth into IAM user/role
-* Authorization: IAM policies to defined access
-* Accounting: audit trail i.e. CloudTrail
+* __Authentication__: auth into IAM entity (user/role)
+* __Authorization__: IAM policies to define access
+* __Accounting__: audit trail i.e. CloudTrail
 
 Non-repudiation
 * Not being able to deny something has happened.
 * CloudTrail, CloudWatch.
 
 
-## How does AWS Secure their Stuff?
+### How does AWS Secure their Stuff?
 
 Physical and Environmental Security
 * AWS consist of regions, with 2+ availability zones, each made up of multiple data centres.
@@ -66,8 +58,7 @@ Exam Tips
 * Remember that the corporate Amazon.com network is completely segregated from the AWS network. Permissions / reviews are requried when an employee wants to access AWS. Permissions are revoked as soon as nologin for 90 days.
 
 
-
-## Shared Responsibility Model
+### Shared Responsibility Model
 
 What is it?
 * Security WITHIN the cloud is the responsibility of the customer.
@@ -91,17 +82,16 @@ https://aws.amazon.com/compliance/shared-responsibility-model/
 Basically, if the customer has no access to the underlying OS/software/infrastructure, then it is AWS's responsibility.
 
 
-
-## Shared Responsibility - AWS service types
+### Shared Responsibility - AWS service types
 
 Infrastructure services - compute services such as EC2, EBS, Auto Scaling, VPC
-* You can architecture and build cloud infra, control the OS, configure and operate any identity management system that provides access to the user layer of the virtualization stack.
+* You can architect and build cloud infrastructure, control the OS, configure and operate any identity management system that provides access to the user layer of the virtualization stack.
 * EC2 - AMIs, OS, applications, data in transit, data at rest, data stores, credentials, policies and configuration.
 
 Container services - services such as RDS, Elastic Map Reduce (EMR) and Elastic Beanstalk.
 * RDS example - you have a DB that you can install/access but you don't manage the underlying OS. AWS is responsible for patching for the RDS instance.
-* Services that are typically run on separate EC2s or other infrastructure instances. Sometimes you don't manage the OS or platform player.
-* Customer is responsible for setting up and managing network controls such as firewall rules, managing platform-level identity and acecss management separately from IAM.
+* Services that are typically run on separate EC2s or other infrastructure instances. Sometimes you don't manage the OS or platform layer.
+* Customer is responsible for setting up and managing network controls such as firewall rules, managing platform-level identity and access management separately from IAM.
 
 Abstracted services - services such as S3, Glacier, DynamoDB, SQS, SES.
 * Services that abstract the platform or management layer on which you can build and operate cloud applications.
@@ -115,39 +105,23 @@ Exam Tips: Have a STRONG understanding of the shared responsibility model.
 3. Abstracted services (S3, Glacier, DynamoDB, SQS, SES) - AWS responsible for almost everything, except for the application layer e.g. TLS / access controls.
 
 
-
-## Security IN AWS
+### Security IN AWS
 
 Controls that you need:
-1. Visibility
-* AWS Config - managed and custom rules
-2. Auditability
-* AWS CloudTrail - records every API call in the environment
-3. Controllability
+1. __Visibility__: AWS Config - managed and custom rules
+2. __Auditability__: AWS CloudTrail - records every API call in the environment
+3. __Controllability__:
 * AWS KMS - multi-tenant. Underlying hardware is shared, but strict controls.
-* AWS CloudHSM (hardware security module) - dedicated. Underlying hardware is NOT shared.
-    * Exam: Which service is required for FIPS 140-2 Compliance? - CloudHSM as KMS being multi-tenant/shared does not comply.
-4. Agility (how quickly can we adapt to changes)
+* AWS CloudHSM (hardware security module) - dedicated. Underlying hardware is NOT shared. __Exam: Which service is required for FIPS 140-2 Compliance? - CloudHSM as KMS being multi-tenant/shared does not comply.__
+4. __Agility__:
 * AWS CloudFormation - deploy templates to any regions
-* AWS Elastic Beanstalk - AWS provision resources for you, rather than you doing it each service manually to create an example (as an example)
-5. Automation (are processes repeatable?
+* AWS Elastic Beanstalk - AWS provision resources for you, rather than you doing it each service manually
+5. __Automation__:
 * AWS OpsWorks - operate alongside CF / EB
 * AWS CodeDeploy - operate alongside CF / EB
-6. Scale
-* Every customer gets the same AWS security foundations, from a startup to a Fortune 500 company.
+6. __Scale__: Every customer gets the same AWS security foundations, from a startup to a Fortune 500 company.
 
 Other services applying to all controls
-* AWS IAM - creaiting users, password policies, MFA, groups
+* AWS IAM - creating users, password policies, MFA, groups
 * AWS CloudWAtch - monitor environment, see breaches, CPU runtime
-* AWS Trusted Advisor - advises on security, budgeting, primarily warn if security groups are open to the world.
-
-
-
-## Intro and Security101 Summary / Exam Tips
-
-Understanding 3 models:
-1. CIA
-2. AAA
-3. Non-repudiation
-
-
+* AWS Trusted Advisor - advises on security, budgeting, system performance and reliability

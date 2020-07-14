@@ -145,20 +145,55 @@ USE CASE: Encrypting PCI Data Using AWS KMS
 * __Reduce burden of managing encryption libraries__: encrypt Primary Account Number (PAN) data with a CMK.
 * __KMS requests are logged in CloudTrail__: CMK use can be audited easily.
 
-USE CASE: Secret Management Using AWS KMS and Amazon S3
-* 
+USE CASE: Manage secrets using KMS and S3
+1. Create an S3 bucket to hold secrets -> deploy bucket policy to limit access to authorized individuals/services.
+2. Each secret is stored using a prefix to allow for granular access control to the secret -> each secret encrypted with a specific customer-managed CMK.
+3. Enable S3 access logging or CloudTrail Data Events for audit purposes.
+4. A user/service that requires access to the secret assume an identity that has permissions to use both the S3 OBJECT in the bucket and the KMS KEY.
 
-Encrypting Lambda Environment Variables
+USE CASE: Encrypting Lambda Environment Variables
+* Lambda env vars are encrypted using AWS-managed KMS by default.
+* __Enable encryption helpers__ to individually encrypt env vars using a customer-managed CMK.
 
-Encryption Data within Systems Manager Paramter Store
+USE CASE: Encryption Data within Systems Manager Parameter Store
+*__Parameter Store Secure String__ values are encrypted using AWS-managed or Customer-managed CMKs then decrypted when processing the Secure String value on a managed instance.
 
-Enforcing Data at Rest Encryption within AWS Services
+USE CASE: Data at Rest Encryption with Amazon S3 (using SSE-KMS)
+* __S3 Server-Side Encryption__: Deploy an S3 bucket which enforces all objects are encrypted BEFORE being uploaded to the bucket.
+* SSE-KMS Bucket Policy:
+```javascript
+{
+    "Version": "2012-10-17",
+    "Id": "PutObjPolicy",
+    "Statement": [
+        "Sid": "DenyUnencryptedObjectUploads",
+        "Effect": "Deny",
+        "Principal": "*",
+        "Action": "s3:PutObject",
+        "Resource": "arn:aws:s3:::YourBucket/*",
+        "Condition": {
+            "StringNotEquals": {
+                "s3:x-amz-server-side-encryption": "aws:kms"
+            }
+        }
+    ]
+}
+```
 
-Data at Rest Encryption with Amazon S3
+USE CASE: Data at Rest Encryption with Amazon EBS
+* __Encrypt EBS volumes with KMS__: Data is encrypted at rest + decrypted at the hypervisor of the EC2 that uses the EBS volume on an AS-NEEDED BASIS.
+* __Enforce EBS encryption #1__: Upon EBS volume creation requests, check that `CreateVolume` parameter ENCRYPTED=TRUE.
+    * If value is not TRUE, prevent IAM entity from creating volume.
+* __Enforce EBS encryption #2__: Use CloudTrail to monitor for new EBS volumes being created -> trigger Lambda to respond to unencrypted volume && check KMS key used for encryption (to make sure its the correct one).
+    * Lambda can automatically delete EC2 that has the unencrypted volume.
+    * Lambda can automatically quarantine EC2 by preventing inbound connectings via. Security Group rules.
+    * Lambda can simply trigger SNS topic to alert security of unencrypted volume.
+    * Lambda can call the `CopyImage` API to create a new encrypted version of the EBS -> automatically attach it to the instance -> delete the old EBS volume.
 
-Data at Rest Encryption with Amazon EBS
+USE CASE: Data at Rest Encryption with Amazon RDS
+* __RDS relies on EBS to provide encryption of database volumes__: Create an encrypted database instance -> RDS creates an encrypted EBS volume to store the database.
+* __Enforce EBS encryption via. Lambda__: Lambda to monitor for `CreateDBInstance` calls via. CloudTrail -> ensure `KmsKeyId` parameter is set to the expected CMK -> react to failures.
 
-Data at Rest Encryption with Amazon RDS
 
 ## Incident Response
 

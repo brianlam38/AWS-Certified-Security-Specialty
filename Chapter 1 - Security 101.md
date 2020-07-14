@@ -108,18 +108,18 @@ Exam Tips: Have a STRONG understanding of the shared responsibility model.
 ### Security IN AWS
 
 Controls that you need:
-__1. Visibility__: AWS Config - managed and custom rules
-__2. Auditability__: AWS CloudTrail - records every API call in the environment
-__3. Controllability__:
-* AWS KMS - multi-tenant. Underlying hardware is shared, but strict controls.
-* AWS CloudHSM (hardware security module) - dedicated. Underlying hardware is NOT shared. __Exam: Which service is required for FIPS 140-2 Compliance? - CloudHSM as KMS being multi-tenant/shared does not comply.__
-__4. Agility__:
-* AWS CloudFormation - deploy templates to any regions
-* AWS Elastic Beanstalk - AWS provision resources for you, rather than you doing it each service manually
-__5. Automation__:
-* AWS OpsWorks - operate alongside CF / EB
-* AWS CodeDeploy - operate alongside CF / EB
-__6. Scale__: Every customer gets the same AWS security foundations, from a startup to a Fortune 500 company.
+* __Visibility__: AWS Config - managed and custom rules
+* __Auditability__: AWS CloudTrail - records every API call in the environment
+* __Controllability__:
+    * AWS KMS - multi-tenant. Underlying hardware is shared, but strict controls.
+    * AWS CloudHSM (hardware security module) - dedicated. Underlying hardware is NOT shared. __Exam: Which service is required for FIPS 140-2 Compliance? - CloudHSM as KMS being multi-tenant/shared does not comply.__
+* __Agility__:
+    * AWS CloudFormation - deploy templates to any regions
+    * AWS Elastic Beanstalk - AWS provision resources for you, rather than you doing it each service manually
+* __Automation__:
+    * AWS OpsWorks - operate alongside CF / EB
+    * AWS CodeDeploy - operate alongside CF / EB
+* Scale__: Every customer gets the same AWS security foundations, from a startup to a Fortune 500 company.
 
 Other services applying to all controls
 * AWS IAM - creating users, password policies, MFA, groups

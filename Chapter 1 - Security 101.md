@@ -108,18 +108,18 @@ Exam Tips: Have a STRONG understanding of the shared responsibility model.
 ### Security IN AWS
 
 Controls that you need:
-1. __Visibility__: AWS Config - managed and custom rules
-2. __Auditability__: AWS CloudTrail - records every API call in the environment
-3. __Controllability__:
+__1. Visibility__: AWS Config - managed and custom rules
+__2. Auditability__: AWS CloudTrail - records every API call in the environment
+__3. Controllability__:
 * AWS KMS - multi-tenant. Underlying hardware is shared, but strict controls.
 * AWS CloudHSM (hardware security module) - dedicated. Underlying hardware is NOT shared. __Exam: Which service is required for FIPS 140-2 Compliance? - CloudHSM as KMS being multi-tenant/shared does not comply.__
-4. __Agility__:
+__4. Agility__:
 * AWS CloudFormation - deploy templates to any regions
 * AWS Elastic Beanstalk - AWS provision resources for you, rather than you doing it each service manually
-5. __Automation__:
+__5. Automation__:
 * AWS OpsWorks - operate alongside CF / EB
 * AWS CodeDeploy - operate alongside CF / EB
-6. __Scale__: Every customer gets the same AWS security foundations, from a startup to a Fortune 500 company.
+__6. Scale__: Every customer gets the same AWS security foundations, from a startup to a Fortune 500 company.
 
 Other services applying to all controls
 * AWS IAM - creating users, password policies, MFA, groups

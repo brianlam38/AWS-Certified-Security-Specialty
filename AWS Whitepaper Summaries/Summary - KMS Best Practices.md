@@ -197,6 +197,10 @@ USE CASE: Data at Rest Encryption with Amazon RDS
 
 ## Incident Response
 
-Security Automation of AWS KMS
+__Use Lambda to automate IR__: Monitor CMK actions that indicate compromise -> Lambda disables CMK or other reactive measure.
 
 Deleting and Disabling CMKs
+* __MINIMUM 7-DAY to 30-DAYS waiting period is enforced by KMS before a CMK is truly deleted.__ `kms:ScheduleKeyDeletion`
+* __"Pending Deletion"__ state of a CMK means it can't be used for encrypt/decrypt operations.
+* __Use CloudTrail to detect kms:ScheduleKeyDeletion__ to reverse accidental or malicious key deletion.
+* __CMK with Imported Key Material__ can be deleted immediately with `kms:DeleteImportedKeyMaterial`, making CMK unusable with NO WAITING PERIOD. If you lose the Key Material locally, then you will NOT be able to access encrypted data anymore.

@@ -12,18 +12,14 @@ S3 Bucket Policy / ACL / IAM conflicts:
     4. Does a policy have an ALLOW? ( YES = ALLOW | NO = DENY)
 
 S3 Cross-Region Replication (CRR)
-* __AUDIT account__: best CRR example
-    1. CloudTrail logs AWS accounts XYZ.
-    2. Turn on CRR to replicate logs to AUDIT account.
-    3. AWS accounts XYZ can only replicate logs, but not read/write logs in AUDIT account.
+* __CRR AUDIT account use case__: CloudTrail logs accounts XYZ -> turn on CRR to replicate CloudTrail logs to AUDIT -> XYZ can only replicate logs, but NOT read/write logs in audit.
 * CRR replicates: new objects (_encrypted w/ SSE-S3 or SSE-KMS + unencrypted_), metadata, ACL updates, tags
 * CRR NOT replicate: objects before CRR, objects encrypted by SSE-C, objects which bucket owner does NOT have permissions, object deletes of a specific version.
 
 Secure S3 bucket access via. CloudFront Origin Access Identity
 1. Goto CloudFront -> __Origins and Origin Groups__
 2. Turn on __Restrict Bucket Access__ -> Create an __Origin Access Identity__
-3. Turn on __Grant Read Permissions on Bucket__ to allow CloudFront OAI to perform `s3:GetObject`
-Resulting Policy:
+3. Turn on __Grant Read Permissions on Bucket__ to allow CloudFront OAI to perform `s3:GetObject` | Resulting Policy:
 ```javascript
 {
 	"Sid": "1",
@@ -34,6 +30,14 @@ Resulting Policy:
 	"Action": "s3:GetObject",
 	"Resource": "arn:aws:s3:::AWSDOC-EXAMPLE-BUCKET/*"
 }
+```
+
+Secure S3 object access via. Presigned-URL
+* Presign URL with 300s expiry: `$ aws s3 presign s3://acloudgurupresigned/hello.txt --expires-in 300`
+* URL example: https://acloudgurupresigned.s3.amazonaws.com/OBJECT.txt?AWSACcessKeyId=XXX&Expires=XXX&x-amz-security-token=XXX&Signature=XXX
+
+
+
 
 
 ## Chapter 3 - Logging and Monitoring

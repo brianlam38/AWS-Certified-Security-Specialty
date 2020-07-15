@@ -207,9 +207,10 @@ S3 bucket policy to restrict access via. CloudFront:
 }
 ```
 
-## Using SSL Certificates using CloudFront
+### Using SSL Certificates using CloudFront
 
-DEFAULT SSL CERTIFICATE: If you have happy for users to access your content using *.cloudfront.net domain name.
+DEFAULT SSL CERTIFICATE: If you are happy for users to access your content using *.cloudfront.net domain name.
+
 CUSTOM SSL CERTIFICATE: If you want to use a domain name that you own example.com.
 
 You must store your custom SSL Certificate using:
@@ -217,7 +218,7 @@ You must store your custom SSL Certificate using:
 * AWS Certificate Manager (ACM)
 * Only in the `us-east-1` region = US East (N. Virginia)
 
-## Secure S3 Using Pre-Signed URLs
+### Secure S3 Using Pre-Signed URLs
 
 Another method of accessing objects inside S3 - done via. SDKs (Python, Java, Go) or CLI.
 
@@ -230,7 +231,7 @@ $ aws s3 presign s3://acloudgurupresigned/hello.txt --expires-in 300 # presign U
 https://acloudgurupresigned.s3.amazonaws.com/hello.txt?AWSACcessKeyId=XXX&Expires=XXX&x-amz-security-token=XXX&Signature=XXX
 ```
 
-## Security Token Service (STS) (IMPORTANT EXAM TOPIC)
+### Security Token Service (STS) (IMPORTANT EXAM TOPIC)
 
 STS grants users limited and temporary access to AWS resources.
 

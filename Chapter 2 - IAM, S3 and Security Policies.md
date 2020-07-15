@@ -1,7 +1,5 @@
 # Identity Access Management, S3 & Security Policies
 
-Understanding IAM inside-out is crucial to passing this course.
-
 IAM provides:
 * Centralised control of your AWS account
 * Shared access to your AWS account
@@ -19,7 +17,7 @@ Critical Terms:
 * Roles - assign roles to AWS resources (e.g. EC2, Lambdas)
 * Policies - document that defines permissions
 
-IAM is global - users, groups, roles, policies are done on a global level, not region-specific.
+__IAM is global__ - users, groups, roles, policies are done on a global level, not region-specific.
 
 IAM Permissions Boundary for IAM Entities (users/roles)
 * A Permissions Boundary is using a managed policy to set the _maximum permissions_ that an identity-based policy can grant to an IAM entity.
@@ -27,9 +25,9 @@ IAM Permissions Boundary for IAM Entities (users/roles)
 * https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_iam-condition-keys.html#ck_PermissionsBoundary
 
 
-## IAM Root User Scenario
+### IAM Root User Scenario
 
-Scenario: You have have started as a sysadmin at a cloud-based company. Previous admin used only the root-user.
+_Scenario: You have have started as a sysadmin at a cloud-based company. Previous admin used only the root-user._
 
 First thing to do = rotate everything
 * Change password
@@ -37,68 +35,58 @@ First thing to do = rotate everything
 * Delete Access Key ID / Secret Access Key (don't create new access keys via. root user)
 * Verify and delete IAM users that are not-legitimate.
 
-## IAM Policies
+### IAM Policies
 
 IAM policies specify what you are allowed to do with any AWS resource. You attach IAM policies to users, groups or roles.
 
 Types of IAM policies:
-* AWS Managed Policies
-* Customer Managed Policies
-* Inline Policies
+* __AWS Managed Policies__: standalone policy managed by AWS. Managed policy `AWS Administrator` has access to IAM, whereas `AWS PowerUser` does not.
+* __Customer Managed Policies__: standalone policy that you create and manage.
+* __Inline Policies__: Used if you want to maintain a strict ONE-TO-ONE relationship between policy and the principal entity that its applied to.
 
-AWS Managed Policies:
-* Standalone policy created / administered by AWS, which occasionally changes.
-* Managed policy AWS Administrator has access to IAM, whereas PowerUser does not.
 
-Customer Managed Policies:
-* Standalone policy that you administer in your own AWS account.
+### S3 Bucket Policies
 
-Inline Policies:
-* Used if you want to maintain a strict one-to-one relationship between a policy and the principal entity that its applied to.
-* E.g. you want to be sure that permissions in a policy are not unintentionally assigned to a principal other than the one that the policy is intended for.
-* Inline policies don't show up in the exam much.
-
-## S3 Bucket Policies
-
-S3 bucket policies specify what actions are allowed ot denied on the bucket.
+S3 bucket policies specify what actions are allowed or denied on the bucket.
 * They are attached only to S3 buckets.
-* They are bucket-level only (not bucket object-level).
+* They are BUCKET-LEVEL only (not bucket object-level).
 
 Why use S3 policy instead of IAM policy
 * You want to grant cross-account access to your S3 environment, without using IAM roles.
 * Your IAM policies reach the size limit (2kb for users, 5kb for groups, 10kb for roles). S3 supports bucket policies of up to 20kb.
-* You prefer to keep access control policies in the S3 env.
+* You prefer to keep access control policies in the S3 environment.
 
-S3 Policy best use case: management of individual S3 buckets
-* Having a deny policy for a specific bucket is easier than creating an IAM policy that denies access to a specific bucekt, then rolling that out to every user in your organisation.
+__Management of individual S3 buckets__ = best use case of S3 bucket policies.
+* Having a deny policy for a specific bucket is easier than creating an IAM policy that denies access to a specific bucket, then rolling that out to every user in your organisation.
 * Example scenario: bucket could contain everyone's performance reviews in it.
 
-Use the "AWS Policy Generator" to generate a S3 bucket policy.
+Use the __AWS Policy Generator__ to generate a S3 bucket policy.
 
-S3 Policy "EXPLICIT DENY" will always override an "ALLOW".
+In any AWS policy (IAM, S3, Key), a __DENY will always override an ALLOW__.
 
-## S3 Object Access Control Lists (ACLs)
+
+### S3 Object Access Control Lists (ACLs)
 
 S3 ACLs are a legacy access control mechanism. AWS recommends sticking to IAM policies and S3 bucket policies.
-However, S3 ACLs can be applied to individual objects/files as opposed to S3 bucekt policies.
+However, S3 ACLs can be applied to individual objects/files as opposed to S3 bucket policies.
 
 S3 ACL use cases:
-* If you nede fine grained permissions on individual files/objects.
-* Reachign size limit of 20kb for S3 bucket policies.
+* If you need __fine grained permissions__ on individual files/objects.
+* Reaching __size limit of 20kb__ for S3 bucket policies.
 
 Managing S3 object permissions
 * Click on object itself -> permissions
 * Applying S3 object policies to individual IAM users - possible but can only be done via. CLI or AWS API (not console).
 * Add S3 object access for other AWS Accounts by adding Account ID.
 
-Conflict policy example: IAM user policy denying all S3 read vs. S3 bucket with object open to the public.
+__Conflict policy example__: IAM user policy denying all S3 read vs. S3 bucket with object open to the public.
 * Even though an explicit DENY overrides all ALLOW policies... the user would still be able to access the object. WHY??? =>
 * The user CAN access objects in the public bucket via. the public bucket link (as an anonymous user).
 * The user CANNOT access objects in the public bucket via. opening the object within AWS console/CLI/API (as an AWS user).
 
 EXAM: Best exam practise is by creating your own S3 Bucket Policies, S3 Object ACLs, IAM User Policies etc.
 
-## Policy Conflicts (EXAM ESSENTIAL TOPIC)
+### Policy Conflicts (EXAM ESSENTIAL TOPIC)
 
 What happens if an IAM policy conflicts with an S3 policy which conflicts with an S3 ACL?
 
@@ -107,7 +95,7 @@ Whenever an AWS principal (user, group or role) issues a request to S3, the auth
 Least-privilege:
 * Decisions ALWAYS default to DENY.
 * An explicit DENY ALWAYS trumps an ALLOW.
-* So if you DENY access to something somewhere and then something else allows acecssm the DENY will override the ALLOW.
+* So if you DENY access to something somewhere and then something else allows access the DENY will override the ALLOW.
 
 ACCESS DENIED EXAMPLES:
 * IAM policy grants access to an object + S3 bucket policy denies access to object + no S3 ACL exists.
@@ -116,21 +104,16 @@ ACCESS DENIED EXAMPLES:
 ACCESS ALLOWED EXAMPLE:
 * No method specifies a DENY + one or more methods specify an ALLOW.
 
-Policy conflict flow:
+__Policy Conflict flow__:
 1. Decision starts at DENY by default.
-2. Any applicable policies?
-    -> YES = CONTINUE
-    -> NO = DENY (0 allow/deny)
-3. Does a policy have an EXPLICIT DENY?
-    -> YES = DENY
-    -> NO = CONTINUE
-4. Does a policy have an ALLOW?
-    -> YES = ALLOW
-    -> NO = DENY (0 allow/deny)
+2. Any applicable policies? ( YES = CONTINUE | NO = DENY )
+3. Does a policy have an EXPLICIT DENY? ( YES = DENY | NO = CONTINUE )
+4. Does a policy have an ALLOW? ( YES = ALLOW | NO = DENY)
 
 This flow will be examined heavily with scenarios containing 2-3 different policies.
 
-## Forcing Encryption on S3
+
+### Forcing Encryption on S3
 
 Use S3 bucket policy to enforce encryption - prevent read without SSL enabled:
 ```json
@@ -152,24 +135,24 @@ Use S3 bucket policy to enforce encryption - prevent read without SSL enabled:
 
 ### Cross-Region Replication
 
-Cross-region replication replicates objects from one region to another.
-By default, this is done using SSL. You don't need to enable encryption.
+Cross-region replication replicates objects from one region to another. By default, this is done using SSL. You don't need to enable encryption.
 
 You can replicate objects from a source bucket to only one destination bucket (1-1 relationship).
 After S3 replicates an object, the object can't be replicated again.
 
 Cross-Region Replication (CRR) requirements:
-* Src/dest buckets must have versioning enabled.
-* Src/dest buckets must be in different AWS regions.
-* Amazon S3 must have permissions to replicate objects from src/dest bucket on your behalf. When you enable CRR for the first time, a role will be created for you + a customer-managed policy will be assigned.
+* Src/dest buckets must have __versioning enabled__.
+* Src/dest buckets must be in __different AWS regions__.
+* Amazon S3 must have permissions to replicate objects from src/dest bucket on your behalf. When you enable CRR for the first time, a __role will be created__ for you + a __customer-managed policy__ will be assigned.
 * If src bucket owner also owns the object, the bucket owner has full permissions to replicate the object. If not, object owner must grant the bucket owner `READ`/`READ_ACP` permissions via. the object ACL.
 
 CRR Cross Accounts:
 * The IAM role must have permissions to replicate objects in the destination bucket.
 * In CRR config, you can optionally direct AWS S3 to change ownership of object replicas to the AWS account that owns the destination bucket.
-* GOOD USE-CASE: CloudTrail auditing - have CT log everything inside an AWS account, turn on CRR and replicate audit logs to another AWS account. The AWS account will only have permission to replicate the objects, but not read,edit,delete CT logs. So you have a separate AUDIT account that contains all log data which can't be touched.
-
-Best-practice to have a separate AWS account, turn on Cross-Region Replication, have your CloudTrail logs replicated to an AWS "AUDIT ACCOUNT" and you can't go in and read, write, delete those logs.
+* __AUDIT account Cross-Region Replication use case__:
+1. CloudTrail logs AWS accounts XYZ.
+2. Turn on CRR to replicate logs to AUDIT account.
+3. AWS accounts XYZ can only replicate logs, but not read/write logs in AUDIT account.
 
 What is replicated?
 * New objects created after you add a replication config.
@@ -180,21 +163,22 @@ What is replicated?
 * S3 replicates only objects in the src bucket for which the bucket owner has permissions to read objects and read access control lists.
 
 DELETE marker replication
-* Delete markers on an object are replicated. Deleted versions of objects are NOT replicated.
+* Delete markers on an object are replicated. Deletion of versions of objects are NOT replicated.
 * A delete marker only hides an object via. versioning, not actually delete it.
 
 What is NOT replicated
-* Anything created BEFORE CRR is turned on.
-* Objects created with SSE using customer-provided (SSE-C) encryption keys.
-* Objects created with SSE using AWS KMS-managed encryption (SSE-KMS) keys, unless you explicitly enable this option.
-* Objects in the src bucket for which the bucket owner does NOT have permissions (happens when the obj owner is different from the bucket owner).
-* Deletes to a particular VERSION of an object. This is a security mechanism. Stops being maliciously deleting versions of a file.
+* Anything created __BEFORE CRR is turned on__.
+* Objects created with SSE using __customer-provided (SSE-C)__ encryption keys.
+* Objects created with SSE using __AWS KMS-managed encryption (SSE-KMS)__ keys, unless you explicitly enable this option.
+* Objects in the src bucket for which the __bucket owner does NOT have permissions__ (happens when the obj owner is different from the bucket owner).
+* Delete replication of a particular VERSION of an object. Source bucket deletion != dest bucket deletion. This is to stop malicious deletion of a specific version on an object.
 
 Resources:
 * Cross-Region Replication: https://docs.aws.amazon.com/AmazonS3/latest/dev/replication.html
 * What does S3 replicate: https://docs.aws.amazon.com/AmazonS3/latest/dev/replication-what-is-isnot-replicated.html
 
-## Securing S3 Using CloudFront
+
+### Securing S3 Using CloudFront
 
 Force users to only access S3 via. CloudFront instead of direct access via. S3 URL.
 
@@ -205,11 +189,23 @@ Steps to create a new CF distribution:
 4. Restrict Bucket Access -> NO (exam will test how to restrict AFTER a distribution has already been created)
 5. Everything as default
 
-Steps to secure the CF distribution:
-1. CloudFront service
-2. Select distribution -> Distribution Settings -> Origins -> Select Origin -> Edit
-3. "Restrict Bucket Access" = YES. You need an "Origin Access Identity" - a special CF user (an origin access identity) to your origin.
-4. "Grant Read Permissions on Bucket" = YES. So CF can update the bucket policy for you.
+Steps to secure S3 bucket via. CF:
+1. Goto CloudFront -> __Origins and Origin Groups__
+2. Turn on __Restrict Bucket Access__ -> Create an __Origin Access Identity__
+3. Turn on __Grant Read Permissions on Bucket__ to allow CloudFront OAI to perform `s3:GetObject`
+
+S3 bucket policy to restrict access via. CloudFront:
+```javascript
+{
+	"Sid": "1",
+	"Effect": "Allow",
+	"Principal": {
+		"AWS": "arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity EAF5XXXXXXXXX"
+		},
+	"Action": "s3:GetObject",
+	"Resource": "arn:aws:s3:::AWSDOC-EXAMPLE-BUCKET/*"
+}
+```
 
 ## Using SSL Certificates using CloudFront
 

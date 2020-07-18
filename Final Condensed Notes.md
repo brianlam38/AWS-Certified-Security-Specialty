@@ -118,4 +118,33 @@ AWS CloudWatch: real-time monitoring for resources and applications (utilisation
 	* RULE: A rule matches incoming events and route them to one or more targets.
 	* TARGET: A target processes events. Targets include Lambda, SNS topics, SQS queues, Kinesis Streams and more.
 
-AWS Config: 
+AWS Config: continuously monitors and records AWS resource configurations and allows you to automate evaluation of recorded configurations against desired configs.
+* __Provides__: configuration snapshots, logs config changes of AWS resources, automated compliance checking.
+* __Enables__: compliance auditing, security analysis, resource tracking (what resource we're using and where)
+* How AWS Config works: resource configuration changes -> AWS Config invokes `List`/`Describe` API call -> updating config is recorded as __Configuration Items__ and delivered in a __Configuration Stream__ to an S3 bucket.
+* How __AWS Config Rules__ work: resource configuration changes -> AWS invokes custom/managed-rule's Lambda -> Lambda returns a compliance status.
+* __Use CloudTrail to gain deeper insights__: by getting an answer on _"Who made an API call to modify the configuration of this resource?"_
+
+__Root User Monitoring via. CloudWatch__: setting up an alert for Root User API activity
+1. Enable delivery of CloudTrail events to a CloudWatch Logs log-group.
+	* A role is required for CT to perform CloudWatch API calls. Two calls are performed:
+	* `CreateLogStream`: Create a CloudWatch Logs log-stream in the CloudWatch Logs log-group you specify.
+	* `PutLogEvents`: Deliver CloudTrail events to the CloudWatch Logs logs-stream.
+2. Select the CW log-group -> create a __CW Metric Filter__ (_defines terms/patterns to look for in log-data_) using filter: `{ $.userIdentity.type = "Root" && $.userIdentity.invokedBy NOT EXISTS && $.eventType != "AwsServiceEvent" }` -> assign Metric Filter "e.g. RootAccountUsage" to Metric "e.g. RootAccountUsageCount.
+3. Create a __CW Alarm__: select Metric created above -> set a threshold level e.g.`THRESHOLD >= 1` -> set an action when an alarm-state occurs e.g. send SNS notification.
+
+AWS Inspector: automated security assessment service to improve security/compliance of applications in your AWS account
+* How it works: assessment performed -> prioritised findings produced -> findings can be reviewed directly or exported as a report via. Inspector or API
+* __Assessment Template__ is a configuration you define your assessment run i.e. RULES PACKAGE to evaluate target with,DURATION of assessment, SNS TOPICS which Inspector sends notifications to about run-state/findings.
+* __Rule packages__ include CVE's, CIS OS Config Benchmarks etc.
+
+AWS Trusted Advisor: advise you on COST OPTIMISATION, PERFORMANCE, SECURITY, FAULT TOLERANCE
+* Example security recommendations: service/usage limits, security groups (unrestricted ports), no-MFA on Root, exposed EBS snapshots etc.
+
+__S3 storage for logs__: best service for log storage
+* S3 Object Lifecycle Management.
+* 99.99% durability and 99.99% availability of objects over a given year.
+
+
+## Chapter 4 - Infrastructure Security
+

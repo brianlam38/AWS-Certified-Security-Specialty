@@ -124,12 +124,12 @@ CloudWatch Events:
     * AWS CloudTrail (API Calls)
     * Custom events (e.g. HTTP 403 status in Apache web-server logs)
     * Scheduled events
-* Rules: match incoming events and orute them to one or more targets
+* Rules: match incoming events and route them to one or more targets
 * Targets: Lambda, SNS topics. SQS queues, Kinesis Streams and more
 
 ## AWS Config
 
-AWS Config is a fully managed service that provides you with an AWS resource inventorgy, configuration history and configuration change notifications to enable security and governance.
+AWS Config is a fully managed service that provides you with an AWS resource inventory, configuration history and configuration change notifications to enable security and governance.
 
 Enables: Compliance auditing, security analysis, resource tracking (what resource we're using where)
 Provides: Configuration snapshots and log config changes of AWS resources, automated compliance checking

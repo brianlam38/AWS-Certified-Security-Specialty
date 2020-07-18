@@ -108,7 +108,7 @@ __CloudTrail: How can we ensure logs are retained for X years in accordance with
 * By default, log files are kept indefinitely.
 * Use S3 Object Lifecycle Management to remove the files after the required period of time or move files to AWS Glacier for more cost-effective long-term storage.
 
-CloudWatch: real-time monitoring for resources and applications (utilisation / operational performance)
+AWS CloudWatch: real-time monitoring for resources and applications (utilisation / operational performance)
 * __CW Metrics / CW Custom Metrics__: CPU utilisation, network utilisation
 * __CW Alarms__: CPU > 80% utilisation = trigger CW Alarm
 * __Notifications__: SNS notifications
@@ -118,3 +118,4 @@ CloudWatch: real-time monitoring for resources and applications (utilisation / o
 	* RULE: A rule matches incoming events and route them to one or more targets.
 	* TARGET: A target processes events. Targets include Lambda, SNS topics, SQS queues, Kinesis Streams and more.
 
+AWS Config: 

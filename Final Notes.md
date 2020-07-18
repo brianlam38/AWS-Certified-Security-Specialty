@@ -1,13 +1,15 @@
 ## Chapter 2 - IAM, S3 and Security
 
+Resetting Root Users
+* Create new root user password / strong password policy.
+* Delete 2FA then re-enable 2FA.
+* Delete Access Key ID, Secret Access Key.
+* Check existing user accounts and delete if not legitimate.
+
 S3 Bucket Policy / ACL / IAM conflicts:
 * __Explicit Deny Overrides__: An EXPLICIT DENY will always override any ALLOW.
 * __Policy Conflicts__: Whenever an AWS principal (user, group or role) issues a request to S3, the authorization decision depends on the union of all the IAM policies, S3 bucket policies and S3 ACLs that apply.
-* __Policy Conflict flow__:
-    1. Decision starts at DENY by default.
-    2. Any applicable policies? ( YES = CONTINUE | NO = DENY )
-    3. Does a policy have an EXPLICIT DENY? ( YES = DENY | NO = CONTINUE )
-    4. Does a policy have an ALLOW? ( YES = ALLOW | NO = DENY)
+* __Policy Conflict flow__: (1) DENY by default (2) If policy has EXPLICIT DENY = DENY (3) If policy has ALLOW = ALLOW
 
 S3 Cross-Region Replication (CRR)
 * __CRR AUDIT account use case__: CloudTrail logs accounts XYZ -> turn on CRR to replicate CloudTrail logs to AUDIT -> XYZ can only replicate logs, but NOT read/write logs in audit.
@@ -72,6 +74,48 @@ Glacier Vault Lock: low-cost storage service for data archiving and long-term ba
 	}
 }
 ```
+* __Vault Access Policy__ is for implementing access control rather than a Lock Policy which is compliance-related.
+
+AWS Organisations: Service Control Policies (SCPs)
+* __Service Control Policy__ enables you to restrict, at the account-level, what services and actions the IAM Entities in those accounts can do.
+* SCP never GRANTS permissions, only LIMITS permissions.
+
+__IAM Credential Report__ is a CSV-formatted report which lists all users in accounts + status of their various credentials, including PASSWORDS, ACCESS KEYS, MFA devices (last used, rotated).
+* Requires `iam:GenerateCredentialReport` and `iam:GetCredentialReport`.
 
 
 ## Chapter 3 - Logging and Monitoring
+
+__CloudTrail Log File Integrity Validation__ when enabled:
+1. CT creates a HASH for every log file that it delivers.
+2. CT then creates a DIGEST FILE that references the log files for the LAST HOUR and contains a hash of each log file.
+3. CT signs each DIGEST FILE using a private/public keypair (AWS-controlled) - uses SHA-256 and SHA-256 hashing w/ RSA for digital signing.
+4. After delivery of digest file, you can use the PUBLIC KEY to validate the digest file.
+
+__CloudTrail: How do we stop unauthorised access to log files?__
+* Use IAM policies and S3 bucket policies to restrict access to the S3 bucket containing the log files.
+* Encrypt logs with SSE-S3 or SSE-KMS.
+
+__CloudTrail:How can we be notified that a log file has been created, then validate that its not been modified?__
+* Lambda to compare digest file of yesterday vs. digest of same file last week -> if digest is different, trigger SNS notification.
+
+__CloudTrail: How can we prevent logs from being deleted?__
+* Restrict access with IAM and bucket policies.
+* Configure S3 MFA delete.
+* Validate that logs have not been deleted via. log file validation.
+
+__CloudTrail: How can we ensure logs are retained for X years in accordance with our compliance standards?__
+* By default, log files are kept indefinitely.
+* Use S3 Object Lifecycle Management to remove the files after the required period of time or move files to AWS Glacier for more cost-effective long-term storage.
+
+__CloudWatch__: real-time monitoring for resources and applications (utilisation / operational performance)
+* CW Metrics / CW Custom Metrics: CPU utilisation, network utilisation
+* CW Alarms: CPU > 80% utilisation = trigger CW Alarm
+* Notifications: SNS notifications
+* CW Logs: monitor, store and access log files from AWS services (e.g. CloudTrail) or apps/systems (EC2 kernel logs, appserver logs). CW log retention = logs are stored indefinitely by default.
+* CW Events: delivers near real-time stream of system events that describe changes in AWS resources.
+	* __Event__: An event indicates AWS resource state change, CloudTrail API calls, custom-events (HTTP 403), scheduled-events.
+	* __Rule__: A rule matches incoming events and route them to one or more targets.
+	* __Target__: A target processes events. Targets include Lambda, SNS topics, SQS queues, Kinesis Streams and more.
+
+ 

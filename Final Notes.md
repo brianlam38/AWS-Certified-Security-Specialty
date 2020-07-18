@@ -108,14 +108,13 @@ __CloudTrail: How can we ensure logs are retained for X years in accordance with
 * By default, log files are kept indefinitely.
 * Use S3 Object Lifecycle Management to remove the files after the required period of time or move files to AWS Glacier for more cost-effective long-term storage.
 
-__CloudWatch__: real-time monitoring for resources and applications (utilisation / operational performance)
-* CW Metrics / CW Custom Metrics: CPU utilisation, network utilisation
-* CW Alarms: CPU > 80% utilisation = trigger CW Alarm
-* Notifications: SNS notifications
-* CW Logs: monitor, store and access log files from AWS services (e.g. CloudTrail) or apps/systems (EC2 kernel logs, appserver logs). CW log retention = logs are stored indefinitely by default.
-* CW Events: delivers near real-time stream of system events that describe changes in AWS resources.
-	* __Event__: An event indicates AWS resource state change, CloudTrail API calls, custom-events (HTTP 403), scheduled-events.
-	* __Rule__: A rule matches incoming events and route them to one or more targets.
-	* __Target__: A target processes events. Targets include Lambda, SNS topics, SQS queues, Kinesis Streams and more.
+CloudWatch: real-time monitoring for resources and applications (utilisation / operational performance)
+* __CW Metrics / CW Custom Metrics__: CPU utilisation, network utilisation
+* __CW Alarms__: CPU > 80% utilisation = trigger CW Alarm
+* __Notifications__: SNS notifications
+* __CW Logs__: monitor, store and access log files from AWS services (e.g. CloudTrail) or apps/systems (EC2 kernel logs, appserver logs). CW log retention = logs are stored indefinitely by default.
+* __CW Events__: delivers near real-time stream of system events that describe changes in AWS resources.
+	* EVENT: An event indicates AWS resource state change, CloudTrail API calls, custom-events (HTTP 403), scheduled-events.
+	* RULE: A rule matches incoming events and route them to one or more targets.
+	* TARGET: A target processes events. Targets include Lambda, SNS topics, SQS queues, Kinesis Streams and more.
 
- 

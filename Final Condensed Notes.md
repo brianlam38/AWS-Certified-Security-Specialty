@@ -186,6 +186,16 @@ KMS key rotation options:
 * __Customer Managed CMK__: Customer manages rotation | Automatic rotation every __1 YEAR__ can be enabled | Manual rotation is possible by deleting CMK + creating new CMK.
 * __Customer Managed CMK w/ imported Key Material__: Customer manages rotation | NO automatic rotation | Manual rotation is only option by deleting CMK + creating new CMK.
 
-
-
-
+EC2 security
+* Importing a customer-managed key pair for SSH access:
+	1. Generate a private-key using RSA 2048bits and a public-key
+	```bash
+	$ openssl genpkey -algorithm RSA -out private_key.pem -pkeyopt rsa_keygen_bits:2048
+	$ openssl rsa -pubout -in private_key.pem -out public_key.pem
+	$ chmod 400 private_key.pem
+	```
+	2. Go to EC2 -> Import a Key Pair -> choose your public-key. Now you can provision an EC2 instance and select the public-key.
+	3. SSH into EC2 using the private key.
+	4. Add additional logins by generating a new asymmetric keypair (type=RSA) via. `$ ssh-keygen -t rsa` -> add public-key to `~/.ssh/authorized_keys` in the EC2 -> login using private-key.
+* You CANNOT use KMS with SSH for EC2 as AWS is involved in generation of KMS keys.
+* You CAN use CloudHSM with SSH for EC2 because you can EXPORT CloudHSM keys.

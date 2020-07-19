@@ -197,7 +197,7 @@ EC2 Dedicated Instances
     * Reserved Instances - save up to 70%.
     * Spot Instances - save up to 90%.
 
-EC Dedicated Hosts
+EC2 Dedicated Hosts
 * Also runs on dedicated physical hardware from other AWS accounts, for a single customer.
 * Provides additional visibility and control over how instances are placed on a physical server.
 * Consistently deploy instances to the same physical server each time.
@@ -434,7 +434,7 @@ Elastic Container Service (ECS)
 4. Use trusted images only
 * Avoid public repositories, where you don't know the origin of the code.
 * Use images from a trusted source or ones created inhouse.
-* Scan for CVE's.
+* Scan for CVE's using Amazon Inspector or external tools.
 * __AWS Elastic Container Registry (ECR)__: a container registry where you can store your own container images e.g. Docker or Windows Container images and make them available to ECS.
     * AWS provides image scanning for container images stored in ECR and reports on any CVEs.
 

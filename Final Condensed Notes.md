@@ -152,7 +152,7 @@ KMS Customer Master Keys (CMKs): a master key, used to generate/encrypt/decrypt 
 * __Data Keys__ are used to encrypt your actual data = __Envelope Encryption__.
 * __7-30 day waiting period__ before you can delete CMKs.
 
-Create a Customer-managed CMK with imported key material:
+KMS: Create a Customer-managed CMK with imported key material
 1. Create symmetric CMK with NO key material - select ORIGIN = EXTERNAL (non-AWS generated).
 2. Download an AWS __Wrapping Key__ (public key) as `PublicKey.bin` and an Import Token `ImportTokenXXX`.
 3. Use `openssl` to generate your own key material
@@ -174,17 +174,29 @@ $ openssl rsautl -encrypt \
 ```
 5. Upload `EncryptedKeyMaterial.bin` and `ImportTokenXXX` to the customer-managed CMK.
 
-Considerations of using imported Key Material:
+KMS: Considerations of using imported Key Material
 * You CANNOT use `EncryptedKeyMaterial` and `ImportTokenXXX` files twice - they are single use only.
 * You CANNOT enable _automatic key rotation_ for a CMK w/ imported Key Material.
 * You CAN _manually rotate_ by repeating process of creating a new CMK w/ imported Key Material.
 * You CAN delete imported keys immediately by deleting the Key Material.
 
-KMS key rotation options:
+KMS: key rotation options
 * __AWS Owned CMKs__: AWS manages rotation | Rotation is varied - depends on the AWS service.
 * __AWS Managed CMK__: AWS manages rotation | Rotation occurs every __3 YEARS__.
 * __Customer Managed CMK__: Customer manages rotation | Automatic rotation every __1 YEAR__ can be enabled | Manual rotation is possible by deleting CMK + creating new CMK.
 * __Customer Managed CMK w/ imported Key Material__: Customer manages rotation | NO automatic rotation | Manual rotation is only option by deleting CMK + creating new CMK.
+
+__KMS Grants__ are used to programatically delegate temporary use of CMKs to other AWS principals. Grants only ALLOW.
+* `create-grant`: adds new grant to CMK, specifies who can use it and list of operations grantee can perform. A grant token is generated and can be passed as an argument to a KMS API.
+* `list-grants`: lists grants for a CMK.
+* `revoke-grant`: remove a grant from a CMK.
+
+__KMS Policy Conditions - ViaService__ is used to ALLOW/DENY access to your CMK according to which service the request originated from.
+
+__KMS CMK cross-account access__: enable access by
+1. Change CMK Key Policy in origin account to allow a specific userARN/roleARN of destination account to have access.
+2. Set up an IAM policy in destination account with explicit permission to use the CMK in the origin account.
+3. Attach IAM policy to userARN/roleARN in destination account.
 
 EC2 security
 * Importing a customer-managed key pair for SSH access:
@@ -199,3 +211,31 @@ EC2 security
 	4. Add additional logins by generating a new asymmetric keypair (type=RSA) via. `$ ssh-keygen -t rsa` -> add public-key to `~/.ssh/authorized_keys` in the EC2 -> login using private-key.
 * You CANNOT use KMS with SSH for EC2 as AWS is involved in generation of KMS keys.
 * You CAN use CloudHSM with SSH for EC2 because you can EXPORT CloudHSM keys.
+* __EC2 Dedicated Instances__: run in a VPC on hardware that's dedicated to a single customer. Dedicated instances may still share hardware with other non-dedicated instances from the same AWS account.
+* __EC2 Dedicated Hosts__: same as above AND provides additional visibility and control over how instances are placed on a physical server + consistent deployment to same physical server each time + enables you to use existing server-bound licenses (e.g VMWare, Oracle which may require dedicated hosts) + allows you to address corporate and regulatory compliance.
+* __AWS EC2 Hypervisor__: is software, firmware, hardware that creates and runs virtual machines. EC2 AMIs run on 2 types of virtualisation:
+	* __Hardware Virtual Machine (HVM)__: VM guests are fully virtualised - they are not aware that they're sharing processing time with other VMs.
+	* __Paravirtual (PV)__: (MORE LIGHTWEIGHT / QUICKER) VM guests relies on hypervisor to provide support for operations that normally require privileged access = guest OS has no elevated CPU access.
+	* Hypervisor access by AWS employees is logged/audited + requires MFA + access strictly controlled. This cloud management plane is specially designed, built, configured and hardened.
+	* Guest OS (EC2) instances are controlled completely by customers with full root over accounts, services and apps running on EC2. AWS has no right to access EC2s.
+	* __AWS IS NOW SHIFTING ITS PHYSICAL SERVERS FROM XEN HYPERVISOR TO LINUX KERNEL-BASED VIRTUAL MACHINE (KVM) OPEN-SOURCE HYPERVISOR__.
+
+Container security principals:
+1. __Don't store secrets__
+	* Use IAM roles instead of hardcoding user credentials.
+	* Use Secrets Manager for RDS credentials and API keys.
+	* Use Amazon Certificate Manager (ACM) if you have TLS certs to store and manage.
+2. __Don't run container as AWS root__
+	* Don't run containers using your AWS Root account.
+3. __Less is more__
+	* Minimise attack surface by running one service per container, not multiple per container.
+	* Avoid unnecessary libraries: remove code/libraries you don't need in your container image.
+4. __Use trusted images only__
+	* Avoid public repos, where you don't know the origin of code.
+	* Use images from a trusted source or ones created inhouse.
+	* Scan for CVEs using Amazon Inspector or external tools.
+	* __AWS Elastic Container Registry (ECR)__ to store your own container images and use __AWS Elastic Container Service (ECS)__ to run containers.
+5. __Infrastructure security__
+	* Avoid public internet by using __ECS Interface Endpoints__ (similar to VPC endpoints)
+	* If using public internet, use TLS to secure end-to-end communication between end-users and your apps running in containers.
+	* __Amazon Certificate Manager (ACM)__ can be used to provide single, central interface for storing and managing certificates. It integrates well with many AWS services.

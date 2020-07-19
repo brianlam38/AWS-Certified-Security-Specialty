@@ -148,3 +148,44 @@ __S3 storage for logs__: best service for log storage
 
 ## Chapter 4 - Infrastructure Security
 
+KMS Customer Master Keys (CMKs): a master key, used to generate/encrypt/decrypt data keys
+* __Data Keys__ are used to encrypt your actual data = __Envelope Encryption__.
+* __7-30 day waiting period__ before you can delete CMKs.
+
+Create a Customer-managed CMK with imported key material:
+1. Create symmetric CMK with NO key material - select ORIGIN = EXTERNAL (non-AWS generated).
+2. Download an AWS __Wrapping Key__ (public key) as `PublicKey.bin` and an Import Token `ImportTokenXXX`.
+3. Use `openssl` to generate your own key material
+```bash
+# generates random 32 bytes (256 bits) + store in "PlaintextKeyMaterial.bin"
+$ openssl rand -out PlaintextKeyMaterial.bin 32
+```
+4. Encrypt the key material with the Wrapping Key (public key):
+```bash
+# Encrypt the data in "PlaintextKeyMaterial.bin" using RSA key "PublicKey.bin"
+# Resuting output as "EncryptedKeyMaterial.bin" as DER key format
+$ openssl rsautl -encrypt \
+             -in PlaintextKeyMaterial.bin \
+             -oaep \
+             -inkey PublicKey.bin \
+             -keyform DER \
+             -pubin \
+             -out EncryptedKeyMaterial.bin
+```
+5. Upload `EncryptedKeyMaterial.bin` and `ImportTokenXXX` to the customer-managed CMK.
+
+Considerations of using imported Key Material:
+* You CANNOT use `EncryptedKeyMaterial` and `ImportTokenXXX` files twice - they are single use only.
+* You CANNOT enable _automatic key rotation_ for a CMK w/ imported Key Material.
+* You CAN _manually rotate_ by repeating process of creating a new CMK w/ imported Key Material.
+* You CAN delete imported keys immediately by deleting the Key Material.
+
+KMS key rotation options:
+* __AWS Owned CMKs__: AWS manages rotation | Rotation is varied - depends on the AWS service.
+* __AWS Managed CMK__: AWS manages rotation | Rotation occurs every __3 YEARS__.
+* __Customer Managed CMK__: Customer manages rotation | Automatic rotation every __1 YEAR__ can be enabled | Manual rotation is possible by deleting CMK + creating new CMK.
+* __Customer Managed CMK w/ imported Key Material__: Customer manages rotation | NO automatic rotation | Manual rotation is only option by deleting CMK + creating new CMK.
+
+
+
+

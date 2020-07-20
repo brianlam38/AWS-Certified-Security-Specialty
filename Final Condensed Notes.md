@@ -239,3 +239,86 @@ Container security principals:
 	* Avoid public internet by using __ECS Interface Endpoints__ (similar to VPC endpoints)
 	* If using public internet, use TLS to secure end-to-end communication between end-users and your apps running in containers.
 	* __Amazon Certificate Manager (ACM)__ can be used to provide single, central interface for storing and managing certificates. It integrates well with many AWS services.
+
+
+## Chapter 5 - Data Protection With VPCs
+
+__AWS Virtual Private Cloud (VPC)__ lets you provision a logically isolated section of the AWS cloud where you can launch resources in a virtual network that you define.
+
+VPCs
+* Flow of inbound traffic: entry via. __VPC Virtual Private Gateway (VPN)__ or __VPC Internet Gateway (public)__ -> Route Tables -> Network ACL -> Subnet -> Security Groups -> EC2s.
+* __VPC Peering__ allows you to connect one VPC with another VPC via. direct network route using private IP addresses.
+	* Peering is in a STAR CONFIGURATION i.e. 1 central VPC with 4 others. No TRANSITIVE PEERING is allowed.
+* Setting up and testing a custom VPC:
+	1. Create VPC -> provision private/public subnets to VPC -> provision Internet Gateway for public internet connectivity to VPC
+	2. Create CUSTOM ROUTE TABLE -> add route to the internet `0.0.0.0/0` via. Internet Gateway -> disable internet access for MAIN ROUTE TABLE, so all new subnets created won't have internet access by default -> associate subnet with CUSTOM ROUTE TABLE
+	3. Test internet connectivity using EC2s: Turn on `Auto-assign public IP addresses` for the public subnet so a public IPv4 address is assigned for all EC2s launched into the subnet -> try to SSH into EC2 in public subnet.
+
+NAT Instances (OLD NAT METHOD)
+* __Single instance reliance__: any crash = no internet access for servers in private subnet.
+* __Limited network throughput__: amount of traffic supported depends on instance size.
+* To have high availability, requires using Autoscaling Groups + multiple subnets in different AZs + scripts to automate failover (switching to a standby server upon failure).
+* NAT instances can be used as a __Bastion Server__.
+
+NAT Gateways (PREFERRED NAT METHOD)
+* Scales automatically to 10GBps.
+* Highly available, automatic failover.
+* Security is managed by AWS - no need for Security Groups, server patching, antivirus protections etc.
+* Automatically assigned with a public IP
+* Create at least 1 NAT Gateway per Availability Zone so there is redundancy in case of Zone Failure.
+
+NACLs vs. Security Groups
+* __NACLs are STATELESS__: responses to allowed inbound traffic are subject to outbound rules (vice versa).
+* __SGs are STATEFUL__: response to outbound requests will be allowed to flow in regardless of inbound security group rules (vice versa).
+* __Default VPC NACL__ will ALLOW ALL traffic in/out of subnets associated with the VPC.
+* __Custom NACLs__ created will by default DENY ALL traffic in/out.
+* You can block specific IP addresses using NACLs, but not with Security Groups.
+
+Elastic Load Balancers and TLS/SSL Termination: terminate at ELB vs. EC2
+* __Terminate at Load Balancer__: ALB decrypts HTTPS request -> inspects headers -> routes request to EC2 as plaintext over local private network in your VPC.
+	* __PRO: More resources + more cost-effective (USE ALB)__ as decryption is offloaded to ALB, allowing you to use smaller EC2 instances to handle application load.
+	* __PRO: Reduces administrative overhead (USE ALB)__ as you don't need to manage X509 certs (used to decrypt/encrypt) individually on each EC2.
+	* __CON: Unencrypted traffic (USE NLB OR CLB)__ between ALB and EC2 (however AWS states that EC2s that aren't part of the connection cannot listen in, even if they are running within your AWS account).
+	* __CON: Compliance/regulatory requirements (USE NLB OR CLB)__ typically require use of E2E encryption.
+* __Application Load Balancer (HTTP/HTTPS)__ only supports HTTPS termination using an SSL cert on the Load Balancer itself. Only supports HTTP/HTTPS connections.
+* __Network Load Balancer (TCP, UDP, TLS)__ supports TLS/SSL termination on the Load Balancer AND EC2 instances. You will need to use TCP (load balancing at TCP transport-layer rather than HTTP application-layer).
+* __Classic Load Balancer (TCP, SSL/TLS, HTTP, HTTPS)__ supports TLS/SSL termination on the Load Balancer AND EC2 instances.
+
+VPC Flow Logs: enable you to capture info about IP traffic going to/from Elastic Network Interfaces (ENIs - represent a virtual networking card) in your VPC, stored in CloudWatch.
+* Logs are created at 3 different levels: (1) VPC - captures all ENI traffic (2) Subnet - capture ENI and EC2 traffic within a particular subnet (3) Network Interface
+* Cannot enable Flow Logs for VPCs that are peered with your VPC unless they're in the same AWS account.
+* Cannot change configuration of Flow Logs after creation.
+* Not all IP traffic is monitored: _EC2 metadata `169.254.169.254`_, _DHCP traffic_, _traffic to reserved AWS IPs_, _traffic generated by instances when they contact the AWS DNS server_.
+
+How to build a highly available Bastion instance:
+* __High availability__: at least 2x Bastion instances in 2 public subnets in 2 Availability Zones.
+* __Autoscaling Groups__: minimum of 1 Bastion -> if Bastion goes down, ASG deploys a Bastion into one AZ or another.
+* __Route53 health check__: run health checks on Bastion server.
+
+Session Manager in AWS Systems Manager: enables secure remote login to EC2 instances (alternative to RDP/SSH)
+* __Session Manager is Secure__: TLS encryption, no Bastion required, no Security Groups needed, CloudTrail logging, keystroke logging sent to CloudWatch/S3.
+* Setting up Session Manager in AWS Systems Manager:
+	1. Create EC2 instance role (IAM) w/ permission to call Systems Manager -> launch EC2 with no SGs.
+	2. Create CloudWatch Log Group for Session Manager `SM_LogGroup`.
+	3. Configure Session Manager #1: `Systems Manager` -> `Session Manager` -> `Preferences` -> enter CloudWatch Log Group created.
+	4. Configure Session Manager #2: select session logging options (1) Encrypt logs with KMS (2) Send logs to S3 bucket (3) Send logs to CloudWatch.
+	5. Start a session: `Sessions` -> Start a session and select running EC2 -> launch web shell.
+
+__VPC Endpoints__ enable you to privately connect (using AWS PrivateLink) your VPC to supported AWS services without needing a NAT Gateway (goes over private network).
+
+__AWS CloudHSM__ provides Hardware Security Modules (HSM) in a cluster - a collection of individual HSMs that AWS CloudHSM keeps in sync. Any tasks performed on one HSM, other HSMs in the cluster will be updated.
+* CloudHSM user types:
+	1. __Precrypto Officer (PRECO)__: default account with admin/pass creds -> upon setting password, you will be promoted to CO.
+	2. __Crypto Officer (CO)__: performs user management e.g. create and delete users and change user passwords.
+	3. __Crypto Users (CU)__: performs key management (_create/delete/import/export_) and cryptographic operations (_encr/decr/sign/verify_).
+	4. __Appliance User (AU)__: performs cloning and synchronization operations. CloudHSM uses AU to sync HSMs. AU exists in all HSMs and has limited permissions.
+
+__AWS Transit Gateway__ connects VPCs and on-premise datacenters/networks through a central hub. Acts as a cloud router.
+* NOT using Transit Gateway
+	* Each VPC requires VPN connection and config to the on-prem network.
+	* VPCs require peering between each other. If hundreds of VPCs = difficult to manage, not scalable.
+* USING Transit Gateway
+	* __Highly scalable__: supports thousands of VPCs (hub-and-spoke architecture)
+	* __Centralised__: Transit Gateway sits between all your VPCs and Datacentre, only needs to be configured once. Any VPC connected to Transit Gateway can communicate with every other connected VPC.
+	* __Route Tables__: can be used to enforce which VPCs can communicate with each other.
+	* __Secure__: communication between VPCs are done via. AWS private network. Inter-region traffic is supported.

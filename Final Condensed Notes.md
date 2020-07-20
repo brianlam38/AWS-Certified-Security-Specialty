@@ -322,3 +322,18 @@ __AWS Transit Gateway__ connects VPCs and on-premise datacenters/networks throug
 	* __Centralised__: Transit Gateway sits between all your VPCs and Datacentre, only needs to be configured once. Any VPC connected to Transit Gateway can communicate with every other connected VPC.
 	* __Route Tables__: can be used to enforce which VPCs can communicate with each other.
 	* __Secure__: communication between VPCs are done via. AWS private network. Inter-region traffic is supported.
+
+
+## Chapter 6 - Incident Response and AWS in the Real World
+
+__DDoS: Amplification / Reflection Attacks__: Attacker sends 3rd-party server a request using spoofed IP -> server responds with greater payload than inital request.
+
+__Minimising DDoS__
+1. _Minimise ATTACK SURFACE AREA_: reduce internet accessible services/servers, use Bastion host, whitelist allowed IPs.
+2. _Absorb attack by SCALING_: scale horizontally (machines++) and vertically (compute++) = additional levels of redundancy and buys time to analyze the attack.
+3. _Safeguard PUBLIC-FACING resources_: AWS WAF, CloudFront (Geo-blocking, S3 Origin Access Identity), Route53 (alias records to redirect traffic to CloudFront, ELB or other security tools + Private DNS to manage internal DNS names for DBs, webservers etc. without exposing info publically).
+4. _Learn what NORMAL BEHAVIOUR looks like_: spot abnormalities, create alarms to alert for unusual behaviour, collect forensic data to understand attacks.
+5. _Create a PLAN for attacks_: validate design of architecture, understand costs of resiliency, know who to contact when attack occurs.
+6. _AWS Shield_: protects all AWS customers on ELB, CloudFront and Route53 against SYN/UDP floods, reflection attacks and other layer 3/4 attacks.
+7. _AWS Shield Advanced_: enhanced protections, $3k/month, always-on flow-based monitoring of network/app traffic, 24/7 DDoS Response Team (DRT), AWS billing protection.
+

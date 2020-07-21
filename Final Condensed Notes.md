@@ -328,12 +328,30 @@ __AWS Transit Gateway__ connects VPCs and on-premise datacenters/networks throug
 
 __DDoS: Amplification / Reflection Attacks__: Attacker sends 3rd-party server a request using spoofed IP -> server responds with greater payload than inital request.
 
-__Minimising DDoS__
-1. _Minimise ATTACK SURFACE AREA_: reduce internet accessible services/servers, use Bastion host, whitelist allowed IPs.
-2. _Absorb attack by SCALING_: scale horizontally (machines++) and vertically (compute++) = additional levels of redundancy and buys time to analyze the attack.
-3. _Safeguard PUBLIC-FACING resources_: AWS WAF, CloudFront (Geo-blocking, S3 Origin Access Identity), Route53 (alias records to redirect traffic to CloudFront, ELB or other security tools + Private DNS to manage internal DNS names for DBs, webservers etc. without exposing info publically).
-4. _Learn what NORMAL BEHAVIOUR looks like_: spot abnormalities, create alarms to alert for unusual behaviour, collect forensic data to understand attacks.
-5. _Create a PLAN for attacks_: validate design of architecture, understand costs of resiliency, know who to contact when attack occurs.
-6. _AWS Shield_: protects all AWS customers on ELB, CloudFront and Route53 against SYN/UDP floods, reflection attacks and other layer 3/4 attacks.
-7. _AWS Shield Advanced_: enhanced protections, $3k/month, always-on flow-based monitoring of network/app traffic, 24/7 DDoS Response Team (DRT), AWS billing protection.
+Minimising DDoS
+1. __Minimise attack surface__: reduce internet accessible services/servers, use Bastion host, whitelist allowed IPs.
+2. __Absorb attack by scaling__: scale horizontally (machines++) and vertically (compute++) = additional levels of redundancy and buys time to analyze the attack.
+3. __Safeguard public-facing resources__: AWS WAF, CloudFront (Geo-blocking, S3 Origin Access Identity), Route53 (alias records to redirect traffic to CloudFront, ELB or other security tools + Private DNS to manage internal DNS names for DBs, webservers etc. without exposing info publically).
+4. __Learn what normal behaviour looks like__: spot abnormalities, create alarms to alert for unusual behaviour, collect forensic data to understand attacks.
+5. __Create a plan for attacks__: validate design of architecture, understand costs of resiliency, know who to contact when attack occurs.
+6. __AWS Shield__: protects all AWS customers on ELB, CloudFront and Route53 against SYN/UDP floods, reflection attacks and other layer 3/4 attacks.
+7. __AWS Shield Advanced__: enhanced protections, $3k/month, always-on flow-based monitoring of network/app traffic, 24/7 DDoS Response Team (DRT), AWS billing protection.
+
+EC2 has been hacked - what to do?
+1. Stop instances immediately.
+2. Take a snapshot of EBS volume + terminate instnace.
+3. Deploy a copy of the instance in an __isolated environment__ (isolated VPC, no internet access).
+4. Access the instance using an __isolated forensic workstation__.
+5. Read logs to figure out how they obtained access.
+
+Leaked Github keys - what to do?
+* __IAM User Credentials__: (1) De-activate IAM User Access Key (2) Create new User Access Key (3) Delete old User Access Key
+* __Root User Credentials__: (1) Goto `My Security Credentials` -> `Access Keys` -> De-active Root User Access Key. (2) Create new Root User Access Key (3) Delete old Root User Access Key
+
+__AWS Certificate Manager (ACM)__: provision a SSL cert for a domain name you have registered. SSL certs are autorenewed provided the domain name was purchased from Route53.
+* __Requesting a SSL cert__: (1) Add domain name (2) Select domain validation methods DNS or EMAIL (3) If DNS validation, add the given CNAME record to Route53.
+* __Auto-renew SSL/TLS certs__: ACM provides autorenewal for Amazon-issued SSL/TLS certs.
+* __Manual-renew SSL/TLS certs__: Imported SSL/TLS certs OR certs associated with R53 private hosted zones must be manually renewed.
+* __Use Amazon SSL cert with CloudFront__: Goto `CloudFront` -> select distribution -> edit settings to change default CloudFront SSL cert to the new custom SSL cert associated with your domian name.
+* __Use Amazon SSL cert with EC2__: Goto `EC2` -> `Load Balancers` -> create a load balancer -> `choose a certificate from ACM`.
 

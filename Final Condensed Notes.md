@@ -355,3 +355,79 @@ __AWS Certificate Manager (ACM)__: provision a SSL cert for a domain name you ha
 * __Use Amazon SSL cert with CloudFront__: Goto `CloudFront` -> select distribution -> edit settings to change default CloudFront SSL cert to the new custom SSL cert associated with your domian name.
 * __Use Amazon SSL cert with EC2__: Goto `EC2` -> `Load Balancers` -> create a load balancer -> `choose a certificate from ACM`.
 
+Configuring Security Policy with ELBs / CloudFront (SSL/TLS protocols and ciphers)
+* __2016-08__ is the recommended Security Policy as it supports most ciphers.
+* __ECDHE-* cipher__ is required to enable Perfect Forward  Secrecy.
+
+API Gateway - Throttling and Caching
+* __Steady-State Limit__: 10,000 req/sec
+* __Burst Limit__: (max concurrent requests) 5,000 req across all APIs within an AWS account.
+* __API Gateway Caching__: cache API endpoint response for a specified __TIME TO LIVE (TTL)__
+	* TTL=300 (default) | TTL=3600 (max) | TTL=0 (cache disabled)
+
+AWS Systems Manager - Run Command
+* __Manage EC2s and on-premise systems__: automate admin tasks and adhoc config changes e.g. patching.
+* __Using EC2 Run Command__: Create EC2 instance and role for SSM `EC2 role for Simple Systems Manager` -> Goto `SSM` -> `Run a command` -> choose a command document e.g. `Configure CloudWatch` -> select target instance and run.
+* __SSM Agent__ needs to be installed AND __EC2 instance role with SSM permissions__ enabled for the Run Command to work.
+* __Systems Manager Document__ defines the commands and parameters to be run.
+
+Compliance Frameworks
+* __ISO27001__: _establishing, implementing, operating, monitoring, reviewing, maintaining and improving documented Information Security Management System (ISMS)_ within the context of the organisation's overall business risks.
+* __FedRAMP (Federal Risk and Authorization Management Platform)__: Government-wide program that provides a standardised approach to security assessment, authorisation, continuous monitoring for cloud products/services.
+* __HIPAA (Federal Health Insurance Portability and Accountability Act of 1996)__: _lower cost of healthcare and ensure good data security around healthcare info_.
+* __NIST (National Institute of Standards and Technology)__: A framework for improving critical infrastructure security for organisations.
+* __PCI DSS (Payment Card Industry Data Security Standard)__: Policies and procedures to optimise security of credit/debit/cash card transactions and protect cardholders against misuse of personal info.
+* __FIPS 140-2__: a U.S government computer security standard used to approve cryptograhic modules.
+	* __AWS CloudHSM__ meets level 3. Rated from level 1 -> level 4 (highest).
+
+
+## Chapter 7 - Additional Topics
+
+Using Amazon Macie
+* Macie can only monitor S3 buckets within the same region.
+* Macie uses `AWSServiceRoleForAmazonMacie` which cover mainly permissions for CloudTrail (creating/reading logs) and S3 (creating/deleting buckets and objects)
+* An S3 CloudTrail bucket will be created to capture all data events with Macie.
+
+Using Amazon GuardDuty
+* Takes 7-14 days to establish a baseline - "_what is normal behaviour in your account?_"
+* 30 days free, then is charged off __quantity of CloudTrail events__ and __volume of DNS and VPC Flow Logs__.
+
+AWS Secrets Manager
+* __Store credentials__ for RDS, non-RDS databases (DynamoDB) and any other secrets as long as you can store them as a key-value pair (SSH keys, API keys).
+* __Automatic secret rotation__ can be turned on, but make sure your app is not using hardcoded credentials + make sure it is retrieving credentials from Secrets Manager.
+* __Deletion of secrets__ require a 7 day waiting period.
+* __Secrets Manager vs. Parameter Store__: Parameter Store is for passwords, db strings, license codes, parameter values, config data. Values may be cleartext or encrypted (Secure String Parameter). No charge and is integrated with AWS Systems Manager.
+
+Using AWS Simple Email Service (SES)
+* Configure SG associated with EC2 to allow outbound to the SES SMTP endpoint.
+* EC2 throttles email traffic over the default SMTP `port 25` -> bypass throttle by using `port 587` or `port 2587`. Otherwise, request for a limit increase.
+
+AWS Security Hub:
+1. __Centralised dashboard__ for findings/alerts from key AWS security services.
+2. __Automated compliance checks__ by evaluating AWS resources against PCI-DSS, CIS controls and AWS Foundational Security Best Practices.
+* Integrates with _GuardDuty, Macie, Inspector, IAM Access Analyzer, Firewall Manager, 3rd-party marketplace tools, CloudWatch (trigger lambdas/SIEM/3rd-party tools)_.
+
+Network packet inspection in AWS
+* __Network Packet Inspection / Deep Packet Inspection__ involves inspecting a packet's headers and data.
+	* Filters non-compliant protocols, viruses, spam, intrusions.
+	* Takes action by blocking, re-routing or logging.
+	* IDS/IPS combined with a traditional firewall.
+* How to use: install 3rd-party solution for Network Packet Inspection via. AWS Marketplace.
+
+Active Directory Federation with AWS: AWS enables federated sign-in to AWS using Active Directory credentials
+* Great for companies with an existing Active Directory Domain + have corporate users who have AD accounts.
+* __2-WAY TRUST__: establishing AD federation with AWS
+	* In AWS, configure ADFS as the __Trusted Identity Provider__ = "_Trust ADFS to provide your users' identities_"
+	* In ADFS, configure AWS as the __Trusted Relying Party__ = "_Trust AWS to consume your users' identities_"
+* Using ADFS to sign-in to AWS Console:
+	1. User logs into ADFS via. ADFS sign-in page + provide credentials.
+	2. ADFS authenticates user against Active Directory.
+	3. ADFS sends back authentication response to user in the form of a SAML token.
+	4. User sends SAML token to AWS sign-in endpoint (choose / assume role page).
+	5. AWS sign-in endpoint makes an `STS AssumeRoleWithSAML` request to get temporary creds to AWS -> STS returns temporary credentials.
+	6. AWS sign-in endpoint redirects user to the AWS Console.
+
+AWS Artifact: is a central resource for compliance and security related documents / information
+* Demonstrate compliance to regulators, evaluate your own cloud architecture, assess effectiveness of internal controls.
+* Download _ISO 1270001 certs, PCI-DSS docs, SOC reports_.
+

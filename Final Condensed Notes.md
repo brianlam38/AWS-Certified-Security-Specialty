@@ -50,7 +50,12 @@ AWS STS authentication steps:
 Web Identity Federation with Amazon Cognito:
 * __Amazon Cognito__: An Identity Broker to connect a WebApp to users from Identity Store/Provider like Facebook.
 * __Cognifo benefits__: No need for mobile app to embed AWS credentials locally on device + provides user with seamless experience.
-* __Cognito User Pools__: A user directory within AWS that allows sign-up and sign-in to your WebApp via. Cognito.
+* __Cognito User Pools__ are for authentication. With a User Pool, your app users can sign-in through the User Pool OR federate through a 3rd-party identity provider (IdP).
+	* __User Pool Attributes__ are pieces of info that help you identify individual users, such as _name, email, mobile_.
+* __Cognito Identity Pools__ are for authorization. Use Identity Pools to authorize your users (sourced from User Pools, FB, Google etc.) to different AWS services. You can also generate temporary AWS credentials for unauthenticated users.
+* __Access to API Gateway via. Cognito User Pools as authorizer__: You can use a Cognito User Pool to control access to your APIs in API Gateway as an alternative to IAM roles and policies or Lambda authorizers.
+	1. Create a Cognito User Pool -> Create an API Gateway authorizer w/ the chosen User Pool -> Enable the authorizer on selected API methods.
+	2. User obtains an identity token from the User Pool after authentication, then the identity token is passed to the `Authorization` header in the API request.
 
 Glacier Vault Lock: low-cost storage service for data archiving and long-term backup
 * __Archives__ is a single file or multiple files stored in .tar/.zip.
@@ -191,12 +196,18 @@ __KMS Grants__ are used to programatically delegate temporary use of CMKs to oth
 * `list-grants`: lists grants for a CMK.
 * `revoke-grant`: remove a grant from a CMK.
 
-__KMS Policy Conditions - ViaService__ is used to ALLOW/DENY access to your CMK according to which service the request originated from.
+__KMS Policy Conditions - ViaService__ is used to ALLOW/DENY access to your CMKs according to which service the request originated from.
+
+__KMS Policy Conditions - `aws:SourceVpce`__ is used to enforce access to your CMKs to a specific VPC Endpoint e.g. "vpce-1234abcdf5678c90a" (VPC Endpoint ID).
 
 __KMS CMK cross-account access__: enable access by
 1. Change CMK Key Policy in origin account to allow a specific userARN/roleARN of destination account to have access.
 2. Set up an IAM policy in destination account with explicit permission to use the CMK in the origin account.
 3. Attach IAM policy to userARN/roleARN in destination account.
+
+__KMS vs. CloudHSM__
+* CloudHSM: Dedicated access to HSM that complies with government standards (FIPS) + you control keys and software that uses them (you need to do your own key management).
+* KMS: Built on the strong protections of a HSM foundation, highly available/durable, auditable, easy integration with AWS services and applications.
 
 EC2 security
 * Importing a customer-managed key pair for SSH access:
@@ -430,4 +441,16 @@ Active Directory Federation with AWS: AWS enables federated sign-in to AWS using
 AWS Artifact: is a central resource for compliance and security related documents / information
 * Demonstrate compliance to regulators, evaluate your own cloud architecture, assess effectiveness of internal controls.
 * Download _ISO 1270001 certs, PCI-DSS docs, SOC reports_.
+
+
+## Troubleshooting Scenarios
+
+Amazon VPC Peering connection issues - are usually the result of incorrect Route Table or NACL/SG rules.
+1. Verify __correct routes__ exist for connections to the IP range of your peered VPCs.
+2. Verify that an ALLOW rule exists in the __NACL table__ for the required traffic.
+3. Verify that __Security Group rules__ allow traffic between the peered VPCs.
+4. Verify using __VPC Flow Logs__.
+
+Lambda not logging to CloudWatch Logs
+* Basic Lambda permissions required are: `CreateLogGroup`, `CreateLogStream` and `PutLogEvents`.
 

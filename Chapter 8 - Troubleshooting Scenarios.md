@@ -74,7 +74,7 @@ Troubleshooting VPCs
     * _Public traffic -> Public subnets_: make sure routing table is routing internet traffic to the INTERNET GATEWAY.
         * FLOW: Internet traffic -> VPC Internet Gateway -> VPC Router -> Routing Table -> NACL -> Security Group -> Public subnet.
     * _VPN traffic -> Private subnets_: make sure routing table is routing any traffic to your own datacenter through the VIRTUAL PRIVATE.
-        * FLOW: VPN traffic -> VPC Virtual Private Gateway -> VPC Router -> Routing Table -> NACL -> Security Group -> Private subnet.
+        * FLOW: VPN traffic -> VPC Virtual Private Gateway -> VPC Router -> Routing Table -> NACL -> Private Subnet -> Security Group -> instance
     * Check that _Security Groups_ and _Network Access Control Lists_ are permitting the traffic.
 * Internet access - NAT Gateway, Internet Gateway.
 * Check VPC Flow Logs to view `ALLOW` or `DENY` messages.

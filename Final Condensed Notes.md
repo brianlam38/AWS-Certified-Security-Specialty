@@ -60,7 +60,7 @@ Web Identity Federation with Amazon Cognito:
 Glacier Vault Lock: low-cost storage service for data archiving and long-term backup
 * __Archives__ is a single file or multiple files stored in .tar/.zip.
 * __Vault__ is a container which stores one or more archives.
-* __Vault Lock Policy__ is used to configure __write-once-read-many__ archives / create data retention policies.
+* __Vault Lock Policy__ is used to configure __WRITE ONCE READ MANY (WORM)__ archives / create data retention policies.
 	* Vault Lock Policy creation: create policy -> initiate lock by attaching policy to your Vault (in-progress state) -> 24 hours to validate lock policy (you can abort within 24 hours) -> once validated, Vault Lock policy is immutable.
 * _Example Vault Lock Policy: enforce archive retention for 1 year_
 ```javascript
@@ -101,7 +101,7 @@ __CloudTrail: How do we stop unauthorised access to log files?__
 * Use IAM policies and S3 bucket policies to restrict access to the S3 bucket containing the log files.
 * Encrypt logs with SSE-S3 or SSE-KMS.
 
-__CloudTrail:How can we be notified that a log file has been created, then validate that its not been modified?__
+__CloudTrail: How can we be notified that a log file has been created, then validate that its not been modified?__
 * Lambda to compare digest file of yesterday vs. digest of same file last week -> if digest is different, trigger SNS notification.
 
 __CloudTrail: How can we prevent logs from being deleted?__
@@ -112,6 +112,10 @@ __CloudTrail: How can we prevent logs from being deleted?__
 __CloudTrail: How can we ensure logs are retained for X years in accordance with our compliance standards?__
 * By default, log files are kept indefinitely.
 * Use S3 Object Lifecycle Management to remove the files after the required period of time or move files to AWS Glacier for more cost-effective long-term storage.
+
+__CloudTrail: Multi-region__
+* Configure CloudTrail to deliver log files from multiple regions in a single AWS account into a single S3 bucket.
+* New region launches in AWS partition -> CloudTrail automatically creates Trail in new region with same settings as your original trail.
 
 AWS CloudWatch: real-time monitoring for resources and applications (utilisation / operational performance)
 * __CW Metrics / CW Custom Metrics__: CPU utilisation, network utilisation
@@ -348,6 +352,12 @@ Minimising DDoS
 6. __AWS Shield__: protects all AWS customers on ELB, CloudFront and Route53 against SYN/UDP floods, reflection attacks and other layer 3/4 attacks.
 7. __AWS Shield Advanced__: enhanced protections, $3k/month, always-on flow-based monitoring of network/app traffic, 24/7 DDoS Response Team (DRT), AWS billing protection.
 
+AWS Account compromised - what to do?
+1. CHANGE `AWS account Root Password`.
+2. ROTATE, then DELETE `Root and IAM user access keys`.
+3. DELETE `IAM Users that have been potentially compromised`.
+4. DELETE `AWS resources you didn't create`.
+
 EC2 has been hacked - what to do?
 1. Stop instances immediately.
 2. Take a snapshot of EBS volume + terminate instnace.
@@ -445,12 +455,33 @@ AWS Artifact: is a central resource for compliance and security related document
 
 ## Troubleshooting Scenarios
 
-Amazon VPC Peering connection issues - are usually the result of incorrect Route Table or NACL/SG rules.
-1. Verify __correct routes__ exist for connections to the IP range of your peered VPCs.
+VPC Peering - connection issues between VPCs (Route Table, NACL/SG rules)
+1. Verify that routes in __Routing Tables__ for ALL peered VPCs and configured correctly, so they know how to route traffic to each other.
 2. Verify that an ALLOW rule exists in the __NACL table__ for the required traffic.
 3. Verify that __Security Group rules__ allow traffic between the peered VPCs.
 4. Verify using __VPC Flow Logs__.
 
-Lambda not logging to CloudWatch Logs
-* Basic Lambda permissions required are: `CreateLogGroup`, `CreateLogStream` and `PutLogEvents`.
+VPC - no internet access
+* Configure Routing Table to use either an __Internet Gateway__ or a __NAT Gateway__.
 
+VPC - VPN connection not working
+* Ensure Routing Table is routing traffic to your data center via. the __Virtual Private Gateway__.
+* VPN traffic flow: VPC Virtual Private Gateway -> VPC Router -> Routing Table -> NACL -> Private Subnet -> SG -> EC2
+
+CloudWatch Logs - Lambda / EC2 not logging to CloudWatch Logs
+* Basic role permissions required to log to CloudWatch are: `CreateLogGroup`, `CreateLogStream` and `PutLogEvents`.
+* EC2 requires a CloudWatch agent installed and running.
+
+CloudWatch Events / S3 Event - Event not invoking Lambda
+* Add permissions in __Lambda Function Policy__ for Cloudwatch Events or S3 Events  to `invoke` your Lambda function.
+* This applies to ANY services that can invoke Lambdas listed here: https://aws.amazon.com/blogs/architecture/understanding-the-different-ways-to-invoke-lambda-functions
+
+CloudTrail Logging issues
+* __CT Logging not working__: Check S3 bucket name, S3 Bucket Policy, S3 Access Control List.
+* __CT Logging is expensive__: S3 Data Events record all object-level API activity. Lambda Data Events record all invoke-API operations.
+* __Auditor can't access logs__: `AWSCloudTrailReadOnlyAccess` IAM Policy allows access to CloudTrail logs.
+
+Troubleshooting Identity Federation - use the correct API for the job
+* `sts:AssumeRole`: If authenticated by AWS, typically for cross-account delegation.
+* `sts:AssumeRoleWithSAML`: If authenticated by a SAML IdP (Active Directory etc.).
+* `sts:AssumeRoleWithWebIdentity`: If authenticated by a Web Identity Provider (Facebook,, Google etc.)

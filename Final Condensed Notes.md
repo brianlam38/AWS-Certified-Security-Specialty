@@ -61,8 +61,12 @@ Glacier Vault Lock: low-cost storage service for data archiving and long-term ba
 * __Archives__ is a single file or multiple files stored in .tar/.zip.
 * __Vault__ is a container which stores one or more archives.
 * __Vault Lock Policy__ is used to configure __WRITE ONCE READ MANY (WORM)__ archives / create data retention policies.
-	* Vault Lock Policy creation: create policy -> initiate lock by attaching policy to your Vault (in-progress state) -> 24 hours to validate lock policy (you can abort within 24 hours) -> once validated, Vault Lock policy is immutable.
-* _Example Vault Lock Policy: enforce archive retention for 1 year_
+* Vault Locking steps:
+	1. CREATE Vault Lock Policy.
+	2. INITIATE Vault Lock (`POST lock-policy`) -> attaches policy to your Vault -> 24hrs to validate policy, otherwise the policy is detached/removed from the Vault.
+	3. TEST Vault Lock: ABORT Vault Lock (`DELETE lock-policy`) to detach policy and re-attach with INITIATE Vault Lock until you fine-tune the policy.
+	4. COMPLETE Vault Lock (`POST lockId`) -> Vault is now locked and policy is UNCHAGEABLE/IMMUTABLE.
+* Example Vault Lock Policy: enforce archive retention for 1 year:
 ```javascript
 {
 	"Sid": "deny-based-on-archive-age",

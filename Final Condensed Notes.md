@@ -101,6 +101,9 @@ __CloudTrail Log File Integrity Validation__ when enabled:
 3. CT signs each DIGEST FILE using a private/public keypair (AWS-controlled) - uses SHA-256 and SHA-256 hashing w/ RSA for digital signing.
 4. After delivery of digest file, you can use the PUBLIC KEY to validate the digest file.
 
+__CloudTrail: validate Log File Integrity via. CLI__
+* `$ aws cloudtrail validate-logs`
+
 __CloudTrail: How do we stop unauthorised access to log files?__
 * Use IAM policies and S3 bucket policies to restrict access to the S3 bucket containing the log files.
 * Encrypt logs with SSE-S3 or SSE-KMS.
@@ -134,8 +137,8 @@ AWS CloudWatch: real-time monitoring for resources and applications (utilisation
 AWS Config: continuously monitors and records AWS resource configurations and allows you to automate evaluation of recorded configurations against desired configs.
 * __Provides__: configuration snapshots, logs config changes of AWS resources, automated compliance checking.
 * __Enables__: compliance auditing, security analysis, resource tracking (what resource we're using and where)
-* How AWS Config works: resource configuration changes -> AWS Config invokes `List`/`Describe` API call -> updating config is recorded as __Configuration Items__ and delivered in a __Configuration Stream__ to an S3 bucket.
-* How __AWS Config Rules__ work: resource configuration changes -> AWS invokes custom/managed-rule's Lambda -> Lambda returns a compliance status.
+* __AWS Config changes__: resource configuration changes -> AWS Config invokes `List`/`Describe` API call -> updating config is recorded as __Configuration Items__ and delivered in a __Configuration Stream__ to an S3 bucket.
+* __AWS Config Rules__: resource config changes -> CloudWatch Event invokes custom/managed-rule's Lambda -> Lambda returns a compliance status.
 * __Use CloudTrail to gain deeper insights__: by getting an answer on _"Who made an API call to modify the configuration of this resource?"_
 
 __Root User Monitoring via. CloudWatch__: setting up an alert for Root User API activity
@@ -149,10 +152,16 @@ __Root User Monitoring via. CloudWatch__: setting up an alert for Root User API 
 AWS Inspector: automated security assessment service to improve security/compliance of applications in your AWS account
 * How it works: assessment performed -> prioritised findings produced -> findings can be reviewed directly or exported as a report via. Inspector or API
 * __Assessment Template__ is a configuration you define your assessment run i.e. RULES PACKAGE to evaluate target with,DURATION of assessment, SNS TOPICS which Inspector sends notifications to about run-state/findings.
-* __Rule packages__ include CVE's, CIS OS Config Benchmarks etc.
+* Rule packages allow you to run assessments related to a specific area:
+	* __Network Reachability package__ help automate monitoring of AWS networks (VPS, ELBS) and identify where network access to your EC2 instances might be misconfigured.
+	* __Common Vulnerabilities and Exposures__ help verify whether EC2 instances are exposed to CVEs.
+	* __CIS benchmarks__ and __Amazon Inspector Security Best Practices__ rules.
 
-AWS Trusted Advisor: advise you on COST OPTIMISATION, PERFORMANCE, SECURITY, FAULT TOLERANCE
-* Example security recommendations: service/usage limits, security groups (unrestricted ports), no-MFA on Root, exposed EBS snapshots etc.
+AWS Trusted Advisor (advises on cost, performance, security, fault tolerance). Example security checks:
+* __Security Groups__ for unrestricted access on specific ports (SSH inbound 0.0.0.0/0), overly permissive RDS SG access.
+* __Credentials__: MFA on Root, IAM password policy, IAM key rotation, exposed access keys on the internet.
+* __S3__: open access to S3 buckets.
+* __Logging__: CloudTrail enabled
 
 __S3 storage for logs__: best service for log storage
 * S3 Object Lifecycle Management.
@@ -164,6 +173,8 @@ __S3 storage for logs__: best service for log storage
 KMS Customer Master Keys (CMKs): a master key, used to generate/encrypt/decrypt data keys
 * __Data Keys__ are used to encrypt your actual data = __Envelope Encryption__.
 * __7-30 day waiting period__ before you can delete CMKs.
+* CMK administrative actions: `CreateKey, EnableKey, DescribeKey` and more.
+* CMK cryptographic operations: `Encrypt, Decrypt, GenerateKey`.
 
 KMS: Create a Customer-managed CMK with imported key material
 1. Create symmetric CMK with NO key material - select ORIGIN = EXTERNAL (non-AWS generated).
@@ -189,8 +200,8 @@ $ openssl rsautl -encrypt \
 
 KMS: Considerations of using imported Key Material
 * You CANNOT use `EncryptedKeyMaterial` and `ImportTokenXXX` files twice - they are single use only.
-* You CANNOT enable _automatic key rotation_ for a CMK w/ imported Key Material.
-* You CAN _manually rotate_ by repeating process of creating a new CMK w/ imported Key Material.
+* You CANNOT enable _automatic key rotation_ for a CMK w/ imported Key Material (also applies to asymmetric CMKs and custom key stores backed by CloudHSM).
+* You CAN _manually rotate_ by repeating process of creating a new CMK with new imported Key Material.
 * You CAN delete imported keys immediately by deleting the Key Material.
 
 KMS: key rotation options
@@ -200,10 +211,17 @@ KMS: key rotation options
 * __Customer Managed CMK w/ imported Key Material__: Customer manages rotation | NO automatic rotation | Manual rotation is only option by deleting CMK + creating new CMK.
 * _Be careful of deleting OLD CMKs during rotation - KEEP the old key in case it is needed._
 
-__KMS Grants__ are used to programatically delegate temporary use of CMKs to other AWS principals. Grants only ALLOW.
-* `create-grant`: adds new grant to CMK, specifies who can use it and list of operations grantee can perform. A grant token is generated and can be passed as an argument to a KMS API.
-* `list-grants`: lists grants for a CMK.
-* `revoke-grant`: remove a grant from a CMK.
+__KMS CMKs in Custom Key Store (backed by CloudHSM)__
+* You can create CMKs in a custom key store, where KMS will generate and store key material for the CMK in a CloudHSM Cluster that you own and manage.
+* Cryptographic operations are performed in the HSMs in the cluster.
+
+__KMS CMKs with IAM policies__
+* A Key Policy must explicitly allow IAM to use IAM policies to give users/roles access to the CMK.
+* This is done by having an `ALLOW` statement for Principal `"AWS": "arn:aws:iam::111222333:root"` (Allow IAM in account 111222333 to use CMK).
+
+__KMS Grants__ are used to programatically delegate TEMPORARY use of CMKs to other AWS principals.
+* Grants only ALLOW, not deny access to a CMK.
+* `create-grant` adds new grant to CMK, specifies who can use it and list of operations grantee can perform. A grant token is generated and can be passed as an argument to a KMS API.
 
 __KMS Policy Conditions - ViaService__ is used to ALLOW/DENY access to your CMKs according to which service the request originated from.
 
@@ -233,6 +251,14 @@ EC2 security
 * You CAN use CloudHSM with SSH for EC2 because you can EXPORT CloudHSM keys.
 * __EC2 Dedicated Instances__: run in a VPC on hardware that's dedicated to a single customer. Dedicated instances may still share hardware with other non-dedicated instances from the same AWS account.
 * __EC2 Dedicated Hosts__: same as above AND provides additional visibility and control over how instances are placed on a physical server + consistent deployment to same physical server each time + enables you to use existing server-bound licenses (e.g VMWare, Oracle which may require dedicated hosts) + allows you to address corporate and regulatory compliance.
+
+AWS EC2 Hypervisor: is software, firmware, hardware that creates and runs virtual machines.
+* __Hypervisor access by AWS employees__: Admins require MFA, access is logged/audited, administration hosts are specifically designed/built/configured/hardened to protect the management plane. Access is revoked upon no more business need for employee.
+* __Memory scrubbing__:
+	* EBS volumes are NOT scrubbed immediately after being deleted, only PRIOR TO BEING RE-USED.
+	* Host (EC2) memory that is allocated is scrubbed/zeroed by the Hypervisor as soon as it is UNALLOCATED from the guest.
+	* Host memory is not returned to the pool of free memory until scrubbing is complete.
+
 * __AWS EC2 Hypervisor__: is software, firmware, hardware that creates and runs virtual machines. EC2 AMIs run on 2 types of virtualisation:
 	* __Hardware Virtual Machine (HVM)__: VM guests are fully virtualised - they are not aware that they're sharing processing time with other VMs.
 	* __Paravirtual (PV)__: (MORE LIGHTWEIGHT / QUICKER) VM guests relies on hypervisor to provide support for operations that normally require privileged access = guest OS has no elevated CPU access.
@@ -240,7 +266,7 @@ EC2 security
 	* Guest OS (EC2) instances are controlled completely by customers with full root over accounts, services and apps running on EC2. AWS has no right to access EC2s.
 	* __AWS IS NOW SHIFTING ITS PHYSICAL SERVERS FROM XEN HYPERVISOR TO LINUX KERNEL-BASED VIRTUAL MACHINE (KVM) OPEN-SOURCE HYPERVISOR__.
 
-Container security principals:
+Container security:
 1. __Don't store secrets__
 	* Use IAM roles instead of hardcoding user credentials.
 	* Use Secrets Manager for RDS credentials and API keys.
@@ -259,6 +285,10 @@ Container security principals:
 	* Avoid public internet by using __ECS Interface Endpoints__ (similar to VPC endpoints)
 	* If using public internet, use TLS to secure end-to-end communication between end-users and your apps running in containers.
 	* __Amazon Certificate Manager (ACM)__ can be used to provide single, central interface for storing and managing certificates. It integrates well with many AWS services.
+
+Amazon DNS - Default DHCP vs. Custom DHCP options
+* __Default DHCP__ options set uses `AmazonProvidedDNS`. You cannot update the existing option set, only delete and create a new one.
+* __Custom DHCP__ options set can be used by creating a NEW SET of DHCP options and providing IPs of up to 4 DNS servers.
 
 
 ## Chapter 5 - Data Protection With VPCs
@@ -332,7 +362,7 @@ __AWS CloudHSM__ provides Hardware Security Modules (HSM) in a cluster - a colle
 	4. __Appliance User (AU)__: performs cloning and synchronization operations. CloudHSM uses AU to sync HSMs. AU exists in all HSMs and has limited permissions.
 
 __AWS Direct Connect (DX)__ enables you to establish a dedicated private connection from an _on-premise network/datacenter to 1+ VPCs in the same region_ to reduce network costs, increase throughput, provide more consistent network experience than internet-based connections.
-* __DX + VPN (AWS Virtual Private Gateway endpoint)__: end-to-end encrypted connection with LOW LATENCY and INCREASED BANDWIDTH of AWS Direct Connect.
+* __DX + VPN (AWS Virtual Private Gateway endpoint)__: The VPN provides end-to-end encryption while AWS Direct Connect provides a reliable network with low latency and increased bandwidth.
 
 __AWS Transit Gateway__ connects VPCs and on-premise datacenters/networks through a central hub. Acts as a cloud router.
 * NOT using Transit Gateway
@@ -345,6 +375,10 @@ __AWS Transit Gateway__ connects VPCs and on-premise datacenters/networks throug
 	* __Secure__: communication between VPCs are done via. AWS private network. Inter-region traffic is supported.
 
 __AWS VPC Endpoints__ enable you to privately connect (using __AWS PrivateLink__) your VPC to supported AWS services without needing a NAT Gateway (goes over private network).
+* _MOST SECURE WAY TO ALLOW RESOURCES TO CONNECT TO OTHER AWS SERVICES, AS TRAFFIC NEVER LEAVES VPC_.
+* EC2 instances in your VPC do NOT require public IPs to communicate with resources in supported VPC Endpoint services.
+* Supported services include `S3, DynamoDB, SNS, ELBs, CloudFormation` and more.
+* Restrict access to AWS resources to only specific VPC Endpoints by using `aws:sourceVpce: vpce-endpoint-id`. E.g. S3 Bucket Policy condition to access S3 bucket via. specific VPCE only.
 
 
 ## Chapter 6 - Incident Response and AWS in the Real World
@@ -357,7 +391,7 @@ Minimising DDoS
 3. __Safeguard public-facing resources__: AWS WAF, CloudFront (Geo-blocking, S3 Origin Access Identity), Route53 (alias records to redirect traffic to CloudFront, ELB or other security tools + Private DNS to manage internal DNS names for DBs, webservers etc. without exposing info publically).
 4. __Learn what normal behaviour looks like__: spot abnormalities, create alarms to alert for unusual behaviour, collect forensic data to understand attacks.
 5. __Create a plan for attacks__: validate design of architecture, understand costs of resiliency, know who to contact when attack occurs.
-6. __AWS Shield__: protects all AWS customers on ELB, CloudFront and Route53 against SYN/UDP floods, reflection attacks and other layer 3/4 attacks.
+6. __AWS Shield__: protects all AWS customers on ELB, CloudFront and Route53 against SYN/UDP floods, reflection attacks and other layer 3/4 DDoS attacks.
 7. __AWS Shield Advanced__: enhanced protections, $3k/month, always-on flow-based monitoring of network/app traffic, 24/7 DDoS Response Team (DRT), AWS billing protection.
 
 AWS Account compromised - what to do?
@@ -378,7 +412,7 @@ Leaked Github keys - what to do?
 * __Root User Credentials__: (1) Goto `My Security Credentials` -> `Access Keys` -> De-active Root User Access Key. (2) Create new Root User Access Key (3) Delete old Root User Access Key
 
 __AWS Certificate Manager (ACM)__: provision a SSL cert for a domain name you have registered. SSL certs are autorenewed provided the domain name was purchased from Route53.
-* __Requesting a SSL cert__: (1) Add domain name (2) Select domain validation methods DNS or EMAIL (3) If DNS validation, add the given CNAME record to Route53.
+* __Requesting a SSL cert__: (1) Add domain name (2) Select domain validation methods DNS or EMAIL (3) If DNS validation, add the given CNAME record to Route53. _IF YOU REQUIRE HTTPS BETWEEN END-USERS <-> CF, CERTIFICATE CAN ONLY BE REQUESTED/IMPORTED ON US-EAST-1 IN ACM_
 * __Auto-renew SSL/TLS certs__: ACM provides autorenewal for Amazon-issued SSL/TLS certs.
 * __Manual-renew SSL/TLS certs__: Imported SSL/TLS certs OR certs associated with R53 private hosted zones must be manually renewed.
 * __Use Amazon SSL cert with CloudFront__: Goto `CloudFront` -> select distribution -> edit settings to change default CloudFront SSL cert to the new custom SSL cert associated with your domian name.
@@ -428,8 +462,9 @@ AWS Secrets Manager
 * __Secrets Manager vs. Parameter Store__: Parameter Store is for passwords, db strings, license codes, parameter values, config data. Values may be cleartext or encrypted (Secure String Parameter). No charge and is integrated with AWS Systems Manager.
 
 Using AWS Simple Email Service (SES)
-* Configure SG associated with EC2 to allow outbound to the SES SMTP endpoint.
-* EC2 throttles email traffic over the default SMTP `port 25` -> bypass throttle by using `port 587` or `port 2587`. Otherwise, request for a limit increase.
+* Configure Security Group associated with EC2 to allow outbound to the SES SMTP endpoint.
+* __Using SES__: if you have reached a Sending Limit, you can request to increase it via. AWS Support.
+* __Using custom Mail Transmission software__: e.g. JavaMail. EC2 throttles traffic over the default SMTP `port 25`. You can bypass the throttle by using `port 587` or `port 2587`.
 
 AWS Security Hub:
 1. __Centralised dashboard__ for findings/alerts from key AWS security services.
@@ -442,6 +477,9 @@ Network packet inspection in AWS
 	* Takes action by blocking, re-routing or logging.
 	* IDS/IPS combined with a traditional firewall.
 * How to use: install 3rd-party solution for Network Packet Inspection via. AWS Marketplace.
+
+IDS/IPS solution to protection AWS infrastructure from possible threats.
+* Use 3rd-party solutions from AWS Marketplace.
 
 Active Directory Federation with AWS: AWS enables federated sign-in to AWS using Active Directory credentials
 * Great for companies with an existing Active Directory Domain + have corporate users who have AD accounts.
@@ -479,6 +517,7 @@ VPC - VPN connection not working
 CloudWatch Logs - Lambda / EC2 not logging to CloudWatch Logs
 * Basic role permissions required to log to CloudWatch are: `CreateLogGroup`, `CreateLogStream` and `PutLogEvents`.
 * EC2 requires a CloudWatch agent installed and running.
+* Lambda's EXECUTION ROLE requires the above permissions.
 
 CloudWatch Events / S3 Event - Event not invoking Lambda
 * Add permissions in __Lambda Function Policy__ for Cloudwatch Events or S3 Events  to `invoke` your Lambda function.
@@ -493,3 +532,18 @@ Troubleshooting Identity Federation - use the correct API for the job
 * `sts:AssumeRole`: If authenticated by AWS, typically for cross-account delegation.
 * `sts:AssumeRoleWithSAML`: If authenticated by a SAML IdP (Active Directory etc.).
 * `sts:AssumeRoleWithWebIdentity`: If authenticated by a Web Identity Provider (Facebook,, Google etc.)
+
+SMTP or AWS SES SMTP - timeout issues
+* EC2 throttles SMTP `port 25` by default. Use `port 587` or `port 2587` which are unrestricted or request to remove email sending limitations.
+
+Lambda - issues with Lambda not being invoked OR Lambda not accessing resource
+* __Lambda executions not logged in CloudWatch Logs__: `CreateLogGroup`, `CreateLogStream` and `PutLogEvents` required in LAMBDA EXECUTION ROLE.
+* __Lambda cannot perform an action__ e.g. write to S3, log to CloudWatch, Terminate Instances, use a CMK, use Secrets Manager
+    * Check the LAMBDA EXECUTION ROLE allows the actions.
+* __Lambda cannot be invoked by service__ e.g. CloudWatch Event invoking Lambda.
+    * Check the LAMBDA FUNCTION POLICY allows the service.
+* Remember that some services have their own resource-based policies which will impact access to the resource
+    * E.g S3 Bucket Policy, KMS Key Policies etc.
+* NOTE: _Lambda Execution Role_ defines what the Lambda fn can do.
+* NOTE: _Function Policy_ defines which services can invoke the Lambda fn.
+

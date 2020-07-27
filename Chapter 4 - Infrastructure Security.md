@@ -50,8 +50,7 @@ Why import your own Key Material:
 Considerations of importing your own Key Material:
 * You CANNOT use the same `EncryptedKeyMaterial` and `ImportToken` files twice - it is SINGLE USE only.
 * You CANNOT *enable automatic key rotation* for a CMK with imported key material.
-* You CAN *manually rotate* a CMK with imported key material.
-^Do this by creating a new CMK then import the new key material into that CMK (i.e. repeat the same process as creating a new key)
+* You CAN *manually rotate* a CMK with imported key material - do this by creating a NEW CMK then import the new key material into that CMK (i.e. repeat the same process as creating a new key)
 * You can delete imported keys immediately by deleting the Key Material.
 
 Scenario #1: User disables a KMS key - event-driven security.

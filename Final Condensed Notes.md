@@ -198,6 +198,7 @@ KMS: key rotation options
 * __AWS Managed CMK__: AWS manages rotation | Rotation occurs every __3 YEARS__.
 * __Customer Managed CMK__: Customer manages rotation | Automatic rotation every __1 YEAR__ can be enabled | Manual rotation is possible by deleting CMK + creating new CMK.
 * __Customer Managed CMK w/ imported Key Material__: Customer manages rotation | NO automatic rotation | Manual rotation is only option by deleting CMK + creating new CMK.
+* _Be careful of deleting OLD CMKs during rotation - KEEP the old key in case it is needed._
 
 __KMS Grants__ are used to programatically delegate temporary use of CMKs to other AWS principals. Grants only ALLOW.
 * `create-grant`: adds new grant to CMK, specifies who can use it and list of operations grantee can perform. A grant token is generated and can be passed as an argument to a KMS API.
@@ -331,6 +332,9 @@ __AWS CloudHSM__ provides Hardware Security Modules (HSM) in a cluster - a colle
 	2. __Crypto Officer (CO)__: performs user management e.g. create and delete users and change user passwords.
 	3. __Crypto Users (CU)__: performs key management (_create/delete/import/export_) and cryptographic operations (_encr/decr/sign/verify_).
 	4. __Appliance User (AU)__: performs cloning and synchronization operations. CloudHSM uses AU to sync HSMs. AU exists in all HSMs and has limited permissions.
+
+__AWS Direct Connect (DX)__ enables you to establish a dedicated private connection from an _on-premise network/datacenter to 1+ VPCs in the same region_ to reduce network costs, increase throughput, provide more consistent network experience than internet-based connections.
+	* __DX + VPN (AWS Virtual Private Gateway endpoint)__: end-to-end encrypted connection with LOW LATENCY and INCREASED BANDWIDTH of AWS Direct Connect.
 
 __AWS Transit Gateway__ connects VPCs and on-premise datacenters/networks through a central hub. Acts as a cloud router.
 * NOT using Transit Gateway

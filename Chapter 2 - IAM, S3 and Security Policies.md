@@ -116,7 +116,7 @@ This flow will be examined heavily with scenarios containing 2-3 different polic
 ### Forcing Encryption on S3
 
 Use S3 bucket policy to enforce encryption - prevent read without SSL enabled:
-```json
+```javascript
 // If secure transport is false, DENY read.
 // Alternative policy, if secure transport is true, ALLOW read.
 "Sid":"PublicReadGetObject",

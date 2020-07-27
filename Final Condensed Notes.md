@@ -324,8 +324,6 @@ Session Manager in AWS Systems Manager: enables secure remote login to EC2 insta
 	4. Configure Session Manager #2: select session logging options (1) Encrypt logs with KMS (2) Send logs to S3 bucket (3) Send logs to CloudWatch.
 	5. Start a session: `Sessions` -> Start a session and select running EC2 -> launch web shell.
 
-__VPC Endpoints__ enable you to privately connect (using AWS PrivateLink) your VPC to supported AWS services without needing a NAT Gateway (goes over private network).
-
 __AWS CloudHSM__ provides Hardware Security Modules (HSM) in a cluster - a collection of individual HSMs that AWS CloudHSM keeps in sync. Any tasks performed on one HSM, other HSMs in the cluster will be updated.
 * CloudHSM user types:
 	1. __Precrypto Officer (PRECO)__: default account with admin/pass creds -> upon setting password, you will be promoted to CO.
@@ -334,7 +332,7 @@ __AWS CloudHSM__ provides Hardware Security Modules (HSM) in a cluster - a colle
 	4. __Appliance User (AU)__: performs cloning and synchronization operations. CloudHSM uses AU to sync HSMs. AU exists in all HSMs and has limited permissions.
 
 __AWS Direct Connect (DX)__ enables you to establish a dedicated private connection from an _on-premise network/datacenter to 1+ VPCs in the same region_ to reduce network costs, increase throughput, provide more consistent network experience than internet-based connections.
-	* __DX + VPN (AWS Virtual Private Gateway endpoint)__: end-to-end encrypted connection with LOW LATENCY and INCREASED BANDWIDTH of AWS Direct Connect.
+* __DX + VPN (AWS Virtual Private Gateway endpoint)__: end-to-end encrypted connection with LOW LATENCY and INCREASED BANDWIDTH of AWS Direct Connect.
 
 __AWS Transit Gateway__ connects VPCs and on-premise datacenters/networks through a central hub. Acts as a cloud router.
 * NOT using Transit Gateway
@@ -345,6 +343,8 @@ __AWS Transit Gateway__ connects VPCs and on-premise datacenters/networks throug
 	* __Centralised__: Transit Gateway sits between all your VPCs and Datacentre, only needs to be configured once. Any VPC connected to Transit Gateway can communicate with every other connected VPC.
 	* __Route Tables__: can be used to enforce which VPCs can communicate with each other.
 	* __Secure__: communication between VPCs are done via. AWS private network. Inter-region traffic is supported.
+
+__AWS VPC Endpoints__ enable you to privately connect (using __AWS PrivateLink__) your VPC to supported AWS services without needing a NAT Gateway (goes over private network).
 
 
 ## Chapter 6 - Incident Response and AWS in the Real World

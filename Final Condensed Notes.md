@@ -25,22 +25,22 @@ S3 bucket access - via. CloudFront using Origin Access Identity (OAI)
 * Steps to enable: (1) Create an OAI in CloudFront + turn on `Restrict Bucket Access` (2) Update S3 bucket permissions: turn on `Grant Read Permissions on Bucket` OR change permissions manually in S3 bucket to allow OAI access.
 * OAI principal with bucket access should be `arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity EAFXXXXXID`
 
-S3 object access - via. Presigned-URL for a temporary access to objects
-* Presign URL with 300s expiry: `$ aws s3 presign s3://acloudgurupresigned/hello.txt --expires-in 300`
-* URL example: https://acloudgurupresigned.s3.amazonaws.com/OBJECT.txt?AWSACcessKeyId=XXX&Expires=XXX&x-amz-security-token=XXX&Signature=XXX
+S3 object access - via. Presigned-URL for a temp S3 object access using your own credentials
+* Presign URL with 300s expiry: `$ aws s3 presign s3://examplepresigned/hello.txt --expires-in 300`
+* Example response: https://examplepresigned.s3.amazonaws.com/OBJECT.txt?AWSACcessKeyId=XXX&Expires=XXX&x-amz-security-token=XXX&Signature=XXX
 
-AWS Security Token Service (STS)
-* __Federation__ uses SAML to combine a list of users in one domain (e.g. AWS IAM) with a list of users in another domain (e.g. Active Directory, Facebook, Google etc.)
+AWS Security Token Service (STS): grants users limited and temporary access to AWS resources. Key terms:
+* __Identity Federation__ is a system of trust between two parties for the purpose of authenticating users and conveying information/attributes needed to authorize their access to resources.
+* __Identity Store / Identity Provider (IdP)__ is responsible for user authentication and stores identities (AD, FB, Google).
+* __Service Provider (SP)__ is responsible for controlling access to resources.
 * __Identity Broker__ is the service that allows you to take an identity from A and federate it to B.
-* __Identity Store / Identity Provider (IdP)__ is the service that stores identities e.g. Okta, AD, FB, Google.
-* __Identities__ are the users in a service like AD, FB, Google.
 
 AWS STS authentication steps:
-1. __As the Identity/User__, authenticate against the __Identity Store / Provider__ (Okta, AD, FB, Google).
-2. __As the Identity Broker__, authenticate against STS using __STS:GetFederationToken__.
-3. __As the Application__, authenticate against AWS service to obtain access to the requested resource.
+1. __As the Identity/User__, authenticate against the __Identity Store / Provider__ (Okta, AD, FB, Google) using user/pass.
+2. __As the Identity Broker__, authenticate against STS using __sts:GetFederationToken__ to obtain a temp STS token.
+3. __As the Application__, authenticate against AWS service with temp STS token to obtain access to the requested resource.
 
-Web Identity Federation with Amazon Cognito:
+Web Identity Federation with Amazon Cognito (web and mobile app authN/authZ):
 * __Amazon Cognito__: An Identity Broker to connect a WebApp to users from Identity Store/Provider like Facebook.
 * __Cognifo benefits__: No need for mobile app to embed AWS credentials locally on device + provides user with seamless experience.
 * __Cognito User Pools__ are for authentication. With a User Pool, your app users can sign-in through the User Pool OR federate through a 3rd-party identity provider (IdP).
@@ -53,8 +53,9 @@ Web Identity Federation with Amazon Cognito:
 Glacier Vault Lock: low-cost storage service for data archiving and long-term backup
 * __Archives__ is a single file or multiple files stored in .tar/.zip.
 * __Vault__ is a container which stores one or more archives.
-* __Vault Lock Policy__ is used to configure __WRITE ONCE READ MANY (WORM)__ archives / create data retention policies.
-* Vault Locking steps:
+* __Vault ACCESS Policy__ is for implementing ACCESS CONTROL rather than a Lock Policy which is compliance-related.
+* __Vault LOCK Policy__ is used to configure __WRITE ONCE READ MANY (WORM)__ archives / create data retention policies.
+* __Vault Locking steps__:
 	1. CREATE Vault Lock Policy.
 	2. INITIATE Vault Lock (`POST lock-policy`) -> attaches policy to your Vault -> 24hrs to validate policy, otherwise the policy is detached/removed from the Vault.
 	3. TEST Vault Lock: ABORT Vault Lock (`DELETE lock-policy`) to detach policy and re-attach with INITIATE Vault Lock until you fine-tune the policy.
@@ -76,14 +77,13 @@ Glacier Vault Lock: low-cost storage service for data archiving and long-term ba
 	}
 }
 ```
-* __Vault Access Policy__ is for implementing access control rather than a Lock Policy which is compliance-related.
 
 AWS Organisations: Service Control Policies (SCPs)
 * __Service Control Policy__ enables you to restrict, at the account-level, what services and actions the IAM Entities in those accounts can do.
 * SCP never GRANTS permissions, only LIMITS permissions.
 
 __IAM Credential Report__ is a CSV-formatted report which lists all users in accounts + status of their various credentials, including PASSWORDS, ACCESS KEYS, MFA devices (last used, rotated).
-* Requires `iam:GenerateCredentialReport` and `iam:GetCredentialReport`.
+* Requires both `iam:GenerateCredentialReport` AND `iam:GetCredentialReport`.
 
 
 ## Chapter 3 - Logging and Monitoring
@@ -122,10 +122,16 @@ AWS CloudWatch: real-time monitoring for resources and applications (utilisation
 * __CW Alarms__: CPU > 80% utilisation = trigger CW Alarm
 * __Notifications__: SNS notifications
 * __CW Logs__: monitor, store and access log files from AWS services (e.g. CloudTrail) or apps/systems (EC2 kernel logs, appserver logs). CW log retention = logs are stored indefinitely by default.
-* __CW Events__: delivers near real-time stream of system events that describe changes in AWS resources.
-	* EVENT: An event indicates AWS resource state change, CloudTrail API calls, custom-events (HTTP 403), scheduled-events.
-	* RULE: A rule matches incoming events and route them to one or more targets.
-	* TARGET: A target processes events. Targets include Lambda, SNS topics, SQS queues, Kinesis Streams and more.
+
+AWS CloudWatch Events: delivers near rela-time stream of system events that describe changes in AWS resources.
+* CW Events terminology:
+	* __CW Event__: An event indicates AWS resources state change, CloudTrail API calls, custom events (HTTP 403) or scheduled/periodic events.
+	* __CW Event Rule__: A rule matches incoming events and routes them to one or more targets.
+	* __CW Event Target__: A target processes events. Targets include Lambda, SNS Topics, SQS queues, EC2 and more.
+* Steps to create a CloudWatch Events Rule that triggers on an Event:
+	1. __Event Source__: choose an AWS service (e.g. AWS Config) that you want to capture events from.
+	2. __Event Type__: choose the Event Type (e.g. `Config Rules Compliance Change`). Types available depending on the chosen source AWS service.
+	3. __Event Target__: choose an AWS service as the Event Target (e.g. Lambda) and an associated IAM role with permissions for CloudWatch Events to invoke the target.
 
 AWS Config: continuously monitors and records AWS resource configurations and allows you to automate evaluation of recorded configurations against desired configs.
 * __Provides__: configuration snapshots, logs config changes of AWS resources, automated compliance checking.

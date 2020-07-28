@@ -269,7 +269,7 @@ Scenario:
 1. Employee enters username / password
 2. Application calls Identity Broker. Broker captures username/password.
 3. Identity Broker uses the organisation's LDAP directory to validate the employee's identity.
-4. Identity Broker calls the GetFederationToken function using IAM credentials.
+4. Identity Broker calls the `sts:GetFederationToken` API using IAM credentials.
     * GetFederationToken(DurationSeconds, Name, Policy, PolicyArn) where:
     * _DurationSeconds_: duration of the STS token (1 to 36 hours).
     * _Name_: name of the federated user.

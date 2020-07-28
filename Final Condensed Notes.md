@@ -11,28 +11,21 @@ S3 Bucket Policy / ACL / IAM conflicts:
 * __Policy Conflicts__: Whenever an AWS principal (user, group or role) issues a request to S3, the authorization decision depends on the union of all the IAM policies, S3 bucket policies and S3 ACLs that apply.
 * __Policy Conflict flow__: (1) DENY by default (2) If policy has EXPLICIT DENY = DENY (3) If policy has ALLOW = ALLOW
 
-S3 Cross-Region Replication (CRR)
-* __CRR AUDIT account use case__: CloudTrail logs accounts XYZ -> turn on CRR to replicate CloudTrail logs to AUDIT -> XYZ can only replicate logs, but NOT read/write logs in audit.
-* __CRR replicates__: new objects (_encrypted w/ SSE-S3 or SSE-KMS + unencrypted_), metadata, ACL updates, tags
-* __CRR NOT replicate__: objects before CRR, objects encrypted by SSE-C, objects which bucket owner does NOT have permissions, object deletes of a specific version.
+S3 Cross-Region Replication (CRR): replicate objects across S3 buckets in different AWS regions
+* __CRR replicates__: NEW objects (_encrypted with SSE-S3/SSE-KMS or unencrypted_), metadata, ACL updates, tags.
+* __CRR CANNOT replicate__: objects before CRR, objects encrypted by SSE-C, objects which bucket owner does NOT have permissions, object deletes of a specific version.
 
-Secure S3 bucket access via. CloudFront Origin Access Identity
-1. Goto CloudFront -> __Origins and Origin Groups__
-2. Turn on __Restrict Bucket Access__ -> Create an __Origin Access Identity__
-3. Turn on __Grant Read Permissions on Bucket__ to allow CloudFront OAI to perform `s3:GetObject` | Resulting Policy:
-```javascript
-{
-	"Sid": "BucketAccessViaCloudFrontOnly",
-	"Effect": "Allow",
-	"Principal": {
-		"AWS": "arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity EAF5XXXXXXXXX"
-		},
-	"Action": "s3:GetObject",
-	"Resource": "arn:aws:s3:::AWS-EXAMPLE-BUCKET/*"
-}
-```
+S3 Bucket Cross-Region Replicate with Cross-Accounts:
+* __Audit use-case__: (1) CT logs acct-XYZ (2) CRR turned on to replicate CT logs to acct-Audit (3) acct-XYZ can only replicate logs to acct-Audit but NOT read/write to acct-Audit.
+* __Permissions__: IAM role must have permissions to replicate objects in the destination bucket.
+* __CRR Config__: You can optionally direct S3 to change ownership of object replicates to the AWS account that owns the destination bucket.
 
-Secure S3 object access via. Presigned-URL
+S3 bucket access - via. CloudFront using Origin Access Identity (OAI)
+* __CloudFront Origin Access Identity__ is a virtual identity used to give a CF distribution permission to fetch a private object from an S3 origin on behalf of end-users. All direct access by using S3 URLs will be denied.
+* Steps to enable: (1) Create an OAI in CloudFront + turn on `Restrict Bucket Access` (2) Update S3 bucket permissions: turn on `Grant Read Permissions on Bucket` OR change permissions manually in S3 bucket to allow OAI access.
+* OAI principal with bucket access should be `arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity EAFXXXXXID`
+
+S3 object access - via. Presigned-URL for a temporary access to objects
 * Presign URL with 300s expiry: `$ aws s3 presign s3://acloudgurupresigned/hello.txt --expires-in 300`
 * URL example: https://acloudgurupresigned.s3.amazonaws.com/OBJECT.txt?AWSACcessKeyId=XXX&Expires=XXX&x-amz-security-token=XXX&Signature=XXX
 
@@ -173,8 +166,8 @@ __S3 storage for logs__: best service for log storage
 KMS Customer Master Keys (CMKs): a master key, used to generate/encrypt/decrypt data keys
 * __Data Keys__ are used to encrypt your actual data = __Envelope Encryption__.
 * __7-30 day waiting period__ before you can delete CMKs.
-* CMK administrative actions: `CreateKey, EnableKey, DescribeKey` and more.
-* CMK cryptographic operations: `Encrypt, Decrypt, GenerateKey`.
+* CMK administrative actions: `CreateKey, EnableKey, DescribeKey (get CMK metadata)` and more.
+* CMK cryptographic operations: `Encrypt, Decrypt, GenerateDataKey (create Data Key that is encrypted with a specified CMK)`.
 
 KMS: Create a Customer-managed CMK with imported key material
 1. Create symmetric CMK with NO key material - select ORIGIN = EXTERNAL (non-AWS generated).

@@ -146,7 +146,7 @@ Cross-Region Replication (CRR) requirements:
 * Amazon S3 must have permissions to replicate objects from src/dest bucket on your behalf. When you enable CRR for the first time, a __role will be created__ for you + a __customer-managed policy__ will be assigned.
 * If src bucket owner also owns the object, the bucket owner has full permissions to replicate the object. If not, object owner must grant the bucket owner `READ`/`READ_ACP` permissions via. the object ACL.
 
-CRR Cross Accounts:
+CRR + Cross Accounts:
 * The IAM role must have permissions to replicate objects in the destination bucket.
 * In CRR config, you can optionally direct AWS S3 to change ownership of object replicas to the AWS account that owns the destination bucket.
 * __AUDIT account Cross-Region Replication use case__:
@@ -323,7 +323,7 @@ Glacier is a low-cost storage service for data archiving and long-term backup.
 * _Vault Lock Policy_: similar to an IAM policy to configure and enforce compliance controls - connfigure write-once-read-many archives / create data retention policies
 
 Example Vault Lock Policy: Enforce archive retention for 1 year (deny archive delete for all archives <365 days old)
-```json
+```javascript
 "Version":"2012-10-17",
 "Statement":[
     {
@@ -382,7 +382,7 @@ Required permissions to generate IAM Credential Reports
 * `GetCredentialReport`: download report
 
 An IAM Policy with permissions to generate IAM Credential Reports
-```json
+```javascript
 {
     "Version": "2012-10-17",
     "Statement": [{

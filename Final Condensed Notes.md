@@ -88,34 +88,22 @@ __IAM Credential Report__ is a CSV-formatted report which lists all users in acc
 
 ## Chapter 3 - Logging and Monitoring
 
+CloudTrail: Log file security and compliance
+* CloudTrail Event History is turned on by default (showing 90 days of activity). For longer-term logging, create a Trail and specify an S3 bucket to deliver events to. Trails by default log `Management Events` but not `Data Events OR Insight Events`.
+* __Validate log file Iitegrity via. CLI__: `$ aws cloudtrail validate-logs`
+* __Prevent log file UNAUTHORISED ACCESS__: IAM/S3 bucket policies to restrict access + SSE-S3/SSE-KMS encryption.
+* __Prevent log file DELETION__: IAM/S3 bucket policies to restrict access + S3 MFA Delete + validate that logs haven't been deleted via. Log File Validation.
+* __Ensure log file RETENTION for X-years for COMPLIANCE__: Log files are stored indefinitely. Use S3 Object Lifecycle Management to remove files after required period of time OR move files to AWS Glacier for long-term storage.
+* __Receive log files from MULTIPLE-REGIONS__: Turn on `CloudTrail Multi-Region` to delivery logs from multiple regions in a single AWS account to a single S3 bucket. Any new region launched -> CloudTrail automatically creates Trail in the new region with the same settings as your original trail.
+
 __CloudTrail Log File Integrity Validation__ when enabled:
 1. CT creates a HASH for every log file that it delivers.
 2. CT then creates a DIGEST FILE that references the log files for the LAST HOUR and contains a hash of each log file.
 3. CT signs each DIGEST FILE using a private/public keypair (AWS-controlled) - uses SHA-256 and SHA-256 hashing w/ RSA for digital signing.
 4. After delivery of digest file, you can use the PUBLIC KEY to validate the digest file.
 
-__CloudTrail: validate Log File Integrity via. CLI__
-* `$ aws cloudtrail validate-logs`
-
-__CloudTrail: How do we stop unauthorised access to log files?__
-* Use IAM policies and S3 bucket policies to restrict access to the S3 bucket containing the log files.
-* Encrypt logs with SSE-S3 or SSE-KMS.
-
 __CloudTrail: How can we be notified that a log file has been created, then validate that its not been modified?__
 * Lambda to compare digest file of yesterday vs. digest of same file last week -> if digest is different, trigger SNS notification.
-
-__CloudTrail: How can we prevent logs from being deleted?__
-* Restrict access with IAM and bucket policies.
-* Configure S3 MFA delete.
-* Validate that logs have not been deleted via. log file validation.
-
-__CloudTrail: How can we ensure logs are retained for X years in accordance with our compliance standards?__
-* By default, log files are kept indefinitely.
-* Use S3 Object Lifecycle Management to remove the files after the required period of time or move files to AWS Glacier for more cost-effective long-term storage.
-
-__CloudTrail: Multi-region__
-* Configure CloudTrail to deliver log files from multiple regions in a single AWS account into a single S3 bucket.
-* New region launches in AWS partition -> CloudTrail automatically creates Trail in new region with same settings as your original trail.
 
 AWS CloudWatch: real-time monitoring for resources and applications (utilisation / operational performance)
 * __CW Metrics / CW Custom Metrics__: CPU utilisation, network utilisation

@@ -443,7 +443,13 @@ AWS Secrets Manager
 * __Store credentials__ for RDS, non-RDS databases (DynamoDB) and any other secrets as long as you can store them as a key-value pair (SSH keys, API keys).
 * __Automatic secret rotation__ can be turned on, but make sure your app is not using hardcoded credentials + make sure it is retrieving credentials from Secrets Manager.
 * __Deletion of secrets__ require a 7 day waiting period.
-* __Secrets Manager vs. Parameter Store__: Parameter Store is for passwords, db strings, license codes, parameter values, config data. Values may be cleartext or encrypted (Secure String Parameter). No charge and is integrated with AWS Systems Manager.
+* __Secrets Manager BENEFITS vs. Parameter Store__:
+	* __Generation of passwords__: Secrets Manager can generate random passwords.
+	* __Secrets rotation__: Secrets Manager can natively rotate RDS passwords.
+	* __Cross-account access__: Secrets Manager secrets can be accessed cross-account.
+* Parameter Store is for storing:
+	* Plaintext (`String`, `StringList`) data such as non-confidential environment vars or config values.
+	* Encrypted (`SecureString`) data such as passwords, license codes, application secrets (encrypted with AWS or Customer managed CMKs).
 
 Using AWS Simple Email Service (SES)
 * Configure Security Group associated with EC2 to allow outbound to the SES SMTP endpoint.

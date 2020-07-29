@@ -245,7 +245,7 @@ AWS EC2 Hypervisor: is software, firmware, hardware that creates and runs virtua
 	* __Paravirtual (PV)__: (MORE LIGHTWEIGHT / QUICKER) VM guests relies on hypervisor to provide support for operations that normally require privileged access = guest OS has no elevated CPU access.
 	* __Hypervisor access by AWS employees__ is logged/audited + requires MFA + access strictly controlled. This cloud management plane is specially designed, built, configured and hardened.
 	* __Guest OS (EC2) are controlled by customers__ with full root over accounts, services and apps running on EC2. AWS has no right to access EC2s.
-	* __AWS IS NOW SHIFTING ITS PHYSICAL SERVERS FROM XEN HYPERVISOR TO LINUX KERNEL-BASED VIRTUAL MACHINE (KVM) OPEN-SOURCE HYPERVISOR__.
+	* _AWS IS NOW SHIFTING ITS PHYSICAL SERVERS FROM XEN HYPERVISOR TO LINUX KERNEL-BASED VIRTUAL MACHINE (KVM) OPEN-SOURCE HYPERVISOR_.
 
 Container security:
 1. __Don't store secrets__
@@ -284,6 +284,10 @@ VPCs
 	1. Create VPC -> provision private/public subnets to VPC -> provision Internet Gateway for public internet connectivity to VPC
 	2. Create CUSTOM ROUTE TABLE -> add route to the internet `0.0.0.0/0` via. Internet Gateway -> disable internet access for MAIN ROUTE TABLE, so all new subnets created won't have internet access by default -> associate subnet with CUSTOM ROUTE TABLE
 	3. Test internet connectivity using EC2s: Turn on `Auto-assign public IP addresses` for the public subnet so a public IPv4 address is assigned for all EC2s launched into the subnet -> try to SSH into EC2 in public subnet.
+
+AWS NAT devices - NAT Instaces / NAT Gateways
+* A NAT device forwards traffic from instances in the private subnet to the internet / AWS services, then sends the response back to the instances. The internet cannot initiate connections with these instances.
+* When traffic goes to the internet, source IPv4 address is replaced with the NAT device address and response traffic is translated by NAT device back to the instance's private IPv4 addresses.
 
 NAT Instances (OLD NAT METHOD)
 * __Single instance reliance__: any crash = no internet access for servers in private subnet.

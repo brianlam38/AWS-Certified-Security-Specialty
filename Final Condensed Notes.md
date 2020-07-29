@@ -163,18 +163,18 @@ KMS Customer Master Keys (CMKs): a master key, used to generate/encrypt/decrypt 
 * __CMK administrative actions__: `CreateKey, EnableKey, DescribeKey (get CMK metadata)` and more.
 * __CMK cryptographic actions__: `Encrypt, Decrypt, GenerateDataKey (create Data Key that is encrypted with a specified CMK)`.
 
-KMS: Create a Customer-managed CMK with imported key material
+KMS: Create a Customer-managed CMK with Imported Key Material
 1. Create __symmetric CMK__ with NO key material, where material origin = EXTERNAL (non-AWS generated).
 2. Download an AWS __Wrapping Key__ (public key) as `PublicKey.bin` and an Import Token `ImportTokenXXX`.
 3. Use `$ openssl rand 32` (random 32bit string) to generate your own key material
 4. Encrypt the key material with the Wrapping Key (public key).
 5. Upload `EncryptedKeyMaterial.bin` and `ImportTokenXXX` to the customer-managed CMK.
 
-KMS: Considerations of using imported Key Material
-* You CANNOT use `EncryptedKeyMaterial` and `ImportTokenXXX` files twice - they are single use only.
-* You CANNOT enable _automatic key rotation_ for a CMK w/ imported Key Material (also applies to asymmetric CMKs and custom key stores backed by CloudHSM).
-* You CAN _manually rotate_ by repeating process of creating a new CMK with new imported Key Material.
-* You CAN delete imported keys immediately by deleting the Key Material.
+KMS: Considerations of using Imported Key Material
+* `EncryptedKeyMaterial` and `ImportTokenXXX` CANNOT be used twice - they are single use only.
+* __Automatic Key Rotation__ CANNOT be done for CMK w/ Imported Key Material. Same applies to Asymmetric CMKs and Custom Key Stores backed by CloudHSM.
+* __Manual Key Rotation__ CAN be done, by repeating the process of creating a new CMK w/ new Imported Key Material
+* __Key Deletion__ CAN be done IMMEDIATELY, by deleting the Key Material.
 
 KMS: key rotation options
 * __AWS Owned CMKs__: AWS manages rotation | Rotation is varied - depends on the AWS service.

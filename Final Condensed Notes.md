@@ -275,8 +275,6 @@ Amazon DNS - Default DHCP vs. Custom DHCP options
 ## Chapter 5 - Data Protection With VPCs
 
 __AWS Virtual Private Cloud (VPC)__ lets you provision a logically isolated section of the AWS cloud where you can launch resources in a virtual network that you define.
-
-VPCs
 * Flow of inbound traffic: entry via. __VPC Virtual Private Gateway (VPN)__ or __VPC Internet Gateway (public)__ -> Route Tables -> Network ACL -> Subnet -> Security Groups -> EC2s.
 * __VPC Peering__ allows you to connect one VPC with another VPC via. direct network route using private IP addresses.
 	* Peering is in a STAR CONFIGURATION i.e. 1 central VPC with 4 others. No TRANSITIVE PEERING is allowed.
@@ -285,22 +283,33 @@ VPCs
 	2. Create CUSTOM ROUTE TABLE -> add route to the internet `0.0.0.0/0` via. Internet Gateway -> disable internet access for MAIN ROUTE TABLE, so all new subnets created won't have internet access by default -> associate subnet with CUSTOM ROUTE TABLE
 	3. Test internet connectivity using EC2s: Turn on `Auto-assign public IP addresses` for the public subnet so a public IPv4 address is assigned for all EC2s launched into the subnet -> try to SSH into EC2 in public subnet.
 
-AWS NAT devices - NAT Instaces / NAT Gateways
+VPC - AWS NAT Instance / AWS NAT Gateway
 * A NAT device forwards traffic from instances in the private subnet to the internet / AWS services, then sends the response back to the instances. The internet cannot initiate connections with these instances.
 * When traffic goes to the internet, source IPv4 address is replaced with the NAT device address and response traffic is translated by NAT device back to the instance's private IPv4 addresses.
 
-NAT Instances (OLD NAT METHOD)
+VPC - AWS NAT Instances (OLD NAT METHOD)
+* __Traffic flow__: EC2s in private subnet -> route table -> NAT instance in public subnet -> Internet Gateway -> the internet.
 * __Single instance reliance__: any crash = no internet access for servers in private subnet.
 * __Limited network throughput__: amount of traffic supported depends on instance size.
 * To have high availability, requires using Autoscaling Groups + multiple subnets in different AZs + scripts to automate failover (switching to a standby server upon failure).
 * NAT instances can be used as a __Bastion Server__.
 
-NAT Gateways (PREFERRED NAT METHOD)
-* Scales automatically to 10GBps.
-* Highly available, automatic failover.
+VPC - AWS NAT Gateways (PREFERRED NAT METHOD)
+* __Traffic flow__: EC2s in private subnet -> route table -> NAT Gateway in public subnet -> Internet Gateway -> the internet.
 * Security is managed by AWS - no need for Security Groups, server patching, antivirus protections etc.
-* Automatically assigned with a public IP
+* Automatically assigned with a public IP. Scales automatically to 10GBps. Highly available, automatic failover.
 * Create at least 1 NAT Gateway per Availability Zone so there is redundancy in case of Zone Failure.
+* __GuardDuty__ can monitor NAT Gateway metrics.
+
+VPC Flow Logs enable you to capture info about IP traffic going to/from Elastic Network Interfaces (ENIs - represent a virtual networking card) in your VPC, stored in CloudWatch.
+* __Flow log creation__ are at 3 different levels: (1) VPC - captures all ENI traffic (2) Subnet - capture ENI and EC2 traffic within a particular subnet (3) Network Interface
+* __Limitations__: Flow Logs for peered VPCs must be in the same AWS account. Flow logs can't be reconfigured after creation. Not all traffic is monitored (e.g. EC2 metadata, DHCP traffic, traffic to AWS DNS server, traffic to reserved AWS IPs)
+
+VPC Endpoints enable you to privately connect (using __AWS PrivateLink__) your VPC to supported AWS services without needing a NAT Gateway (goes over private network).
+* __MOST SECURE WAY TO ALLOW RESOURCES TO CONNECT TO OTHER AWS SERVICES, AS TRAFFIC NEVER LEAVES VPC__.
+* EC2 instances in your VPC do NOT require public IPs to communicate with resources in supported VPC Endpoint services.
+* Supported services include `S3, DynamoDB, SNS, ELBs, CloudFormation` and more.
+* Restrict access to AWS resources to only specific VPC Endpoints by using `aws:sourceVpce: vpce-endpoint-id`. E.g. S3 Bucket Policy condition to access S3 bucket via. specific VPCE only.
 
 NACLs vs. Security Groups
 * __NACLs are STATELESS__: responses to allowed inbound traffic are subject to outbound rules (vice versa).
@@ -318,12 +327,6 @@ Elastic Load Balancers and TLS/SSL Termination: terminate at ELB vs. EC2
 * __Application Load Balancer (HTTP/HTTPS)__ only supports HTTPS termination using an SSL cert on the Load Balancer itself. Only supports HTTP/HTTPS connections.
 * __Network Load Balancer (TCP, UDP, TLS)__ supports TLS/SSL termination on the Load Balancer AND EC2 instances. You will need to use TCP (load balancing at TCP transport-layer rather than HTTP application-layer).
 * __Classic Load Balancer (TCP, SSL/TLS, HTTP, HTTPS)__ supports TLS/SSL termination on the Load Balancer AND EC2 instances.
-
-VPC Flow Logs: enable you to capture info about IP traffic going to/from Elastic Network Interfaces (ENIs - represent a virtual networking card) in your VPC, stored in CloudWatch.
-* Logs are created at 3 different levels: (1) VPC - captures all ENI traffic (2) Subnet - capture ENI and EC2 traffic within a particular subnet (3) Network Interface
-* Cannot enable Flow Logs for VPCs that are peered with your VPC unless they're in the same AWS account.
-* Cannot change configuration of Flow Logs after creation.
-* Not all IP traffic is monitored: _EC2 metadata `169.254.169.254`_, _DHCP traffic_, _traffic to reserved AWS IPs_, _traffic generated by instances when they contact the AWS DNS server_.
 
 How to build a highly available Bastion instance:
 * __High availability__: at least 2x Bastion instances in 2 public subnets in 2 Availability Zones.
@@ -358,12 +361,6 @@ __AWS Transit Gateway__ connects VPCs and on-premise datacenters/networks throug
 	* __Centralised__: Transit Gateway sits between all your VPCs and Datacentre, only needs to be configured once. Any VPC connected to Transit Gateway can communicate with every other connected VPC.
 	* __Route Tables__: can be used to enforce which VPCs can communicate with each other.
 	* __Secure__: communication between VPCs are done via. AWS private network. Inter-region traffic is supported.
-
-__AWS VPC Endpoints__ enable you to privately connect (using __AWS PrivateLink__) your VPC to supported AWS services without needing a NAT Gateway (goes over private network).
-* _MOST SECURE WAY TO ALLOW RESOURCES TO CONNECT TO OTHER AWS SERVICES, AS TRAFFIC NEVER LEAVES VPC_.
-* EC2 instances in your VPC do NOT require public IPs to communicate with resources in supported VPC Endpoint services.
-* Supported services include `S3, DynamoDB, SNS, ELBs, CloudFormation` and more.
-* Restrict access to AWS resources to only specific VPC Endpoints by using `aws:sourceVpce: vpce-endpoint-id`. E.g. S3 Bucket Policy condition to access S3 bucket via. specific VPCE only.
 
 
 ## Chapter 6 - Incident Response and AWS in the Real World

@@ -176,12 +176,25 @@ KMS: Considerations of using Imported Key Material
 * __Manual Key Rotation__ CAN be done, by repeating the process of creating a new CMK w/ new Imported Key Material
 * __Key Deletion__ CAN be done IMMEDIATELY, by deleting the Key Material.
 
-KMS: key rotation options
-* __AWS Owned CMKs__: AWS manages rotation | Rotation is varied - depends on the AWS service.
-* __AWS Managed CMK__: AWS manages rotation | Rotation occurs every __3 YEARS__.
-* __Customer Managed CMK__: Customer manages rotation | Automatic rotation every __1 YEAR__ can be enabled | Manual rotation is possible by deleting CMK + creating new CMK.
-* __Customer Managed CMK w/ imported Key Material__: Customer manages rotation | NO automatic rotation | Manual rotation is only option by deleting CMK + creating new CMK.
-* _Be careful of deleting OLD CMKs during rotation - KEEP the old key in case it is needed._
+KMS Key Rotation:
+* __AWS-Owned CMKs__
+	* AWS manages rotation.
+	* Rotation is varied - it depends on the AWS service that creates and manages the CMK.
+* __AWS-Managed CMKs__
+	* AWS manages rotation.
+	* Rotation occurs every __3 YEARS__.
+* __Customer-Managed CMKs__
+	* Customer manages rotation.
+	* Automatic rotation every __1 YEAR__ can be enabled - __ensure CMK is not hardcoded before enabling auto-rotation__.
+	* Manual rotation is possible by (1) Creating new CMK (2) Update apps/key-alias to use new CMK (3) Keep old CMK so it can decrypt old objects.
+	* Deletion requires __7-30 day waiting period__.
+	* Deletion CANNOT be reversed as AWS deletes the Key Material + all metadata associated with the CMK.
+* __Customer-Managed CMKs w/ Imported Key Material__
+	* Customer manages rotation.
+	* NO automatic rotation is possible, as Key Material is external / not AWS-generated.
+	* Manual rotation by (1) Creating new CMK (2) Update apps/key-alias to use new CMK (3) Keep old CMK.
+	* Deletion can be done immediately by deleting Imported Key Material from the CMK, making it unusable.
+	* Deletion can be reversed by re-importing the SAME Imported Key Material.
 
 __KMS CMKs in Custom Key Store (backed by CloudHSM)__
 * You can create CMKs in a custom key store, where KMS will generate and store key material for the CMK in a CloudHSM Cluster that you own and manage.

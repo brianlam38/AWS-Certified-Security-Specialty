@@ -1,10 +1,11 @@
 ## Chapter 2 - IAM, S3 and Security
 
 Resetting Root Users
-* Create new root user password / strong password policy.
-* Delete 2FA then re-enable 2FA.
-* Delete Access Key ID, Secret Access Key.
-* Check existing user accounts and delete if not legitimate.
+* CHANGE root user password / strong password policy.
+* DELETE 2FA then re-enable 2FA.
+* ROTATE, then DELETE Root and IAM user access keys.
+* DELETE IAM users that have potentially been compromised.
+* DELETE AWS resources you didn't create
 
 S3 Bucket Policy / ACL / IAM conflicts:
 * __Explicit Deny Overrides__: An EXPLICIT DENY will always override any ALLOW.
@@ -150,7 +151,7 @@ AWS Trusted Advisor (advises on cost, performance, security, fault tolerance). E
 * __S3__: open access to S3 buckets.
 * __Logging__: CloudTrail enabled
 
-__S3 storage for logs__: best service for log storage
+S3 storage for logs: best service for log storage
 * S3 Object Lifecycle Management.
 * 99.99% durability and 99.99% availability of objects over a given year.
 
@@ -278,7 +279,7 @@ __AWS Virtual Private Cloud (VPC)__ lets you provision a logically isolated sect
 * Flow of inbound traffic: entry via. __VPC Virtual Private Gateway (VPN)__ or __VPC Internet Gateway (public)__ -> Route Tables -> Network ACL -> Subnet -> Security Groups -> EC2s.
 * __VPC Peering__ allows you to connect one VPC with another VPC via. direct network route using private IP addresses.
 	* Peering is in a STAR CONFIGURATION i.e. 1 central VPC with 4 others. No TRANSITIVE PEERING is allowed.
-* Setting up and testing a custom VPC:
+* Setting up and testing a custom VPC:`
 	1. Create VPC -> provision private/public subnets to VPC -> provision Internet Gateway for public internet connectivity to VPC
 	2. Create CUSTOM ROUTE TABLE -> add route to the internet `0.0.0.0/0` via. Internet Gateway -> disable internet access for MAIN ROUTE TABLE, so all new subnets created won't have internet access by default -> associate subnet with CUSTOM ROUTE TABLE
 	3. Test internet connectivity using EC2s: Turn on `Auto-assign public IP addresses` for the public subnet so a public IPv4 address is assigned for all EC2s launched into the subnet -> try to SSH into EC2 in public subnet.
@@ -296,10 +297,10 @@ VPC - AWS NAT Instances (OLD NAT METHOD)
 
 VPC - AWS NAT Gateways (PREFERRED NAT METHOD)
 * __Traffic flow__: EC2s in private subnet -> route table -> NAT Gateway in public subnet -> Internet Gateway -> the internet.
-* Security is managed by AWS - no need for Security Groups, server patching, antivirus protections etc.
+* __Security is managed by AWS__: no need for Security Groups, server patching, antivirus protections etc.
 * Automatically assigned with a public IP. Scales automatically to 10GBps. Highly available, automatic failover.
 * Create at least 1 NAT Gateway per Availability Zone so there is redundancy in case of Zone Failure.
-* __GuardDuty__ can monitor NAT Gateway metrics.
+* GuardDuty can monitor NAT Gateway metrics.
 
 VPC Flow Logs enable you to capture info about IP traffic going to/from Elastic Network Interfaces (ENIs - represent a virtual networking card) in your VPC, stored in CloudWatch.
 * __Flow log creation__ are at 3 different levels: (1) VPC - captures all ENI traffic (2) Subnet - capture ENI and EC2 traffic within a particular subnet (3) Network Interface
@@ -384,7 +385,7 @@ AWS Account compromised - what to do?
 
 EC2 has been hacked - what to do?
 1. Stop instances immediately.
-2. Take a snapshot of EBS volume + terminate instnace.
+2. Take a snapshot of EBS volume + terminate instance.
 3. Deploy a copy of the instance in an __isolated environment__ (isolated VPC, no internet access).
 4. Access the instance using an __isolated forensic workstation__.
 5. Read logs to figure out how they obtained access.
@@ -397,12 +398,13 @@ __AWS Certificate Manager (ACM)__: provision a SSL cert for a domain name you ha
 * __Requesting a SSL cert__: (1) Add domain name (2) Select domain validation methods DNS or EMAIL (3) If DNS validation, add the given CNAME record to Route53. _IF YOU REQUIRE HTTPS BETWEEN END-USERS <-> CF, CERTIFICATE CAN ONLY BE REQUESTED/IMPORTED ON US-EAST-1 IN ACM_
 * __Auto-renew SSL/TLS certs__: ACM provides autorenewal for Amazon-issued SSL/TLS certs.
 * __Manual-renew SSL/TLS certs__: Imported SSL/TLS certs OR certs associated with R53 private hosted zones must be manually renewed.
-* __Use Amazon SSL cert with CloudFront__: Goto `CloudFront` -> select distribution -> edit settings to change default CloudFront SSL cert to the new custom SSL cert associated with your domian name.
+* __Use Amazon SSL cert with CloudFront__: Goto `CloudFront` -> select distribution -> edit settings to change default CloudFront SSL cert to the new custom SSL cert associated with your domain name.
 * __Use Amazon SSL cert with EC2__: Goto `EC2` -> `Load Balancers` -> create a load balancer -> `choose a certificate from ACM`.
 
-Configuring Security Policy with ELBs / CloudFront (SSL/TLS protocols and ciphers)
+Configuring Security Policy (SSL/TLS protocols and ciphers) with ELBs / CloudFront 
 * __2016-08__ is the recommended Security Policy as it supports most ciphers.
 * __ECDHE-* cipher__ is required to enable Perfect Forward  Secrecy.
+* __Perfect Forward Secrecy__ is a concept where PAST captured-data cannot be decrypted using a compromised private key, as a new key is created for each SSL-session. The compromised key would only be able to decode data for its specific session, but no other.
 
 API Gateway - Throttling and Caching
 * __Steady-State Limit__: 10,000 req/sec
@@ -490,7 +492,7 @@ VPC Peering - connection issues between VPCs (Route Table, NACL/SG rules)
 4. Verify using __VPC Flow Logs__.
 
 VPC - no internet access
-* Configure Routing Table to use either an __Internet Gateway__ or a __NAT Gateway__.
+* Configure Routing Table to forward traffic / use an __Internet Gateway__ or a __NAT Gateway__.
 
 VPC - VPN connection not working
 * Ensure Routing Table is routing traffic to your data center via. the __Virtual Private Gateway__.

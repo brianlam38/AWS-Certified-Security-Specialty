@@ -333,14 +333,14 @@ How to build a highly available Bastion instance:
 * __Autoscaling Groups__: minimum of 1 Bastion -> if Bastion goes down, ASG deploys a Bastion into one AZ or another.
 * __Route53 health check__: run health checks on Bastion server.
 
-Session Manager in AWS Systems Manager: enables secure remote login to EC2 instances (alternative to RDP/SSH)
+AWS Systesm Manager - Session Manager: enables secure remote login to EC2 instances (alternative to RDP/SSH)
 * __Session Manager is Secure__: TLS encryption, no Bastion required, no Security Groups needed, CloudTrail logging, keystroke logging sent to CloudWatch/S3.
 * Setting up Session Manager in AWS Systems Manager:
-	1. Create EC2 instance role (IAM) w/ permission to call Systems Manager -> launch EC2 with no SGs.
-	2. Create CloudWatch Log Group for Session Manager `SM_LogGroup`.
-	3. Configure Session Manager #1: `Systems Manager` -> `Session Manager` -> `Preferences` -> enter CloudWatch Log Group created.
-	4. Configure Session Manager #2: select session logging options (1) Encrypt logs with KMS (2) Send logs to S3 bucket (3) Send logs to CloudWatch.
-	5. Start a session: `Sessions` -> Start a session and select running EC2 -> launch web shell.
+	1. Create EC2 instance role w/ permission to call Systems Manager + install SSM Agent on EC2.
+	2. Create CloudWatch Log Group `SM_LogGroup` + associate CW Log Group with Session Manager.
+	3. Configure Session Manager logging: encrypt session logs with KMS CMK (user of session + EC2 instance role must have access to CMK)
+	4. Configure Session Manager logging: choose to send logs to the CloudWatch Log Group OR an S3 bucket.
+	5. Start a session inside Session Manager Console -> launch web shell.
 
 __AWS CloudHSM__ provides Hardware Security Modules (HSM) in a cluster - a collection of individual HSMs that AWS CloudHSM keeps in sync. Any tasks performed on one HSM, other HSMs in the cluster will be updated.
 * CloudHSM user types:

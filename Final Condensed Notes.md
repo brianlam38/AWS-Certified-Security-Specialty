@@ -88,7 +88,7 @@ __IAM Credential Report__ is a CSV-formatted report which lists all users in acc
 
 ## Chapter 3 - Logging and Monitoring
 
-CloudTrail: Log file security and compliance
+CloudTrail: securing CloudTrail log files
 * CloudTrail Event History is turned on by default (showing 90 days of activity). For longer-term logging, create a Trail and specify an S3 bucket to deliver events to. Trails by default log `Management Events` but not `Data Events OR Insight Events`.
 * __Validate log file Iitegrity via. CLI__: `$ aws cloudtrail validate-logs`
 * __Prevent log file UNAUTHORISED ACCESS__: IAM/S3 bucket policies to restrict access + SSE-S3/SSE-KMS encryption.
@@ -160,29 +160,14 @@ __S3 storage for logs__: best service for log storage
 KMS Customer Master Keys (CMKs): a master key, used to generate/encrypt/decrypt data keys
 * __Data Keys__ are used to encrypt your actual data = __Envelope Encryption__.
 * __7-30 day waiting period__ before you can delete CMKs.
-* CMK administrative actions: `CreateKey, EnableKey, DescribeKey (get CMK metadata)` and more.
-* CMK cryptographic operations: `Encrypt, Decrypt, GenerateDataKey (create Data Key that is encrypted with a specified CMK)`.
+* __CMK administrative actions__: `CreateKey, EnableKey, DescribeKey (get CMK metadata)` and more.
+* __CMK cryptographic actions__: `Encrypt, Decrypt, GenerateDataKey (create Data Key that is encrypted with a specified CMK)`.
 
 KMS: Create a Customer-managed CMK with imported key material
-1. Create symmetric CMK with NO key material - select ORIGIN = EXTERNAL (non-AWS generated).
+1. Create __symmetric CMK__ with NO key material, where material origin = EXTERNAL (non-AWS generated).
 2. Download an AWS __Wrapping Key__ (public key) as `PublicKey.bin` and an Import Token `ImportTokenXXX`.
-3. Use `openssl` to generate your own key material
-```bash
-# generates random 32 bytes (256 bits) + store in "PlaintextKeyMaterial.bin"
-$ openssl rand -out PlaintextKeyMaterial.bin 32
-```
-4. Encrypt the key material with the Wrapping Key (public key):
-```bash
-# Encrypt the data in "PlaintextKeyMaterial.bin" using RSA key "PublicKey.bin"
-# Resuting output as "EncryptedKeyMaterial.bin" as DER key format
-$ openssl rsautl -encrypt \
-             -in PlaintextKeyMaterial.bin \
-             -oaep \
-             -inkey PublicKey.bin \
-             -keyform DER \
-             -pubin \
-             -out EncryptedKeyMaterial.bin
-```
+3. Use `$ openssl rand 32` (random 32bit string) to generate your own key material
+4. Encrypt the key material with the Wrapping Key (public key).
 5. Upload `EncryptedKeyMaterial.bin` and `ImportTokenXXX` to the customer-managed CMK.
 
 KMS: Considerations of using imported Key Material

@@ -200,8 +200,9 @@ KMS Key Rotation
 __KMS CMKs in Custom Key Store (backed by CloudHSM)__
 * You can create CMKs in a custom key store, where KMS will generate and store key material for the CMK in a CloudHSM Cluster that you own and manage.
 * Cryptographic operations are performed in the HSMs in the cluster.
+* Unsupported features: NO Asymmetric CMKs, NO CMKs with Imported Key Material, NO automatic rotation.
 
-__KMS CMKs with IAM policies__
+__KMS CMKs: Key Policy use with IAM policies__
 * A Key Policy must explicitly allow IAM to use IAM policies to give users/roles access to the CMK.
 * This is done by having an `ALLOW` statement for Principal `"AWS": "arn:aws:iam::111222333:root"` (Allow IAM in account 111222333 to use CMK).
 
@@ -218,18 +219,13 @@ __KMS CMK cross-account access__: enable access by
 2. Set up an IAM policy in destination account with explicit permission to use the CMK in the origin account.
 3. Attach IAM policy to userARN/roleARN in destination account.
 
-__KMS vs. CloudHSM__
-* CloudHSM: Dedicated access to HSM that complies with government standards (FIPS) + you control keys and software that uses them (you need to do your own key management).
-* KMS: Built on the strong protections of a HSM foundation, highly available/durable, auditable, easy integration with AWS services and applications.
+KMS vs. CloudHSM
+* __CloudHSM__: Dedicated access to HSM that complies with government standards (FIPS) + you control keys and software that uses them (you need to do your own key management).
+* __KMS__: Built on the strong protections of a HSM foundation, highly available/durable, auditable, easy integration with AWS services and applications.
 
 EC2 security
 * Importing a customer-managed key pair for SSH access:
-	1. Generate a private-key using RSA 2048bits and a public-key
-	```bash
-	$ openssl genpkey -algorithm RSA -out private_key.pem -pkeyopt rsa_keygen_bits:2048
-	$ openssl rsa -pubout -in private_key.pem -out public_key.pem
-	$ chmod 400 private_key.pem
-	```
+	1. use `openssl` to generate a private-key.pem using RSA 2048bits and a public-key.pem
 	2. Go to EC2 -> Import a Key Pair -> choose your public-key. Now you can provision an EC2 instance and select the public-key.
 	3. SSH into EC2 using the private key.
 	4. Add additional logins by generating a new asymmetric keypair (type=RSA) via. `$ ssh-keygen -t rsa` -> add public-key to `~/.ssh/authorized_keys` in the EC2 -> login using private-key.
@@ -242,14 +238,13 @@ AWS EC2 Hypervisor: is software, firmware, hardware that creates and runs virtua
 * __Hypervisor access by AWS employees__: Admins require MFA, access is logged/audited, administration hosts are specifically designed/built/configured/hardened to protect the management plane. Access is revoked upon no more business need for employee.
 * __Memory scrubbing__:
 	* EBS volumes are NOT scrubbed immediately after being deleted, only PRIOR TO BEING RE-USED.
-	* Host (EC2) memory that is allocated is scrubbed/zeroed by the Hypervisor as soon as it is UNALLOCATED from the guest.
-	* Host memory is not returned to the pool of free memory until scrubbing is complete.
+	* Host/guest (EC2) memory that is allocated is scrubbed/zeroed by the Hypervisor as soon as it is UNALLOCATED from the guest. The memory is not returned to the pool of free memory until scrubbing is complete.
 
 * __AWS EC2 Hypervisor__: is software, firmware, hardware that creates and runs virtual machines. EC2 AMIs run on 2 types of virtualisation:
 	* __Hardware Virtual Machine (HVM)__: VM guests are fully virtualised - they are not aware that they're sharing processing time with other VMs.
 	* __Paravirtual (PV)__: (MORE LIGHTWEIGHT / QUICKER) VM guests relies on hypervisor to provide support for operations that normally require privileged access = guest OS has no elevated CPU access.
-	* Hypervisor access by AWS employees is logged/audited + requires MFA + access strictly controlled. This cloud management plane is specially designed, built, configured and hardened.
-	* Guest OS (EC2) instances are controlled completely by customers with full root over accounts, services and apps running on EC2. AWS has no right to access EC2s.
+	* __Hypervisor access by AWS employees__ is logged/audited + requires MFA + access strictly controlled. This cloud management plane is specially designed, built, configured and hardened.
+	* __Guest OS (EC2) are controlled by customers__ with full root over accounts, services and apps running on EC2. AWS has no right to access EC2s.
 	* __AWS IS NOW SHIFTING ITS PHYSICAL SERVERS FROM XEN HYPERVISOR TO LINUX KERNEL-BASED VIRTUAL MACHINE (KVM) OPEN-SOURCE HYPERVISOR__.
 
 Container security:

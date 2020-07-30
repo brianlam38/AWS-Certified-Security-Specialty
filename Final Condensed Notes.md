@@ -337,10 +337,20 @@ __AWS Virtual Private Cloud (VPC)__ lets you provision a logically isolated sect
 * Flow of inbound traffic: entry via. __VPC Virtual Private Gateway (VPN)__ or __VPC Internet Gateway (public)__ -> Route Tables -> Network ACL -> Subnet -> Security Groups -> EC2s.
 * __VPC Peering__ allows you to connect one VPC with another VPC via. direct network route using private IP addresses.
 	* Peering is in a STAR CONFIGURATION i.e. 1 central VPC with 4 others. No TRANSITIVE PEERING is allowed.
-* Setting up and testing a custom VPC:`
+* Setting up and testing a custom VPC:
 	1. Create VPC -> provision private/public subnets to VPC -> provision Internet Gateway for public internet connectivity to VPC
 	2. Create CUSTOM ROUTE TABLE -> add route to the internet `0.0.0.0/0` via. Internet Gateway -> disable internet access for MAIN ROUTE TABLE, so all new subnets created won't have internet access by default -> associate subnet with CUSTOM ROUTE TABLE
 	3. Test internet connectivity using EC2s: Turn on `Auto-assign public IP addresses` for the public subnet so a public IPv4 address is assigned for all EC2s launched into the subnet -> try to SSH into EC2 in public subnet.
+
+VPC - Route Table basics
+* __RT Destination__ is the IP range (CIDR) of addresses that you want traffic to end up.
+* __RT Target__ is the Gateway, Network Interface or connection to send the traffic through towards the RT Destination.
+* __Local Route__ is the default route for communication within the VPC.
+* Example Route Table Routes:
+	* `Dest: 10.0.0.0/16 | Tar: Local`: Local route within the VPC CIDR.
+	* `Dest: 172.31.0.0/16 | Tar: pcx-123`: Route to a secondary VPC (CIDR `172.31.0.0/16`), via. a VPC Peering Connection.
+	* `Dest: 0.0.0.0/0 | Tar: igw-321`: Route for IPv4 traffic to the public internet, via. Internet Gateway.
+	* `Dest: ::/0 | Tar: eigw-456`: Route for IPv6 traffic to the public internet, via. an Egress-only Internet Gateway (outbound-only communications).
 
 VPC - AWS NAT Instance / AWS NAT Gateway
 * A NAT device forwards traffic from instances in the private subnet to the internet / AWS services, then sends the response back to the instances. The internet cannot initiate connections with these instances.

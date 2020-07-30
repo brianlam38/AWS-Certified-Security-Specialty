@@ -7,6 +7,28 @@ Resetting Root Users
 * DELETE IAM users that have potentially been compromised.
 * DELETE AWS resources you didn't create
 
+Resource vs. Identity policies
+* __Resource Policies__: S3 Bucket Policy, CMK Key Policy.
+* __Identity Policies__: IAM Policy attached to IAM entitites.
+
+IAM Role
+* A role __Trust Policy__ is a policy that defines the principals that you TRUST TO ASSUME the role. Principals can be users, roles, accounts, services.
+* A role __Permissions Policy__ is a policy that defines the ACTIONS/RESOURCES THE ROLE CAN PERFORM/USE.
+
+S3 Bucket Policy vs. Bucket ACL
+* __Bucket Policy__: for controlling access to Buckets (recommended approach, as controlling multiple ACLs for multiple objects is difficult vs. 1 Bucket Policy).
+* __Bucket ACL__: for controlling access to Buckets AND Objects, or need to exceed 20kb policy max size.
+
+S3 Encryption: Client-side and server-side
+* _SERVER-SIDE ENCRYPTION ONLY APPLIES TO OBJECT DATA, NOT OBJECT METADATA_
+* __S3 Bucket Encryption__: All new S3 objects are encrypted when they are stored in the bucket.
+* __S3 Client-Side Encryption__: is possible using AWS SDKs, by encrypting an S3 object using a KMS CMK or a Master Key you store in your own application before uploading the S3 object to an S3 bucket.
+* __SSE-C__: allows you to set your own external encryption keys.
+	* S3 rejects non-HTTPS requests when using SSE-C.
+	* If you lose the external encryption key, you will lose access to the object (AWS cannot assist).
+* __SSE-KMS__: encryption using KMS service - AWS-managed CMK or Customer-managed CMK.
+* __SSE-S3__: encryption using S3-managed encryption key.
+
 S3 Bucket Policy / ACL / IAM conflicts:
 * __Explicit Deny Overrides__: An EXPLICIT DENY will always override any ALLOW.
 * __Policy Conflicts__: Whenever an AWS principal (user, group or role) issues a request to S3, the authorization decision depends on the union of all the IAM policies, S3 bucket policies and S3 ACLs that apply.
@@ -21,14 +43,25 @@ S3 Bucket Cross-Region Replicate with Cross-Accounts:
 * __Permissions__: IAM role must have permissions to replicate objects in the destination bucket.
 * __CRR Config__: You can optionally direct S3 to change ownership of object replicates to the AWS account that owns the destination bucket.
 
-S3 bucket access - via. CloudFront using Origin Access Identity (OAI)
+S3 Bucket CRR - encrypting replica objects in destination bucket using SSE-KMS: what CRR config is required?
+* CONFIG #1: The CMK referenced by `ReplicaKmsKeyID` needs to be added to CRR configuration.
+* CONFIG #2: Ensure the CMK is in the same region as the destination bucket.
+
+S3 bucket access via. CloudFront - using Origin Access Identity (OAI)
 * __CloudFront Origin Access Identity__ is a virtual identity used to give a CF distribution permission to fetch a private object from an S3 origin on behalf of end-users. All direct access by using S3 URLs will be denied.
 * Steps to enable: (1) Create an OAI in CloudFront + turn on `Restrict Bucket Access` (2) Update S3 bucket permissions: turn on `Grant Read Permissions on Bucket` OR change permissions manually in S3 bucket to allow OAI access.
 * OAI principal with bucket access should be `arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity EAFXXXXXID`
 
-S3 object access - via. Presigned-URL for a temp S3 object access using your own credentials
+S3 bucket access PRIVATE access - using VPC Endpoints
+* __S3 Bucket Policy__ with `aws:SourceVpce` enforces access to S3 bucket only via. the specified VPC Endpoint.
+* All traffic stays within the VPC, hence remains private.
+
+S3 object access via. Pre-signed URL - for a temporary S3 object access using your own credentials
 * Presign URL with 300s expiry: `$ aws s3 presign s3://examplepresigned/hello.txt --expires-in 300`
 * Example response: https://examplepresigned.s3.amazonaws.com/OBJECT.txt?AWSACcessKeyId=XXX&Expires=XXX&x-amz-security-token=XXX&Signature=XXX
+
+S3 object encryption - enforce object encryption (AES256) in a bucket
+* __S3 Bucket Policy__ can be used to DENY `s3:PutObject` if object is not encrypted with `AES_256`.
 
 AWS Security Token Service (STS): grants users limited and temporary access to AWS resources. Key terms:
 * __Identity Federation__ is a system of trust between two parties for the purpose of authenticating users and conveying information/attributes needed to authorize their access to resources.
@@ -80,8 +113,11 @@ Glacier Vault Lock: low-cost storage service for data archiving and long-term ba
 ```
 
 AWS Organisations: Service Control Policies (SCPs)
-* __Service Control Policy__ enables you to restrict, at the account-level, what services and actions the IAM Entities in those accounts can do.
-* SCP never GRANTS permissions, only LIMITS permissions.
+* __IAM entities__ can be restricted at an account-level, as long as accounts are inside the AWS Organisation.
+* __ROOT users__ can be restricted, as long as accounts are inside an AWS Organisation.
+* __Service-linked roles__ are NOT restricted by SCP.
+* __Master account actions__ are NOT restricted by SCP.
+* SCP never GRANTS permissions, only LIMITS permissions in member accounts, including each member account Root user.
 
 __IAM Credential Report__ is a CSV-formatted report which lists all users in accounts + status of their various credentials, including PASSWORDS, ACCESS KEYS, MFA devices (last used, rotated).
 * Requires both `iam:GenerateCredentialReport` AND `iam:GetCredentialReport`.
@@ -96,6 +132,7 @@ CloudTrail: securing CloudTrail log files
 * __Prevent log file DELETION__: IAM/S3 bucket policies to restrict access + S3 MFA Delete + validate that logs haven't been deleted via. Log File Validation.
 * __Ensure log file RETENTION for X-years for COMPLIANCE__: Log files are stored indefinitely. Use S3 Object Lifecycle Management to remove files after required period of time OR move files to AWS Glacier for long-term storage.
 * __Receive log files from MULTIPLE-REGIONS__: Turn on `CloudTrail Multi-Region` to delivery logs from multiple regions in a single AWS account to a single S3 bucket. Any new region launched -> CloudTrail automatically creates Trail in the new region with the same settings as your original trail.
+* __CloudTrail logs in S3__ are encrypted by DEFAULT with SSE-S3. You can configure a different KMS CMK while creating a Trail.
 
 __CloudTrail Log File Integrity Validation__ when enabled:
 1. CT creates a HASH for every log file that it delivers.
@@ -159,10 +196,18 @@ S3 storage for logs: best service for log storage
 ## Chapter 4 - Infrastructure Security
 
 KMS Customer Master Keys (CMKs): a master key, used to generate/encrypt/decrypt data keys
-* __Data Keys__ are used to encrypt your actual data = __Envelope Encryption__.
+* __Data Encryption Keys (DEKs)__ are used to encrypt your actual data = __Envelope Encryption__.
 * __7-30 day waiting period__ before you can delete CMKs.
-* __CMK administrative actions__: `CreateKey, EnableKey, DescribeKey (get CMK metadata)` and more.
-* __CMK cryptographic actions__: `Encrypt, Decrypt, GenerateDataKey (create Data Key that is encrypted with a specified CMK)`.
+* `CMK Key ADMIN` __CMK administrative actions__: `CreateKey, EnableKey, DescribeKey (get CMK metadata)` and more.
+* `CMK Key USER` __CMK cryptographic actions__: `Encrypt, Decrypt, GenerateDataKey (create Data Key that is encrypted with a specified CMK)`.
+* __FIPS 140-2__ is supported by KMS.
+* __CMKs can NEVER be exported__.
+
+KMS: Custom Key Store
+* __KMS CMKs you create__ by DEFAULT are generated and stored/protected by HSMs that are FIPS 140-2 Level 2 compliant.
+* __KMS Custom Key Store__ is a storage/protection for a KMS CMK by an AWS CloudHSM cluster, which is FIPS 140-2 Leve 3 compliant. Your CMKs never leave the CloudHSM instances.
+* __All KMS operations__ on CMKs in a Custom Key Store are only performed in your HSMs.
+* __Integration with AWS SDK/Encryption SDK and AWS services__ is available to applications that use the Custom Key Store.
 
 KMS: Create a Customer-managed CMK with Imported Key Material
 1. Create __symmetric CMK__ with NO key material, where material origin = EXTERNAL (non-AWS generated).
@@ -224,6 +269,10 @@ KMS vs. CloudHSM
 * __CloudHSM__: Dedicated access to HSM that complies with government standards (FIPS) + you control keys and software that uses them (you need to do your own key management).
 * __KMS__: Built on the strong protections of a HSM foundation, highly available/durable, auditable, easy integration with AWS services and applications.
 
+KMS data key ReEncryption using CMK - required permissions?
+* `kms:DescribeKey` is needed to retrieve information about the CMK, to pass to `kms:ReEncrypt` call.
+* `kms:ReEncrypt` is needed to re-encrypt data keys, which were encrypted with the CMK.
+
 EC2 security
 * Importing a customer-managed key pair for SSH access:
 	1. use `openssl` to generate a private-key.pem using RSA 2048bits and a public-key.pem
@@ -247,6 +296,15 @@ AWS EC2 Hypervisor: is software, firmware, hardware that creates and runs virtua
 	* __Hypervisor access by AWS employees__ is logged/audited + requires MFA + access strictly controlled. This cloud management plane is specially designed, built, configured and hardened.
 	* __Guest OS (EC2) are controlled by customers__ with full root over accounts, services and apps running on EC2. AWS has no right to access EC2s.
 	* _AWS IS NOW SHIFTING ITS PHYSICAL SERVERS FROM XEN HYPERVISOR TO LINUX KERNEL-BASED VIRTUAL MACHINE (KVM) OPEN-SOURCE HYPERVISOR_.
+
+EC2 - Auto Scaling
+* __EC2 Auto Scaling__ helps ensure you have the correct min/max number of EC2 instances available to handle load for your application. Collections of EC2 instances = __Auto Scaling Groups__.
+* __VPC Endpoint for Auto Scaling__ is available to allow you to call the EC2 Auto Scaling API from within your VPC without sending traffic over the internet (powered by __AWS PrivateLink__).
+* __Security Groups__ apply to an Auto Scaling group = all instances within ASG are subject to the Security Group rules.
+
+EC2 - Internal instance logging
+* __Record running processes__: by using AWS Systems Manager Run Command to send a list of running processes to an S3 bucket.
+* _CloudWatch CANNOT record running processes in an EC2, only EC2 metrics like CPU utilization_.
 
 Container security:
 1. __Don't store secrets__
@@ -302,15 +360,21 @@ VPC - AWS NAT Gateways (PREFERRED NAT METHOD)
 * Create at least 1 NAT Gateway per Availability Zone so there is redundancy in case of Zone Failure.
 * GuardDuty can monitor NAT Gateway metrics.
 
-VPC Flow Logs enable you to capture info about IP traffic going to/from Elastic Network Interfaces (ENIs - represent a virtual networking card) in your VPC, stored in CloudWatch.
+VPC - Internet Gateway
+* __Internet Gateway__ is a VPC component that allows communication between your VPC and the internert.
+* __E-gress only Internet Gateway__ is a VPC component that allows outbound communication over IPv6 from instances in your VPC to the internet, but prevents the internet from initiating an IPv6 connection with your instances.
+
+VPC Flow Logs enable you to capture info about IP traffic (+ traffic metadata) going to/from a VPC, VPC's subnet or an ENI.
+* __Flow log storage__ is in CloudWatch Logs log groups.
 * __Flow log creation__ are at 3 different levels: (1) VPC - captures all ENI traffic (2) Subnet - capture ENI and EC2 traffic within a particular subnet (3) Network Interface
 * __Limitations__: Flow Logs for peered VPCs must be in the same AWS account. Flow logs can't be reconfigured after creation. Not all traffic is monitored (e.g. EC2 metadata, DHCP traffic, traffic to AWS DNS server, traffic to reserved AWS IPs)
 
 VPC Endpoints enable you to privately connect (using __AWS PrivateLink__) your VPC to supported AWS services without needing a NAT Gateway (goes over private network).
 * __MOST SECURE WAY TO ALLOW RESOURCES TO CONNECT TO OTHER AWS SERVICES, AS TRAFFIC NEVER LEAVES VPC__.
+* __VPC Endpoint policies__ are used to control access to the AWS service which you are connecting to.
 * EC2 instances in your VPC do NOT require public IPs to communicate with resources in supported VPC Endpoint services.
 * Supported services include `S3, DynamoDB, SNS, ELBs, CloudFormation` and more.
-* Restrict access to AWS resources to only specific VPC Endpoints by using `aws:sourceVpce: vpce-endpoint-id`. E.g. S3 Bucket Policy condition to access S3 bucket via. specific VPCE only.
+* Restrict access to AWS resources to only specific VPC Endpoints by using `aws:sourceVpce: vpce-endpoint-id`. E.g. S3 Bucket Policy condition to access S3 bucket via. specific VPCE only.s
 
 NACLs vs. Security Groups
 * __NACLs are STATELESS__: responses to allowed inbound traffic are subject to outbound rules (vice versa).
@@ -334,7 +398,7 @@ How to build a highly available Bastion instance:
 * __Autoscaling Groups__: minimum of 1 Bastion -> if Bastion goes down, ASG deploys a Bastion into one AZ or another.
 * __Route53 health check__: run health checks on Bastion server.
 
-AWS Systesm Manager - Session Manager: enables secure remote login to EC2 instances (alternative to RDP/SSH)
+AWS Systems Manager - Session Manager: enables secure remote login to EC2 instances (alternative to RDP/SSH)
 * __Session Manager is Secure__: TLS encryption, no Bastion required, no Security Groups needed, CloudTrail logging, keystroke logging sent to CloudWatch/S3.
 * Setting up Session Manager in AWS Systems Manager:
 	1. Create EC2 instance role w/ permission to call Systems Manager + install SSM Agent on EC2.
@@ -342,6 +406,10 @@ AWS Systesm Manager - Session Manager: enables secure remote login to EC2 instan
 	3. Configure Session Manager logging: encrypt session logs with KMS CMK (user of session + EC2 instance role must have access to CMK)
 	4. Configure Session Manager logging: choose to send logs to the CloudWatch Log Group OR an S3 bucket.
 	5. Start a session inside Session Manager Console -> launch web shell.
+
+AWS Systems Manager - Patch Manager automates the process of patching managed instances
+* Use Patch Manager to generate a report of out-of-compliance (unpatched) instances/servers.
+* Use Patch Manager to install missing patches.
 
 __AWS CloudHSM__ provides Hardware Security Modules (HSM) in a cluster - a collection of individual HSMs that AWS CloudHSM keeps in sync. Any tasks performed on one HSM, other HSMs in the cluster will be updated.
 * CloudHSM user types:
@@ -447,7 +515,7 @@ AWS Secrets Manager
 	* __Generation of passwords__: Secrets Manager can generate random passwords.
 	* __Secrets rotation__: Secrets Manager can natively rotate RDS passwords.
 	* __Cross-account access__: Secrets Manager secrets can be accessed cross-account.
-* Parameter Store is for storing:
+* __Parameter Store__ is for storing:
 	* Plaintext (`String`, `StringList`) data such as non-confidential environment vars or config values.
 	* Encrypted (`SecureString`) data such as passwords, license codes, application secrets (encrypted with AWS or Customer managed CMKs).
 
@@ -462,14 +530,12 @@ AWS Security Hub:
 * Integrates with _GuardDuty, Macie, Inspector, IAM Access Analyzer, Firewall Manager, 3rd-party marketplace tools, CloudWatch (trigger lambdas/SIEM/3rd-party tools)_.
 
 Network packet inspection in AWS
+* __NO AWS SERVICE SUPPORTS NETWORK PACKET INSPECTION - USE 3RD-PARTY SOLUTION FROM AWS MARKETPLACE__.
 * __Network Packet Inspection / Deep Packet Inspection__ involves inspecting a packet's headers and data.
 	* Filters non-compliant protocols, viruses, spam, intrusions.
 	* Takes action by blocking, re-routing or logging.
 	* IDS/IPS combined with a traditional firewall.
 * How to use: install 3rd-party solution for Network Packet Inspection via. AWS Marketplace.
-
-IDS/IPS solution to protection AWS infrastructure from possible threats.
-* Use 3rd-party solutions from AWS Marketplace.
 
 Active Directory Federation with AWS: AWS enables federated sign-in to AWS using Active Directory credentials
 * Great for companies with an existing Active Directory Domain + have corporate users who have AD accounts.
@@ -488,10 +554,14 @@ AWS Artifact: is a central resource for compliance and security related document
 * Demonstrate compliance to regulators, evaluate your own cloud architecture, assess effectiveness of internal controls.
 * Download _ISO 1270001 certs, PCI-DSS docs, SOC reports_.
 
+AWS Kinesis - security
+* __Kinesis Data Streams SSE__ automatically encrypts data BEFORE its at rest using an AWS CMK you specify. The producers/consumers of your Kinesis stream don't need to manage the keys or perform cryptographic operations.
+* __VPC Endpoints__ can be used with your Kinesis streams so traffic won't leave the Amazon network.
+* __API calls/requests__ must use min `TLS 1.0`, use cipher suites with Perfect Forward Secrecy such as `ECDHE`. Requests must also be signed using an `AccessKeyId/SecretAccessKey` or `STS temporary security credentials (sts:AssumeRole)`.
 
 ## Troubleshooting Scenarios
 
-VPC Peering - connection issues between VPCs (Route Table, NACL/SG rules)
+VPC Peering - connection issues between VPCs (looks at Route Table, NACL/SG rules)
 1. Verify that routes in __Routing Tables__ for ALL peered VPCs and configured correctly, so they know how to route traffic to each other.
 2. Verify that an ALLOW rule exists in the __NACL table__ for the required traffic.
 3. Verify that __Security Group rules__ allow traffic between the peered VPCs.
@@ -536,4 +606,13 @@ Lambda - issues with Lambda not being invoked OR Lambda not accessing resource
     * E.g S3 Bucket Policy, KMS Key Policies etc.
 * NOTE: _Lambda Execution Role_ defines what the Lambda fn can do.
 * NOTE: _Function Policy_ defines which services can invoke the Lambda fn.
+
+AWS Systems Manager Run Command - Run Command not executing on some instances
+1. Ensure the Security Groups allow outbound communication for the instances - SSM agents in the EC2s require communication to the SSM endpoint.
+2. Check the `/var/log/amazon/ssm/errors.log` file - the file shows if there are SSM agent errors.
+3. Ensure the SSM agent is running on the target machine and verify you are running a supported machine type - SSM agent has to be running for the Run Command to work on the EC2.
+
+S3 pre-signed URLs - pre-signed URLs expiring too fast / before specified expiry time?
+* If pre-signed URL was generated by an IAM Role / STS temporary security credentials that have shorter session expiry than pre-signed URL expiry, then it will override the pre-signed URL expiry.
+* Use an IAM user with long-term credentials if you want longer expiry for S3 pre-signed URLs.
 

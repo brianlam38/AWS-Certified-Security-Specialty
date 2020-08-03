@@ -1,4 +1,4 @@
-## Chapter 2 - IAM, S3 and Security
+## Chapter 2 - IAM, S3 and Security Policies
 
 Resetting Root Users
 * CHANGE root user password / strong password policy.

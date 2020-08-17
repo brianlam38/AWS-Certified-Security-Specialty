@@ -21,7 +21,7 @@ Use Inspector to detect exposure to malicious IP address ranges, use AWS WAF to 
 >> Use GuardDuty to detect threats and compromised instances, use CloudWatch Events to trigger SNS notifications and trigger a Lambda function to isolate any compromised EC2 instances
 ```
 
-AWS GuardDuty is a __threat detection__ service that __countinuously monitors for malicious activity and unauthorised behaviour__.
+AWS GuardDuty is a __threat detection__ service that __continuously monitors for malicious activity and unauthorised behaviour__.
 * Analysis tens of billions of events across multiple AWS data sources, such as CloudTrail / VPC Flow Logs / DNS Logs.
 
 ## You would like to enable your users to access the AWS console and APIs using their on premises Active Directory credentials. Which of the following are valid configuration steps? (Choose 3)

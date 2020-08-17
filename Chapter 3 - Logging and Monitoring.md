@@ -66,8 +66,8 @@ How do we restrict access to only employees with a security responsibility?
 * Two AWS-managed policies: AWSCloudTrailFullAccess (security role) and AWSCloudTrailReadOnly (auditor role)
 
 How can we be notified that a log file has been created / validate integrity?
-* Configure SNS ontifs and log file validation.
-* Develop a solution to execute log validation usign the digest file.
+* Configure SNS notifications and log file validation.
+* Develop a solution to execute log validation using the digest file.
 
 How to prevent CT log files from being deleted?
 * Using IAM and bucket policies
@@ -75,7 +75,7 @@ How to prevent CT log files from being deleted?
 * Validate that logs have not been deleted using log file validation
 
 How to ensure that logs are retained for X years?
-* By default, logs are kept indenfinitely
+* By default, logs are kept indefinitely
 * Can use S3 Object Lifecycle Management to delete files after required period of time.
     * Go to S3 bucket -> Management Tab -> "Add lifecycle rule" button -> Configure bucket expiration
 * OR move files to AWS Glacier for long-term storage.
@@ -89,7 +89,7 @@ Enables:
 * Log aggregation and basic analysis
 
 Provides:
-* Real-time monitoring iwthin AWS for resources and applications
+* Real-time monitoring within AWS for resources and applications
 * Hooks to event triggers
 
 Key components:
@@ -98,7 +98,7 @@ Key components:
 3. CloudWatch Events
 
 CloudWatch:
-* Real-time monitoring: standard monitoring (every 5 mins) / detailed monitoring (every 1 min)
+* Real-time monitoring: standard monitoring (every 5 min) / detailed monitoring (every 1 min)
 * Metrics: CPU utilisation, network utilisation
 * Alarms: CPU > 80%, trigger alarm
 * Notifications: SNS notifications etc.
@@ -106,7 +106,7 @@ CloudWatch:
 
 CloudWatch Logs:
 * Pushed from some AWS services, including CloudTrail
-* Pushed from your applicaiton/systems - kernel logs, application logs, web-server logs etc.
+* Pushed from your application/systems - kernel logs, application logs, web-server logs etc.
 * Metrics from log entry matches
 * Stored indefinitely (not user S3)
 
@@ -174,8 +174,8 @@ Permissions needed for AWS Config - requires and IAM role with:
 
 
 Restrict access to AWS Config:
-* Users need to be authenticated with AWS and have appropriate permissions set via. IAM policies to gain acecss.
-* Only Admins/Security needing to set up and manage Config require full acecss.
+* Users need to be authenticated with AWS and have appropriate permissions set via. IAM policies to gain access.
+* Only Admins/Security needing to set up and manage Config require full access.
 * Provide ReadOnly for Config day-to-day use e.g. analyse misconfigurations etc.
 
 
@@ -204,7 +204,7 @@ Set up an alert if the Root user logs in and makes API calls
 _This topic is not really examined - can mostly skip it._
 
 
-AWS CloudHSM service helps meet corporate, contractual and regulatory compliance requiremetns for data security by using dedicated Hardware Security Module appliances within the AWS Cloud.
+AWS CloudHSM service helps meet corporate, contractual and regulatory compliance requirements for data security by using dedicated Hardware Security Module appliances within the AWS Cloud.
 
 
 Enables: Control of data, evidence of control, meet tough compliance controls

@@ -20,7 +20,7 @@
 
 * CloudFront only works with HTTP traffic (application layer 7), not UDP traffic (transport layer 4).
 * WAF only works with HTTP traffic (application layer 7).
-* VPC Security Groups doesn't address DDoS attacks directly i.e. is not the best soultion.
+* VPC Security Groups doesn't address DDoS attacks directly i.e. is not the best solution.
 
 ### Amazon VPC - You notice significant traffic coming from an IP address in a foreign country in which your company does not have customers. Further investigation indicates that the source of the traffic is scanning for open ports on your Amazon EC2 instances. Which of the following can DENY THE TRAFFIC from reaching the instance?
 
@@ -173,7 +173,7 @@ __Explanation__
 
 You must __configure the Route Tables__ in each VPC to route to each other through a peering connection.
 
-You must also __add rules to the Security Group__ for the database to accept requests from the application server in the otehr VPC.
+You must also __add rules to the Security Group__ for the database to accept requests from the application server in the other VPC.
 
 
 ### CloudWatch Logging - When testing a new AWS Lambda function that retrieves items from an Amazon DynamoDB table, the security engineer notices that the function was not logging any data to Amazon CloudWatch Logs. The following policy was assigned to the role assumed by the Lambda function.

@@ -45,7 +45,7 @@ Key Policy Example - create and delegate use of an encrypted Amazon Elastic Bloc
     "Resource": "*",
     "Condition": {
         "StringEquals": {
-            "kms:ViaService": "ec2.us-west-2.amazonaws.com" // only EC2 can use the createed grants
+            "kms:ViaService": "ec2.us-west-2.amazonaws.com" // only EC2 can use the created grants
         }
     }
 }
@@ -98,7 +98,7 @@ CMK Auditing - KMS is integrated natively with CloudTrail
 * Monitor for specific KMS calls such as `ScheduleKeyDeletion`, `PutKeyPolicy`, `DeleteAlias`, `DisableKey`, `DeleteImportedKeyMaterial` on your KMS keys.
 * KMS also produces CloudWatch Events when your CMK is rotated, deleted, and imported key material expires.
 
-CMK Use Validation - validate that your CMKs are being used properly / aigns with best practices
+CMK Use Validation - validate that your CMKs are being used properly / aligns with best practices
 * __AWS Config__: E.g. Config rule `ENCRYPTED_VOLUMES` can be used to validate that attached EBS volumes are encrypted.
 * __Key Tags__: A CMK can a tag applied to it, to correlate back to a business category e.g. cost center, application name, owner etc. Use CloudTrail to verify that the CMK being used belongs to the same cost center of the resource that the CMK is used on (e.g. Marketing CMK used on Marketing S3 Storage).
 
@@ -116,7 +116,7 @@ CMKs - AWS-managed CMK vs Customer-managed CMKs
 * __Deletion__: Can't be deleted || Can't be deleted
 * __Scope of Use__: Limited to specific AWS service || Controlled via. KMS Key Policy /IAM Policy
 * __Key Access Policy__: AWS managed || Customer managed
-* __User Access Mgmt__: IAM policy || IAM policy
+* __User Access Management__: IAM policy || IAM policy
 
 Customer-managed CMKs - 2 options for creating underlying key material
 1. KMS generates cryptographic key material for you.
@@ -186,7 +186,7 @@ USE CASE: Data at Rest Encryption with Amazon EBS
     * If value is not TRUE, prevent IAM entity from creating volume.
 * __Enforce EBS encryption #2__: Use CloudTrail to monitor for new EBS volumes being created -> trigger Lambda to respond to unencrypted volume && check KMS key used for encryption (to make sure its the correct one).
     * Lambda can automatically delete EC2 that has the unencrypted volume.
-    * Lambda can automatically quarantine EC2 by preventing inbound connectings via. Security Group rules.
+    * Lambda can automatically quarantine EC2 by preventing inbound connections via. Security Group rules.
     * Lambda can simply trigger SNS topic to alert security of unencrypted volume.
     * Lambda can call the `CopyImage` API to create a new encrypted version of the EBS -> automatically attach it to the instance -> delete the old EBS volume.
 

@@ -23,7 +23,7 @@ Application Layer Attacks (OSI7 - Application)
     * Exploit XML-RPC API of a WordPress site.
     * (1) Attacker_WP notifies Target_WP of a site link via. pingback feature (2) Target_WP attempts to fetch Attacker_WP to verify existence of link (3) Target_WP is flooded.
 * Other attacks that can impact availability
-    * Scraper botes, brute-forcing, credential-stuffing.
+    * Scraper bots, brute-forcing, credential-stuffing.
 
 ## DDoS Mitigation Techniques
 
@@ -57,11 +57,11 @@ Infrastructure Layer Defenses
         * When serving static content with S3, use CloudFront to protect your bucket via. __Origin Access Identity (OAI)__ to ensure users can only access S3 objects by using CloudFront URLs.
     * __Domain Name Resolution at the Edge__:
         * Route53 has features such as Traffic Flow, Latency Based Routing, Geo DNS, Health Checks and Monitoring to allow you to control how R53 responds to DNS requests, to improve app performance and prevent outages.
-        * Detect anomolies in the source and volume of DNS queries and prioritize requests from users that are known to be reliable.
+        * Detect anomalies in the source and volume of DNS queries and prioritize requests from users that are known to be reliable.
 
 Application Layer Defenses
 * Detect and Filter Malicious Web Requests
-    * Use __AWS CloudFront__ to (1) cache static content and serve it from AWS Edge Locations (2) prevent non-web traffic from reaching your origin to reduce server load (3) automatically close connmections from slow read/write attackers
+    * Use __AWS CloudFront__ to (1) cache static content and serve it from AWS Edge Locations (2) prevent non-web traffic from reaching your origin to reduce server load (3) automatically close connections from slow read/write attackers
     * Use __AWS WAF__ to filter and block requests based on IP match, rate-based, regex rules defined by yourself, managed by AWS or 3rd-party marketplace rules.
     * Use __AWS Shield Advanced__ to engage AWS DDoS Response Team (DRT) to create rules to mitigate an attack that is impacting your application.
     * Use __AWS Firewall Manager__ to centrally configure and manage WAF rules across your organisation. Your AWS Organisations master account can designate an administrator account, which is authorized to create Firewall Manager policies.

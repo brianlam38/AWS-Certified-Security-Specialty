@@ -40,7 +40,7 @@ What can you do with a VPC?
 Default VPC vs. Custom VPC:
 * Default VPC is user friendly, allowing you to immediately deploy instances.
 * All subnets in default VPC have a route out to the internet.
-* Each EC2 instance has both a public and private IP address (unlesse they're in private subnets).
+* Each EC2 instance has both a public and private IP address (unless they're in private subnets).
 
 VPC Peering: connect one VPC with another via. direct network route using private IP addresses.
 * Instances behave as if they were on the same private network.
@@ -117,7 +117,7 @@ NAT instance downsides:
 * Bottlenecks: single instance, single availability zone, limited network throughout.
 * The amount of traffic that NAT instances can support depends on instance size. You must increase instance size if more throughout is required.
 * Reliant on a single OS, any crashes = no internet access for any servers in the private subnet.
-* High availility requires using Autoscaling Groups, multiple subnets in different AZs and scripts to automate failover = pain in the ass.
+* High availability requires using Autoscaling Groups, multiple subnets in different AZs and scripts to automate failover = pain in the ass.
 * Bad design in general to use NAT instances, as it can get complex to make it work efficiently.
 * __AWS new feature NAT gateway now should replace the use of a single NAT instances.__
 
@@ -258,7 +258,7 @@ NAT Gateways will automatically handle failover.
 
 Session Manager enables secure remote login to EC2 instances - alternative to SSH/RDP but more secure.
 
-Simple: manage both Windows/Linux inestances with the same tool
+Simple: manage both Windows/Linux instances with the same tool
 Remote Login: browser-based, run an interactive session using Powershell/Bash.
 Secure:
 * TLS encryption;
@@ -436,7 +436,7 @@ Summary:
 * Replace __DEFAULT Route Table__ (which all new subnets are associated with) with a __NEW Route Table__ and put a route out using __Internet Gateway__ -> Every subnet we want to make public, we would associate with that NEW Route Table.
 * Create a __NAT Instance__ -> disable Src/Dest check.
     * They must be in a public subnet.
-    * There must be a route out of private subent to the NAT instance for this to work.
+    * There must be a route out of private subnet to the NAT instance for this to work.
     * Amount of traffic NAT instance supports depends on instance size. Bottleneck = increase EC2 size.
     * You can create highly availability NAT instances using ASGs, multiple subnets in different AZs, script to automate failover.
 * ^__NAT Gateway__ is better than NAT Instance
@@ -444,9 +444,9 @@ Summary:
     * No patching, no associated Security Groups, automatically assigned public IP address.
     * Remember to update Route Tables when provisioning NAT Gateways.
 * __Network Access Control Lists (NACL)__ 
-    * Create a VPC: default NACL allows all inbound/outbount by default.
+    * Create a VPC: default NACL allows all inbound/outbound by default.
     * Custom NACL: denies all inbound/outbound by default until you add rules.
-    * Each subnet in your VPC MUST be associated with a NACL. If not, it will be automatically associated with your default Netowrk ACL.
+    * Each subnet in your VPC MUST be associated with a NACL. If not, it will be automatically associated with your default Network ACL.
     * You can associate NACL with multiple subnets, however each subnet can have only one NACL.
     * NACLs contain a __numbered list of rules evaluated in order__, __starting with the LOWEST numbered rule first__.
     * NACLs are stateless: responses to inbound traffic are subject to the rules of outbound traffic vice versa.

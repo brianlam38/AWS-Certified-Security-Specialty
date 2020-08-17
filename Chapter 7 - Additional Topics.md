@@ -254,7 +254,7 @@ Using ADFS to sign-in to AWS Console (after 2-way trust is configured0):
 2. ADFS will authenticate against the company Active Directory.
 3. ADFS sends back authentication response in the form of a SAML token.
 4. User's browser sends SAML token to AWS sign-in endpoint.
-5. AWS sign-in endpoint makes an `STS AssumeRoleWithSAML` request to request temporary credentials to AWS console and STS returns temporary crednetials.
+5. AWS sign-in endpoint makes an `STS AssumeRoleWithSAML` request to request temporary credentials to AWS console and STS returns temporary credentials.
 6. AWS sign-in endpoint redirects user to the AWS console and the user will use temporary credentials to get access to the console.
 
 

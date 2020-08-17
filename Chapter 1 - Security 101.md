@@ -55,7 +55,7 @@ Why should we trust AWS?
 
 Exam Tips
 * Remember different security controls around: physical and environmental security, business continuity, network security, AWS access, secure design principles, change management.
-* Remember that the corporate Amazon.com network is completely segregated from the AWS network. Permissions / reviews are requried when an employee wants to access AWS. Permissions are revoked as soon as nologin for 90 days.
+* Remember that the corporate Amazon.com network is completely segregated from the AWS network. Permissions / reviews are required when an employee wants to access AWS. Permissions are revoked as soon as nologin for 90 days.
 
 
 ### Shared Responsibility Model
@@ -67,7 +67,7 @@ What is it?
     * You are responsible for locking your door, making sure windows are shut etc.
 
 AWS Security Responsibilities
-* Global infrastructure - their datacentres
+* Global infrastructure - their data centres
 * Hardware, software, networking and facilities - all their hardware, software such as RDS / AWS operation systems etc.
 * Managed services - S3, DynamoDB etc.
 
@@ -123,5 +123,5 @@ Controls that you need:
 
 Other services applying to all controls
 * AWS IAM - creating users, password policies, MFA, groups
-* AWS CloudWAtch - monitor environment, see breaches, CPU runtime
+* AWS CloudWatch - monitor environment, see breaches, CPU runtime
 * AWS Trusted Advisor - advises on security, budgeting, system performance and reliability

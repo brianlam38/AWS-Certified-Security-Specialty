@@ -28,7 +28,7 @@ CloudTrail logs any AWS API calls made via. AWS Console, AWS CLI and AWS SDKs.
 
 By default, API call log-files are encrypted using SSE-S3 and placed into your S3 bucket.
 
-Modifications to log data can be controlled via. IAM and MFA to enforce read-only access to your S3 buckeet storing your CloudTrail log files.
+Modifications to log data can be controlled via. IAM and MFA to enforce read-only access to your S3 bucket storing your CloudTrail log files.
 
 
 ## Storage of Log Files
@@ -40,7 +40,7 @@ With CloudTrail, you can:
 * Aggregate log-files across all regions and multiple accounts to a single S3 bucket.
 * Configure your desired EXPIRATION PERIOD on log files written to an S3 bucket.
 
-By deafult, log-files are stored indefinitely.
+By default, log-files are stored indefinitely.
 
 Move your log-files to Amazon Glacier to save costs on long-term storage.
 
@@ -55,5 +55,5 @@ CloudTrail log-files can be input into industry leading log management and analy
 CloudTrail produces log-data from a single internal system clock by generating event timestamps in Coordinated Universal Time (UTC) consistent with the ISO 8601 Basic Time and Date format standard.
 
 CloudTrail delivers API calls with detailed info such as
-* Type, data and time, location, source/origin, outcome (including exceptions, faults and security-event informatio), affected resource (data, system etc.) and associated user.
+* Type, data and time, location, source/origin, outcome (including exceptions, faults and security-event information), affected resource (data, system etc.) and associated user.
 * User identity, time of event, IP address of user, request parameters provided by user, response elements returned by service and optional error code and error message.

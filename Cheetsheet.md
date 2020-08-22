@@ -9,7 +9,7 @@ Resetting Root Users
 
 Resource vs. Identity policies
 * __Resource Policies__: S3 Bucket Policy, CMK Key Policy.
-* __Identity Policies__: IAM Policy attached to IAM entitites.
+* __Identity Policies__: IAM Policy attached to IAM entities.
 
 IAM Role
 * A role __Trust Policy__ is a policy that defines the principals that you TRUST TO ASSUME the role. Principals can be users, roles, accounts, services.
@@ -129,7 +129,7 @@ __IAM Credential Report__ is a CSV-formatted report which lists all users in acc
 
 CloudTrail: securing CloudTrail log files
 * CloudTrail Event History is turned on by default (showing 90 days of activity). For longer-term logging, create a Trail and specify an S3 bucket to deliver events to. Trails by default log `Management Events` but not `Data Events OR Insight Events`.
-* __Validate log file Iitegrity via. CLI__: `$ aws cloudtrail validate-logs`
+* __Validate log file Integrity via. CLI__: `$ aws cloudtrail validate-logs`
 * __Prevent log file UNAUTHORISED ACCESS__: IAM/S3 bucket policies to restrict access + SSE-S3/SSE-KMS encryption.
 * __Prevent log file DELETION__: IAM/S3 bucket policies to restrict access + S3 MFA Delete + validate that logs haven't been deleted via. Log File Validation.
 * __Ensure log file RETENTION for X-years for COMPLIANCE__: Log files are stored indefinitely. Use S3 Object Lifecycle Management to remove files after required period of time OR move files to AWS Glacier for long-term storage.
@@ -151,7 +151,7 @@ AWS CloudWatch: real-time monitoring for resources and applications (utilisation
 * __Notifications__: SNS notifications
 * __CW Logs__: monitor, store and access log files from AWS services (e.g. CloudTrail) or apps/systems (EC2 kernel logs, appserver logs). CW log retention = logs are stored indefinitely by default.
 
-AWS CloudWatch Events: delivers near rela-time stream of system events that describe changes in AWS resources.
+AWS CloudWatch Events: delivers near real-time stream of system events that describe changes in AWS resources.
 * CW Events terminology:
 	* __CW Event__: An event indicates AWS resources state change, CloudTrail API calls, custom events (HTTP 403) or scheduled/periodic events.
 	* __CW Event Rule__: A rule matches incoming events and routes them to one or more targets.
@@ -180,7 +180,7 @@ AWS Inspector: automated security assessment service to improve security/complia
 * How it works: assessment performed -> prioritised findings produced -> findings can be reviewed directly or exported as a report via. Inspector or API
 * __Assessment Template__ is a configuration you define your assessment run i.e. RULES PACKAGE to evaluate target with,DURATION of assessment, SNS TOPICS which Inspector sends notifications to about run-state/findings.
 * Rule packages allow you to run assessments related to a specific area:
-	* __Network Reachability package__ help automate monitoring of AWS networks (VPS, ELBS) and identify where network access to your EC2 instances might be misconfigured.
+	* __Network Reachability package__ help automate monitoring of AWS networks (VPS, ELBs) and identify where network access to your EC2 instances might be misconfigured.
 	* __Common Vulnerabilities and Exposures__ help verify whether EC2 instances are exposed to CVEs.
 	* __CIS benchmarks__ and __Amazon Inspector Security Best Practices__ rules.
 
@@ -208,7 +208,7 @@ KMS Customer Master Keys (CMKs): a master key, used to generate/encrypt/decrypt 
 
 KMS: Custom Key Store
 * __KMS CMKs you create__ by DEFAULT are generated and stored/protected by HSMs that are FIPS 140-2 Level 2 compliant.
-* __KMS Custom Key Store__ is a storage/protection for a KMS CMK by an AWS CloudHSM cluster, which is FIPS 140-2 Leve 3 compliant. Your CMKs never leave the CloudHSM instances.
+* __KMS Custom Key Store__ is a storage/protection for a KMS CMK by an AWS CloudHSM cluster, which is FIPS 140-2 Level 3 compliant. Your CMKs never leave the CloudHSM instances.
 * __All KMS operations__ on CMKs in a Custom Key Store are only performed in your HSMs.
 * __Integration with AWS SDK/Encryption SDK and AWS services__ is available to applications that use the Custom Key Store.
 
@@ -255,13 +255,13 @@ __KMS CMKs: Key Policy use with IAM policies__
 * A Key Policy must explicitly allow IAM to use IAM policies to give users/roles access to the CMK.
 * This is done by having an `ALLOW` statement for Principal `"AWS": "arn:aws:iam::111222333:root"` (Allow IAM in account 111222333 to use CMK).
 
-__KMS Grants__ are used to programatically delegate TEMPORARY use of CMKs to other AWS principals.
+__KMS Grants__ are used to programmatically delegate TEMPORARY use of CMKs to other AWS principals.
 * Grants only ALLOW, not deny access to a CMK.
 * `create-grant` adds new grant to CMK, specifies who can use it and list of operations grantee can perform. A grant token is generated and can be passed as an argument to a KMS API.
 
 __KMS Policy Conditions - ViaService__ is used to ALLOW/DENY access to your CMKs according to which service the request originated from.
 
-__KMS Policy Conditions - `aws:SourceVpce`__ is used to enforce access to your CMKs to a specific VPC Endpoint e.g. "vpce-1234abcdf5678c90a" (VPC Endpoint ID).
+__KMS Policy Conditions - `aws:SourceVpc`__ is used to enforce access to your CMKs to a specific VPC Endpoint e.g. "vpce-1234abcdf5678c90a" (VPC Endpoint ID).
 
 __KMS CMK cross-account access__: enable access by
 1. Change CMK Key Policy in origin account to allow a specific userARN/roleARN of destination account to have access.
@@ -321,7 +321,7 @@ Container security:
 	* Avoid unnecessary libraries: remove code/libraries you don't need in your container image.
 4. __Use trusted images only__
 	* Avoid public repos, where you don't know the origin of code.
-	* Use images from a trusted source or ones created inhouse.
+	* Use images from a trusted source or ones created in-house.
 	* Scan for CVEs using Amazon Inspector or external tools.
 	* __AWS Elastic Container Registry (ECR)__ to store your own container images and use __AWS Elastic Container Service (ECS)__ to run containers.
 5. __Infrastructure security__
@@ -374,8 +374,8 @@ VPC - AWS NAT Gateways (PREFERRED NAT METHOD)
 * GuardDuty can monitor NAT Gateway metrics.
 
 VPC - Internet Gateway
-* __Internet Gateway__ is a VPC component that allows communication between your VPC and the internert.
-* __E-gress only Internet Gateway__ is a VPC component that allows outbound communication over IPv6 from instances in your VPC to the internet, but prevents the internet from initiating an IPv6 connection with your instances.
+* __Internet Gateway__ is a VPC component that allows communication between your VPC and the Internet.
+* __Egress only Internet Gateway__ is a VPC component that allows outbound communication over IPv6 from instances in your VPC to the internet, but prevents the internet from initiating an IPv6 connection with your instances.
 
 VPC Flow Logs enable you to capture info about IP traffic (+ traffic metadata) going to/from a VPC, VPC's subnet or an ENI.
 * __Flow log storage__ is in CloudWatch Logs log groups.

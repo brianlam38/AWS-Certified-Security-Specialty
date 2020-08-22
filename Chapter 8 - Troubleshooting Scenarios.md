@@ -214,7 +214,7 @@ Exam Tips:
     2. Check that you have configured the IAM Policy in the EXTERNAL account to take KMS actions on the TRUSTED account.
 * THE TWO MAIN IDEAS FOR CROSS-ACCOUNT ACCESS:
     1. Enable access within the TRUSTED account sharing the resource.
-    2. IAM Polcy in the EXTERNAL account, allowing actions by a role/user in the account. 
+    2. IAM Policy in the EXTERNAL account, allowing actions by a role/user in the account. 
 
 
 ## Troubleshooting Lambda Access

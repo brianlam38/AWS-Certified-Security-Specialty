@@ -320,7 +320,7 @@ Cognito User Pools: user directories used to manage sign-up and sign-in function
 Glacier is a low-cost storage service for data archiving and long-term backup.
 * _Archives_: a single file or multiple files stored in a .tar or .zip.
 * _Vault_: containers which store one or more Archives
-* _Vault Lock Policy_: similar to an IAM policy to configure and enforce compliance controls - connfigure write-once-read-many archives / create data retention policies
+* _Vault Lock Policy_: similar to an IAM policy to configure and enforce compliance controls - configure write-once-read-many archives / create data retention policies
 
 Example Vault Lock Policy: Enforce archive retention for 1 year (deny archive delete for all archives <365 days old)
 ```javascript
@@ -354,7 +354,7 @@ Vault Lock Policy vs. Vault Access Policy:
 
 ## AWS Organisations
 
-AWS Organisations is an account management service that lets you consolodate multiple AWS accounts into an organisation so that you can consolidate billing, group your AWS accounts into logical groupings for access control and attach Service Control Policies.
+AWS Organisations is an account management service that lets you consolidate multiple AWS accounts into an organisation so that you can consolidate billing, group your AWS accounts into logical groupings for access control and attach Service Control Policies.
 
 SCPs enable you to restrict, at the account level of granularity, what services and actions the users, groups, and roles in those accounts can do. However, an SCP never grants permissions. The SCP limits permissions for entities in member accounts, including each AWS account root user. SCPs are available only in an AWS organization that has all features enabled, SCPs aren't available if your organization has enabled only the consolidated billing features.
 

@@ -22,7 +22,7 @@ Customer-Master-Keys (CMK)
     3. AWS owned CMKs - AWS owned keys that are NOT in your account for securing data in multiple AWS accounts (no control)
 
 Customer-managed CMK: Importing your own Key Material into KMS
-1. Create a customer-managed CMK with no key material by selecting "External" for the key material origin (not useable yet).
+1. Create a customer-managed CMK with no key material by selecting "External" for the key material origin (not usable yet).
 2. Import key material - select Wrapping Algorithm SHA1.
 3. Import key material - download Wrapping Key (public key) as `PublicKey.bin` and Import Token `ImportTokenxxx`.
 4. Use `openssl` and follow instructions here to generate key material and encrypt it with the Wrapping Key: https://docs.aws.amazon.com/kms/latest/developerguide/importing-keys-encrypt-key-material.html.
@@ -42,7 +42,7 @@ Customer-managed CMK: Importing your own Key Material into KMS
 6. The key is now available for use.
 
 Why import your own Key Material:
-* Compliance - prove that randomness meets youre requirements.
+* Compliance - prove that randomness meets your requirements.
 * Extend your existing processes to AWS.
 * Deletion of key-material without a 7-30 days wait.
 * To be resilient to AWS failure by storing keys outside AWS.
@@ -76,7 +76,7 @@ Method of rotation depends on the type of key you are using.
 3. Customer Managed w/ imported key material.
 
 Key Rotation: AWS Managed Keys
-* Automatic rotatation every 3 years.
+* Automatic rotation every 3 years.
 * No automatic rotation
 * AWS manages everything and saves old backing key (key material)
 
@@ -154,7 +154,7 @@ Notes about deleting Key Pairs:
 
 Additional notes:
 * You cannot use KMS with SSH for EC2 because Amazon is involved in generation of KMS keys.
-* You can use CloudHSM with SSH for EC2 becausey you can export CloudHSM keys.
+* You can use CloudHSM with SSH for EC2 because you can export CloudHSM keys.
 
 ## AWS Marketplace Security Products
 
@@ -210,11 +210,11 @@ Provision Dedicated Instances / Dedicated Hosts via. EC2 service when launching 
 ## AWS Hypervisors, Isolation of AWS Resources, AWS Firewalls
 
 AWS Hypervisor
-* Hypervisor or virual machine monitor (VMM) is software, firmware, hardware that creates an runs virutal machines.
+* Hypervisor or virtual machine monitor (VMM) is software, firmware, hardware that creates an runs virtual machines.
     * Host machine: a computer on which a hypervisor runs 1+ virtual machines
     * Guest machine: each virtual machine
 * EC2 runs on __Xen Hypervisors__: they can have guest OSs' running Paravirtualisation (PV) or using Hardware Virtual Machine (HVM).
-    * HVM guests are fully virtualised: VMs on top of hypervisors are not aware that they are sharing processing time with other VMs.
+    * HVM guests are fully virtualized: VMs on top of hypervisors are not aware that they are sharing processing time with other VMs.
     * PV is a lighter form of virtualisation and it used to be quicker.
     * Performance gap between HVM/PV is closed and AWS recommends using HVM over PV.
     * Windows EC2 instances can only be HVM where Linux can be HVM/PV.
@@ -251,13 +251,13 @@ Memory Scrubbing:
 ## KMS Grants
 
 KMS Grants are an alternate access control mechanism to a Key Policy
-* Programtically delegate use of KMS CMKs to other AWS principals (another user in your account / another account)
+* Programmatically delegate use of KMS CMKs to other AWS principals (another user in your account / another account)
 * Provide temp granular permissions (encrypt, decrypt, re-encrypt, describekey etc.)]
 * Only grants ALLOWs, not DENYs
 * Use Key Policies for static permissions, Grants for temp permissions.
 * _Analogy: I give house keys to a friend to take care of my plants while I'm on holidays._
 
-KMS Grants are configure programatically via CLI
+KMS Grants are configure programmatically via CLI
 * _create-grant_: adds new grant to CMK, specifies who can use it and list of operations the grantee can perform. A grant token is generated and can be passed as an argument to a KMS API.
 * _list-grants_: lists grants
 * _revoke-grant_: remove a grant
@@ -305,7 +305,7 @@ KMS provides a set of predefined __Condition Keys__.
 Use __kms:ViaService__ to allow or deny access to your CMK according to which service the request originated from.
 * Only for services that are integrated with KMS e.g. S3, EBS, RDS, Systems Manager, SQS, Lambda
 
-ViaServive example: CMK may be used for "Encrypt" action ONLY if request comes from EC2/RDS from the specified regions
+ViaService example: CMK may be used for "Encrypt" action ONLY if request comes from EC2/RDS from the specified regions
 ```json
 "Effect": "Allow",
 "Principal": {
@@ -342,7 +342,7 @@ Example IAM policy in account HELLO for cross account access to CMK in WORLD
             "Action":[
                 "kms:Encrypt",
                 "kms:Decrypt",
-                "kms:ReEncrypt*",
+                "kms:ReEncrypt*"
             ],
             "Resource": "arn:aws:kms:us-west-2:WORLD:key/guid"
         }
@@ -418,9 +418,9 @@ Elastic Container Service (ECS)
 ## Container Security
 
 1. Don't store secrets
-* Use IAM roles instead of harcoding user credentials.
+* Use IAM roles instead of hardcoding user credentials.
 * Use Secrets Manager for RDS credentials, API keys.
-* Use Amazon Certicate Manager (ACM) if you have TLS certificates to store and manage.
+* Use Amazon Certificate Manager (ACM) if you have TLS certificates to store and manage.
 
 2. Don't run as root
 * Don't run containers using your AWS Root account.
@@ -432,7 +432,7 @@ Elastic Container Service (ECS)
 
 4. Use trusted images only
 * Avoid public repositories, where you don't know the origin of the code.
-* Use images from a trusted source or ones created inhouse.
+* Use images from a trusted source or ones created in-house.
 * Scan for CVE's using Amazon Inspector or external tools.
 * __AWS Elastic Container Registry (ECR)__: a container registry where you can store your own container images e.g. Docker or Windows Container images and make them available to ECS.
     * AWS provides image scanning for container images stored in ECR and reports on any CVEs.

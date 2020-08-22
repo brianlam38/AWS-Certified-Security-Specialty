@@ -12,7 +12,7 @@ __DDos__ is an attack that attempts to make your website or app unavailable to y
 * Using large botnets.
 
 __Amplification / Reflection__ attacks include NTP/SSDP/DNS/Chargen/SNMP attacks etc.
-* Attacker sends a 3rd-paryt server a request using a spoofed IP -> server responds with a greater payload than initial request.
+* Attacker sends a 3rd-party server a request using a spoofed IP -> server responds with a greater payload than initial request.
 * Response payload is usually 28-54 times larger to the spoofed IP address.
 * Example 1: NTP Amplification
     * Attacker sends 64 byte request with spoofed IP -> server responds by sending 3,456 bytes of traffic to spoofed IP.
@@ -31,7 +31,7 @@ How to mitigate DDoS:
     * Attack is _spread over a large area_.
     * Attackers have to _counter attack_, taking up more of their resources.
     * Scaling buys time to _analyze_ the attack.
-    * Scaling provides you with _additional lvls of redundancy_.
+    * Scaling provides you with _additional levels of redundancy_.
 3. Safeguard exposed resources.
     * For situations where you can't eliminate internet entry points to your apps, take additional measures to restrict access without interrupting legitimate user traffic. Three measures:
     * AWS WAF: Most DDoS attacks are app-layer rather than infra-layer
@@ -45,7 +45,7 @@ How to mitigate DDoS:
         * __Private DNS__: Allows you to manage internal DNS names for your app resources (web servers, databases) without exposing this info to the public internet.
 4. Learn what normal behaviour looks like.
     * Be aware of normal and unusual behaviour.
-    * Spot abnormalities fast -> create alarms to alert you of unusual behaviour -> collect forensive data to understand attacks.
+    * Spot abnormalities fast -> create alarms to alert you of unusual behaviour -> collect forensic data to understand attacks.
 5. Create a plan for attacks.
     * You've validated the design of your architecture.
     * You understand costs for increased resiliency and know what techniques to employ when an attack happens.
@@ -212,7 +212,7 @@ Using EC2 Run Command:
 
 Exam tips:
 * Commands can be applied to a group of systems based on AWS instance tags or by selecting manually.
-* __SSM agent__ needs to be installed (it is installed by default on certain Windows and Linxu AMIs) and an IAM SSM role enabled on all your managed instances for Run Command to work.
+* __SSM agent__ needs to be installed (it is installed by default on certain Windows and Linux AMIs) and an IAM SSM role enabled on all your managed instances for Run Command to work.
 * The commands and parameters are defined in a __Systems Manager Document__
 * Commands can be issued using AWS Console, AWS CLI, AWS Tools for Windows PowerShell, Systems Manager API or Amazon SDKs.
 * You can use this service with your on-premise systems as well as EC2 instances.
@@ -250,7 +250,7 @@ PCI DSS 12 requirements (not required for exam, but good for interviews):
 5. Protect all systems against a malware and regularly update anti-virus software or programs.
 6. Develop and maintain secure systems and applications.
 
-* _Implement Strong Access Control Meaures_
+* _Implement Strong Access Control Measures_
 7. Restrict access to cardholder data by business need-to-know.
 8. Identify and authenticate access to system components. E.g. use IAM or services such as Auth0
 9. Restrict physical access to cardholder data. E.g. copies of credit card records
@@ -281,7 +281,7 @@ Check out https://aws.amazon.com/compliance.
 AWS Shield
 * Free service that protects all AWS customers on _Elastic Load Balancers_, _CloudFront_ and _Route53_.
 * Protects against SYN/UDP Floods, Reflection Attacks and other layer 3/4 attacks.
-* Advanced Shield protects you against larger and more sophistcated attacks - $3,000 per month cost.
+* Advanced Shield protects you against larger and more sophisticated attacks - $3,000 per month cost.
 
 AWS Advanced Shield
 * Always-on, flow-based monitoring of network traffic and active application monitoring.
@@ -318,8 +318,8 @@ API Gateway Throttling
 * Account-level rate limit and burst limit can be increased upon request.
 
 API Gateway Caching
-* Cache your endpoint's response - reduce number of calls to the endpoint and improve latency of responese from endpoint.
-* API Gateway caches repsonse for a specified TTL (time-to-live) period in seconds.
+* Cache your endpoint's response - reduce number of calls to the endpoint and improve latency of responses from endpoint.
+* API Gateway caches response for a specified TTL (time-to-live) period in seconds.
 * Default TTL = 300 seconds | Maximum TTL = 3600 seconds | TTL = 0 disabled caching.
 
 AWS SSM Run Command

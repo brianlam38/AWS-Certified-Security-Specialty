@@ -6,7 +6,7 @@ The exam tests an examinee's ability to demonstrate:
 * An understanding of __secure Internet protocols__ and __AWS mechanisms to implement them__.
 * A working knowledge of __AWS security services and features of services to provide a secure production environment__.
 * Competency gained from __two or more years of production deployment experience__ using __AWS security services and features__.
-* The ability to make __tradeoff decisions__ with regard to __cost, security, and deployment complexity__ given a set of __application requirements__.
+* The ability to make __trade off decisions__ with regard to __cost, security, and deployment complexity__ given a set of __application requirements__.
 * An understanding of __security operations__ and __risk__.
 
 ## Exam Content

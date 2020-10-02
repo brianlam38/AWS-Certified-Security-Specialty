@@ -62,7 +62,7 @@ How to mitigate DDoS:
 
 WAF scenarios will be in the exam.
 
-WAF only integrates directly with __(1) Application Load Balancers__ and __(2) CloudFront Distributions__.
+WAF only integrates directly with __(1) Application Load Balancers__ , __(2) Amazon API Gateway__ and __(3) CloudFront Distributions__.
 WAF does NOT integrate with EC2, DynamoDB, Route53 or any other services.
 
 
